@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "574909873629",
+    "project_id": "i-canyon-marketing-app",
+    "storage_bucket": "i-canyon-marketing-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:48111a70b1ad4ba13bca34",
+        "android_client_info": {
+          "package_name": "com.icanyon.firstmarketingapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:6633ff82ef2d6c043bca34",
+        "android_client_info": {
+          "package_name": "com.icanyontechnologies.refrrBusiness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
