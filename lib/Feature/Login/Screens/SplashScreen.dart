@@ -1,17 +1,13 @@
-
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:refrr_admin/Core/constants/color-constnats.dart';
+import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
 import 'package:refrr_admin/Feature/Login/Screens/home.dart';
+import 'package:refrr_admin/models/leads_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../Core/constants/color-constnats.dart';
-import '../../../Model/admin-model.dart';
-import '../Controller/auth-controller.dart';
-import 'onboardScreen-1.dart';
+import 'package:refrr_admin/Feature/Login/Screens/onboardScreen-1.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -21,65 +17,64 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-
-  keepLogin() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    if(pref.containsKey('uid')){
-      String id= pref.getString('uid') ??"";
-      print("5555555555555555$id");
-      if(id!=""){
-        DocumentSnapshot snapshot=await ref.read(loginControllerProvider.notifier).getAdminModel(id: id);
-        if(snapshot.exists){
-          AdminModel adminModel=AdminModel.fromMap(snapshot.data() as Map<String,dynamic>);
-          ref.read(adminProvider.notifier).update((state) => adminModel,
-          );
-          Navigator.pushAndRemoveUntil(context,
-            CupertinoPageRoute(builder: (context) =>  HomeScreen(admin: adminModel,),), (route) => false,
-          );
-        }
-        else{
-          print("not snaappppp");
-          Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => OnboardingPage(),),(route) => false,);
-        }
-      }
-      else{
-        print("not iddddddd");
-        Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => OnboardingPage(),),(route) => false,);
-      }
-    }
-    else{
-      print("keeeeeeeeeeeeeeeeeeeeeepno");
-      Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => OnboardingPage(),),(route) => false,);
-    }
-  }
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      keepLogin();
-    },);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _keepLogin());
+  }
+
+  Future<void> _keepLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final uid = prefs.getString('uid');
+
+    if (!mounted) return;
+
+    if (uid == null || uid.isEmpty) {
+      _goToOnboarding();
+      return;
+    }
+
+    try {
+      final LeadsModel? lead =
+      await ref.read(leadControllerProvider.notifier).getLead(uid);
+
+      if (!mounted) return;
+
+      if (lead == null) {
+        _goToOnboarding();
+        return;
+      }
+
+      // IMPORTANT: Only set in-memory lead. Do NOT call updateLead here.
+      ref.read(leadControllerProvider.notifier).setCurrentLead(lead);
+
+      // Replace Splash with Home
+      Navigator.of(context).pushReplacement(
+        CupertinoPageRoute(builder: (_) => HomeScreen(lead: lead)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      _goToOnboarding();
+    }
+  }
+
+  void _goToOnboarding() {
+    Navigator.of(context).pushReplacement(
+      CupertinoPageRoute(builder: (_) => const OnboardingPage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.primaryColor,
-      body: Consumer(
-          builder: (context,ref,child) {
-            print("splashsssssssss");
-            // final connectivityStatus = ref.watch(connectivityProvider);
-            return Center(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
-                width: MediaQuery.of(context).size.width * 0.7,
-                child:
-                // connectivityStatus==ConnectivityStatus.connected?
-                Image.asset('assets/images/refrrAdminLogo.jpg')
-                    // :const InternetError(),
-              ), // Splash image
-            );
-          }
-      ),
-    );
+      body: Center(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          width: MediaQuery.of(context).size.width * 0.7,
+          child: SvgPicture.asset('assets/svg/refrrRoundLogo.svg'),
+          ),
+        ),
+      );
   }
 }

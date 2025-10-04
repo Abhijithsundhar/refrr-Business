@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import '../../../Model/serviceLeadModel.dart';
-import '../../../core/constants/failure.dart';
-import '../../../core/constants/firebaseConstants.dart';
+import 'package:refrr_admin/Core/constants/failure.dart';
+import 'package:refrr_admin/Core/constants/firebaseConstants.dart';
+import 'package:refrr_admin/models/serviceLeadModel.dart';
+
 
 final serviceLeadsRepositoryProvider = Provider<ServiceLeadsRepository>((ref) {
   return ServiceLeadsRepository();
@@ -34,6 +35,7 @@ class ServiceLeadsRepository {
     final collection = FirebaseFirestore.instance.collection(FirebaseCollections.ServiceLeadsCollection);
     if (searchQuery.isEmpty) {
       return collection
+          // .where('leadName' ,isEqualTo: lead)
           .orderBy('createTime', descending: true)
           .snapshots()
           .map((snapshot) =>

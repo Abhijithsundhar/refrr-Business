@@ -5,7 +5,7 @@ class OfferModel {
   final String amount;
   final DateTime endDate;
   final DateTime createTime;
-  final String id;
+  final String? id;
   final bool delete;
   final DocumentReference? reference;
   final String? image;
@@ -19,7 +19,7 @@ class OfferModel {
     required this.amount,
     required this.endDate,
     required this.createTime,
-    required this.id,
+    this.id,
     required this.delete,
     this.reference,
     this.image,

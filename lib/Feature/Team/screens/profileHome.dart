@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../Core/common/custom-container.dart';
-import '../../../Core/common/custom-text-fields.dart';
-import '../../../Core/common/global variables.dart';
-import '../../../Model/affiliate-model.dart';
+import 'package:refrr_admin/Core/common/custom-container.dart';
+import 'package:refrr_admin/Core/common/custom-text-fields.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
+
 
 class ProfilePage extends StatefulWidget {
   final AffiliateModel? affiliate;
@@ -112,18 +114,22 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.grey[200],
-                    image: DecorationImage(
-                      image: AssetImage('assets/profile_avatar.png'), // Replace with your image
+                    image: widget.affiliate!.profile.isEmpty
+                        ? DecorationImage(image: AssetImage('assets/profile_avatar.png'),
+                      fit: BoxFit.cover,
+                    )
+                        : DecorationImage(image: NetworkImage(widget.affiliate!.profile),
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: ClipOval(
+                  child: widget.affiliate!.profile.isEmpty
+                      ? ClipOval(
                     child: Icon(
                       Icons.person,
                       size: 60,
                       color: Colors.grey[600],
                     ),
-                  ),
+                  ) : null, // no icon if network image is shown
                 ),
                 SizedBox(height: height*.01),
 
@@ -146,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       dividerColor:  Colors.transparent,
                       indicatorSize: TabBarIndicatorSize.tab,
                       mouseCursor: SystemMouseCursors.basic, // Use normal arrow cursor
-                      overlayColor: MaterialStateProperty.all(Colors.transparent), // Disable hover effect
+                      overlayColor: WidgetStateProperty.all(Colors.transparent), // Disable hover effect
                       controller: _tabController,
                       tabs: [
                         Tab(child: Text('Account')),

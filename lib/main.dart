@@ -2,13 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Feature/Login/Screens/SplashScreen.dart';
+import 'package:refrr_admin/firebase_options.dart';
 
-import 'Core/common/global variables.dart';
-import 'Core/common/session-manager.dart';
-import 'Feature/Login/Screens/SplashScreen.dart';
-import 'Feature/Login/Screens/login-page.dart';
-import 'firebase_options.dart';
-import 'Feature/Login/Screens/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,20 +30,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       // home: HomeScreen(),
-      home: FutureBuilder(
-        future: SessionManager.getLoggedInLead(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
-          }
-          if (snapshot.data != null) {
-            return const HomeScreen();
-          } else {
-            return const SplashScreen();
-          }
-        },
-      ),
+      home:  SplashScreen(),
     );
   }
 }
+
 

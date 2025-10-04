@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../Model/services-model.dart';
-import '../repository/service-repository.dart';
+import 'package:refrr_admin/Feature/Services/repository/service-repository.dart';
+import 'package:refrr_admin/models/services-model.dart';
+
 
 final serviceControllerProvider =
 StateNotifierProvider<ServiceController, AsyncValue<List<ServiceModel>>>((ref) {

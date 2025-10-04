@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:refrr_admin/Model/services-model.dart';
-import 'contact-person-model.dart';
+import 'package:refrr_admin/models/contact-person-model.dart';
+import 'package:refrr_admin/models/services-model.dart';
+
 
 class AddFirmModel {
   final String name;
