@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:refrr_admin/Core/constants/failure.dart';
+import 'package:refrr_admin/Core/constants/firebaseConstants.dart';
+import 'package:refrr_admin/Core/constants/typedef.dart';
+import 'package:refrr_admin/models/admin-model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../Core/constants/failure.dart';
-import '../../../Core/constants/firebaseConstants.dart';
-import '../../../Core/constants/typedef.dart';
-import '../../../Model/admin-model.dart';
+
 
 
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {

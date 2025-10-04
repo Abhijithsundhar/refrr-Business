@@ -2,8 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Feature/Login/Screens/contact-us.dart';
-
-import '../../Core/common/global variables.dart';
+import '../../../Core/common/global variables.dart';
 
 class UpgradePlanScreen extends StatelessWidget {
   const UpgradePlanScreen({super.key});

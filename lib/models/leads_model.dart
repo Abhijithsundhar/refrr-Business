@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:refrr_admin/Model/affiliate-model.dart';
-import 'firm-model.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
+import 'package:refrr_admin/models/firm-model.dart';
+
 
 class LeadsModel {
   final String logo;
   final String name;
   final String industry;
   final String contactNo;
-  final String mail;
+  final String mail; // email
   final String country;
   final String zone;
   final String website;
@@ -44,7 +45,7 @@ class LeadsModel {
     required this.firms,
     required this.status,
     required this.affiliate,
-    required this.teamMembers, // ✅ Constructor
+    required this.teamMembers,
     this.password,
     this.reference,
   });
@@ -69,7 +70,7 @@ class LeadsModel {
     int? status,
     String? affiliate,
     String? password,
-    List<AffiliateModel>? teamMembers, // ✅ CopyWith
+    List<AffiliateModel>? teamMembers,
     DocumentReference? reference,
   }) {
     return LeadsModel(
@@ -91,7 +92,7 @@ class LeadsModel {
       firms: firms ?? this.firms,
       status: status ?? this.status,
       affiliate: affiliate ?? this.affiliate,
-      teamMembers: teamMembers ?? this.teamMembers, // ✅ copyWith updated
+      teamMembers: teamMembers ?? this.teamMembers,
       password: password ?? this.password,
       reference: reference ?? this.reference,
     );
@@ -117,40 +118,66 @@ class LeadsModel {
       'firms': firms.map((f) => f.toMap()).toList(),
       'status': status,
       'affiliate': affiliate,
-      'teamMembers': teamMembers, // ✅ Added in toMap
+      'teamMembers': teamMembers.map((m) => m.toMap()).toList(), // FIX: serialize properly
       'password': password,
       'reference': reference,
     };
   }
 
-  factory LeadsModel.fromMap(Map<String, dynamic> map, {DocumentReference? reference}) {
+  factory LeadsModel.fromMap(
+      Map<String, dynamic> map, {
+        DocumentReference? reference,
+      }) {
+    // createTime can be Timestamp | String | DateTime
+    final ct = map['createTime'];
+    late final DateTime ctDate;
+    if (ct is Timestamp) {
+      ctDate = ct.toDate();
+    } else if (ct is String) {
+      ctDate = DateTime.tryParse(ct) ?? DateTime.now();
+    } else if (ct is DateTime) {
+      ctDate = ct;
+    } else {
+      ctDate = DateTime.now();
+    }
+
+    final refFromMap =
+    map['reference'] is DocumentReference ? map['reference'] as DocumentReference : null;
+
     return LeadsModel(
-      logo: map['logo'] as String,
-      name: map['name'] as String,
-      industry: map['industry'] as String,
-      contactNo: map['contactNo'] as String,
-      mail: map['mail'] as String,
-      country: map['country'] as String,
-      zone: map['zone'] as String,
-      website: map['website'] as String,
-      currency: map['currency'] as String,
-      address: map['address'] as String,
-      aboutFirm: map['aboutFirm'] as String,
+      logo: map['logo'] as String? ?? '',
+      name: map['name'] as String? ?? '',
+      industry: map['industry'] as String? ?? '',
+      contactNo: map['contactNo'] as String? ?? '',
+      mail: map['mail'] as String? ?? '',
+      country: map['country'] as String? ?? '',
+      zone: map['zone'] as String? ?? '',
+      website: map['website'] as String? ?? '',
+      currency: map['currency'] as String? ?? '',
+      address: map['address'] as String? ?? '',
+      aboutFirm: map['aboutFirm'] as String? ?? '',
       delete: map['delete'] as bool? ?? false,
       search: List<dynamic>.from(map['search'] ?? []),
-      createTime: (map['createTime'] as Timestamp).toDate(),
-      addedBy: map['addedBy'] as String,
-      firms: map['firms'] != null ? List<AddFirmModel>.from((map['firms'] as List)
-              .where((e) => e != null).map((e) => AddFirmModel.fromMap(e as Map<String, dynamic>))) : [],
+      createTime: ctDate,
+      addedBy: map['addedBy'] as String? ?? '',
+      firms: map['firms'] != null
+          ? List<AddFirmModel>.from(
+        (map['firms'] as List)
+            .where((e) => e != null)
+            .map((e) => AddFirmModel.fromMap(e as Map<String, dynamic>)),
+      )
+          : <AddFirmModel>[],
       status: map['status'] as int? ?? 0,
       affiliate: map['affiliate'] as String? ?? '',
-      teamMembers:map['teamMembers'] != null
+      teamMembers: map['teamMembers'] != null
           ? List<AffiliateModel>.from(
-          (map['teamMembers'] as List)
-              .where((e) => e != null)
-              .map((e) => AffiliateModel.fromMap(e as Map<String, dynamic>))) : [],
+        (map['teamMembers'] as List)
+            .where((e) => e != null)
+            .map((e) => AffiliateModel.fromMap(e as Map<String, dynamic>)),
+      )
+          : <AffiliateModel>[],
       password: map['password'] as String? ?? '',
-      reference: map['reference'] is DocumentReference ? map['reference'] as DocumentReference : null,
+      reference: reference ?? refFromMap,
     );
   }
 }

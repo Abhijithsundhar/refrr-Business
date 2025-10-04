@@ -1,9 +1,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../Core/common/snackbar.dart';
-import '../../../Model/affiliate-model.dart';
-import '../repository/affiliate-repository.dart';
+import 'package:refrr_admin/Core/common/snackbar.dart';
+import 'package:refrr_admin/Feature/Team/repository/affiliate-repository.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
+
 
 final affiliateRepositoryProvider = Provider((ref) => AffiliateRepository());
 

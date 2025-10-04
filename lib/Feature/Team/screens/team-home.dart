@@ -1,20 +1,19 @@
-import 'package:badges/badges.dart' as badges;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../../Core/common/global variables.dart';
-import '../../../Model/affiliate-model.dart';
-import '../../../Model/leads-model.dart';
-import '../../Funnel/Controller/serviceLead-controllor.dart';
-import '../controller/affiliate-controller.dart';
-import '../screens/hire-page.dart';
-import '../screens/profileHome.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Feature/Funnel/Controller/serviceLead-controllor.dart';
+import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
+import 'package:refrr_admin/Feature/Team/screens/hire-page.dart';
+import 'package:refrr_admin/Feature/Team/screens/new-profile.dart';
+import 'package:refrr_admin/Feature/Team/screens/profileHome.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
+import 'package:refrr_admin/models/leads_model.dart';
 
 class TeamHome extends ConsumerStatefulWidget {
-  final LeadsModel currentFirm;
-  const TeamHome( {super.key,required this.currentFirm,});
+  final LeadsModel? currentFirm;
+  const TeamHome({super.key, this.currentFirm});
 
   @override
   ConsumerState<TeamHome> createState() => _TeamHomeState();
@@ -27,212 +26,218 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
   /// Filters
   String activeFilter = 'All';
   String? selectedLocation;
-  String getSpacedCount(int count) {
-    if (count < 10) {
-      return '   ${count.toString()}   '; // space before and after
-    } else if (count < 100) {
-      return '${count.toString()} '; // space after
-    } else {
-      return count.toString(); // no space
-    }
-  }  @override
+
+  @override
   Widget build(BuildContext context) {
+    // Keep providers so Hire page can still receive them as before
     final affiliatesAsync = ref.watch(affiliateStreamProvider(searchQuery));
     final serviceLeadAsync = ref.watch(serviceLeadsStreamProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.only(
-            top: height * .035, left: width * .04, right: width * .05),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Image.asset(
-                  'assets/images/refrrTextLogo.png',
-                  width: width * .2,
-                  height: 50,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {},
-                ),
-              ],
-            ),
+    // Use team members from the current firm instead of all affiliates
+    final List<AffiliateModel> teamMembers =
+    List<AffiliateModel>.from(widget.currentFirm?.teamMembers ?? []);
 
-            // Search + Hire Button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: TextField(
-                      controller: searchController,
-                      onChanged: (val) {
-                        setState(() => searchQuery = val.trim().toLowerCase());
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                        hintStyle: TextStyle(color: Colors.black45),
-                        suffixIcon: Icon(Icons.search, color: Colors.black45),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      ),
-                    ),
-                  ),
+    // Apply filters (only filter by location when activeFilter == 'Location')
+    List<AffiliateModel> filteredAffiliates = teamMembers;
+    if (activeFilter == 'Location' &&
+        selectedLocation != null &&
+        selectedLocation!.isNotEmpty) {
+      filteredAffiliates = filteredAffiliates
+          .where((a) => a.zone.toLowerCase() == selectedLocation!.toLowerCase())
+          .toList();
+    }
+    // Performance is a placeholder in your UI; no filtering applied.
+
+    final totalCount = teamMembers.length;
+
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white,
+
+          // NEW: AppBar with lead/firm name and icons
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            centerTitle: false,
+            titleSpacing: 0,
+            title: Padding(
+              padding:  EdgeInsets.only(left: width*.05),
+              child: Text(widget.currentFirm?.name ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.bebasNeue(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: width * .055,
                 ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) =>  HirePage(currentFirm:widget.currentFirm,affiliate:affiliatesAsync,serviceLead:serviceLeadAsync)));
-                  },
-                  child: Container(
-                    width: 80,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add, color: Colors.white, size: 16),
-                        SizedBox(width: 5),
-                        Text('Hire',
-                          style: TextStyle(
-                            color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500,
+              ),
+            ),
+            actions: [
+              Icon(Icons.search, color: Colors.black),
+              SizedBox(width: width * .02),
+              Icon(Icons.menu_outlined, color: Colors.black),
+              SizedBox(width: width * .03),
+            ],
+          ),
+
+          body: Padding(
+            // Reduced top padding since AppBar is present
+            padding: EdgeInsets.only(
+                top: height * .01, left: width * .04, right: width * .05),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // REMOVED: old header row that contained the name and icons
+
+                  SizedBox(height: height * .01),
+
+                  /// Filters (UI unchanged), now based on teamMembers
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Filter Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildFilterButton(
+                            'All ($totalCount)',
+                            activeFilter == 'All',
+                                () {
+                              setState(() {
+                                activeFilter = 'All';
+                                selectedLocation =
+                                null; // ensure no filtering when All
+                              });
+                            },
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: height * 0.03),
-
-            // Filters
-            affiliatesAsync.when(
-              data: (affiliates) {
-                final totalCount = affiliates.length;
-
-                /// Filter by location if selected
-                List<AffiliateModel> filteredAffiliates = affiliates;
-                if (selectedLocation != null) {
-                  filteredAffiliates = filteredAffiliates
-                      .where((a) => a.zone.toLowerCase() == selectedLocation!.toLowerCase())
-                      .toList();
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Filter Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-
-                      children: [
-                        _buildFilterButton('All  (${getSpacedCount(totalCount)})', activeFilter == 'All', () {
-                          setState(() {
-                            activeFilter = 'All';
-                            selectedLocation = null;
-                          });
-                        }),
-                        SizedBox(width: width * .055),
-                        _buildFilterButton(
-                          selectedLocation ?? 'Location',
-                          activeFilter == 'Location',
-                              () => _selectLocation(affiliates),
-                        ),
-                        SizedBox(width: width * .055),
-                        _buildFilterButton('Performance', activeFilter == 'Performance',
+                          SizedBox(width: width * .02),
+                          _buildFilterButton(
+                            selectedLocation ?? 'Location',
+                            activeFilter == 'Location',
+                                () => _selectLocation(teamMembers),
+                          ),
+                          SizedBox(width: width * .02),
+                          _buildFilterButton(
+                            'Performance', activeFilter == 'Performance',
                                 () {
                               setState(() {
                                 activeFilter = 'Performance';
-                                // Placeholder: You can implement your logic
+                                // Placeholder: no filtering applied
                               });
-                            }),
-                      ],
-                    ),
-                    SizedBox(height: height * 0.03),
-
-                    // DISPLAY GRID after serviceLeads load
-                    serviceLeadAsync.when(
-                      data: (serviceLeads) {
-                        if (filteredAffiliates.isEmpty) {
-                          return const Center(child: Text("No affiliates found"));
-                        }
-
-                        return GridView.builder(
-                          padding: const EdgeInsets.only(bottom: 100),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 15,
-                            mainAxisSpacing: 15,
-                            childAspectRatio: 0.65,
+                            },
                           ),
-                          itemCount: filteredAffiliates.length,
-                          itemBuilder: (context, index) {
-                            final affiliate = filteredAffiliates[index];
+                        ],
+                      ),
+                      SizedBox(height: height * 0.03),
 
-                            final myLeads = serviceLeads
-                                .where((lead) => lead.marketerId == affiliate.id)
-                                .toList();
+                      // DISPLAY GRID after serviceLeads load
+                      serviceLeadAsync.when(
+                        data: (serviceLeads) {
+                          if (filteredAffiliates.isEmpty) {
+                            return const Center(
+                                child: Text("No team members found"));
+                          }
+                          return GridView.builder(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 15,
+                              mainAxisSpacing: 15,
+                              childAspectRatio: 0.7,
+                            ),
+                            itemCount: filteredAffiliates.length,
+                            itemBuilder: (context, index) {
+                              final affiliate = filteredAffiliates[index];
 
-                            int completedLeads = myLeads.where((lead) =>
-                            getLatestStatus(lead.statusHistory) ==
-                                'Completed').length;
+                              final myLeads = serviceLeads.where((lead) => lead.marketerId == affiliate.id).toList();
 
-                            String lqScore = ''; // Placeholder
+                              int completedLeads = myLeads.where((lead) =>
+                              getLatestStatus(lead.statusHistory) == 'Completed').length;
 
-                            return InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ProfilePage(affiliate: affiliate),
-                                  ),
-                                );
-                              },
-                              child: _buildCandidateCard(
-                                model: affiliate,
-                                width: width,
-                                completedCount: completedLeads,
-                                lqScore: lqScore,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (e, _) => Center(child: Text("Error loading leads: $e")),
-                    )
-                  ],
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text("Error: $e")),
+                              String lqScore = ''; // Placeholder
+
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) => NewProfile(affiliate: affiliate),),);
+                                },
+                                child: _buildCandidateCard(
+                                  model: affiliate,
+                                  width: width,
+                                  completedCount: completedLeads,
+                                  lqScore: lqScore,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        loading: () => const Center(
+                            child: CircularProgressIndicator()),
+                        error: (e, _) =>
+                            Center(child: Text("Error loading leads: $e")),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
-      ),
+        Positioned(
+          top: height * .84,
+          left: width * .71,
+          child: GestureDetector(
+            onTap: () {
+              // Keep navigation and params unchanged
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HirePage(
+                    serviceLead: serviceLeadAsync,
+                    affiliate: affiliatesAsync,
+                    currentFirm: widget.currentFirm,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.shopping_bag,
+                    color: Colors.white,
+                    size: width * .04,
+                  ),
+                  SizedBox(width: width * .02),
+                  Text(
+                    'Hire',
+                    style: GoogleFonts.roboto(
+                      color: Colors.white,
+                      fontSize: width * .035,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 
-  // Select location dynamically from available zones
+  // Select location dynamically from current team members
   void _selectLocation(List<AffiliateModel> affiliates) async {
     final zones = affiliates.map((a) => a.zone).toSet().toList();
 
@@ -271,39 +276,27 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        width: width * 0.27,   // same width as your card design
+        height: height * 0.043, // same height as your card design
         decoration: BoxDecoration(
-          color: isSelected ? Colors.cyan[100] : Colors.white,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(
-            color: isSelected ? Colors.cyan : Colors.grey[300]!,
-          ),
+          color: isSelected ? Colors.black : const Color(0xFFF3F3F3),
+          borderRadius: BorderRadius.circular(5),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: isSelected ? Colors.cyan[700] : Colors.grey[600],
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+        child: Center(
+          child: Text(
+            text,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.roboto(
+              fontSize: width * 0.03,
+              fontWeight: FontWeight.w400,
+              color: isSelected ? Colors.white : Colors.black,
             ),
-            if (!isSelected && text == 'Location')
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Icon(Icons.keyboard_arrow_down,
-                    color: Colors.grey[600], size: 14),
-              ),
-          ],
+          ),
         ),
       ),
     );
   }
+
 
   Widget _buildCandidateCard({
     required AffiliateModel model,
@@ -334,18 +327,17 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
                 child: CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: model.profile != null && model.profile!.isNotEmpty
-                      ? NetworkImage(model.profile!)
-                      : null,
-                  child: model.profile == null || model.profile!.isEmpty
-                      ? Icon(Icons.person, color: Colors.grey[600], size: 30)
-                      : null,
+                  backgroundImage: model.profile.isNotEmpty
+                      ? NetworkImage(model.profile)
+                      : AssetImage('assets/image.png'),
                 ),
               ),
               SizedBox(height: height * 0.006),
 
               Text(
-                model.name,
+                model.name.length > 15
+                    ? "${model.name.substring(0, 15)}..."
+                    : model.name,
                 style: GoogleFonts.roboto(
                   fontSize: width * .04,
                   fontWeight: FontWeight.w500,
@@ -361,7 +353,7 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              SizedBox(height: 10),
 
               Text.rich(
                 TextSpan(
@@ -378,7 +370,7 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
                       text: '$completedCount',
                       style: GoogleFonts.roboto(
                         fontSize: width * .035,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
                     )
@@ -388,31 +380,41 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
 
               RichText(
                 text: TextSpan(
-                  text: 'C/R Amount:',
-                  style: GoogleFonts.roboto(fontSize: width * .0345, color: Colors.black),
+                  text: 'Total credited:',
+                  style: GoogleFonts.roboto(
+                      fontSize: width * .03, color: Colors.black),
                   children: [
                     TextSpan(
-                      text: " AED${model.totalCredit}",
-                      style: const TextStyle(color: Colors.green),
+                      text: " AED 100",
+                      // text: " AED${model.totalCredit}",
+                      style: GoogleFonts.roboto(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
               ),
               RichText(
                 text: TextSpan(
-                  text: 'W/D Amount:',
-                  style: GoogleFonts.roboto(fontSize: width * .0345, color: Colors.black),
+                  text: 'Total withdrawn:',
+                  style: GoogleFonts.roboto(
+                      fontSize: width * .03, color: Colors.black),
                   children: [
                     TextSpan(
-                      text: " AED${model.totalWithrew}",
-                      style: const TextStyle(color: Colors.red),
+                      // text: " AED${model.totalWithrew}",
+                      text: " AED 20",
+                      style: GoogleFonts.roboto(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 6),
               Text(
-                'LQ - $lqScore %',
+                lqScore.isEmpty ? 'LQ - 60%' : 'LQ - $lqScore %',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -424,13 +426,26 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
         ),
 
         // Badge
-        Positioned(
-          top: height*.0182,
-          left: width*.25,
+        model.profile.isNotEmpty ? Positioned(
+          top: height * .0182,
+          left: width * .25,
           child: Badge.count(
             count: 1,
             backgroundColor: Colors.cyan,
             textColor: Colors.white,
+            textStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+            padding: const EdgeInsets.all(4),
+          ),
+        ): Positioned(
+          top: height * .0182,
+          left: width * .25,
+          child: Badge.count(
+            count: 1,
+            backgroundColor: Colors.transparent,
+            textColor: Colors.transparent,
             textStyle: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,

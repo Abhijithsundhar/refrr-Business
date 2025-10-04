@@ -2,10 +2,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import '../../../Core/constants/failure.dart';
-import '../../../Core/constants/firebaseConstants.dart';
-import '../../../Core/constants/typedef.dart';
-import '../../../Model/affiliate-model.dart';
+import 'package:refrr_admin/Core/constants/failure.dart';
+import 'package:refrr_admin/Core/constants/firebaseConstants.dart';
+import 'package:refrr_admin/Core/constants/typedef.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
+
 
 final affiliateRepositoryProvider = Provider<AffiliateRepository>((ref) {return AffiliateRepository();});
 

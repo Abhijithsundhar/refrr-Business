@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:refrr_admin/Model/total-credit-model.dart';
-import 'package:refrr_admin/Model/total-withdrawal-model.dart';
-import 'package:refrr_admin/Model/withdrew-requst-model.dart';
-import 'balance-amount-model.dart';
+import 'package:refrr_admin/models/balance-amount-model.dart';
+import 'package:refrr_admin/models/total-credit-model.dart';
+import 'package:refrr_admin/models/total-withdrawal-model.dart';
+import 'package:refrr_admin/models/withdrew-requst-model.dart';
 
 class AffiliateModel {
   final String name;
@@ -22,13 +22,14 @@ class AffiliateModel {
   final List<BalanceModel> balance;
   final List<TotalCreditModel> totalCredits;
   final List<TotalWithdrawalsModel> totalWithdrawals;
-  final int totalBalance;       // New field
-  final int totalCredit;        // New field
-  final int totalWithrew;// New field
+  final int totalBalance;
+  final int totalCredit;
+  final int totalWithrew;
   final DocumentReference? reference;
   final String? id;
   final String country;
   final String language;
+  final List<String> industry; // ✅ Added industry as array
 
   AffiliateModel({
     required this.name,
@@ -48,13 +49,14 @@ class AffiliateModel {
     required this.balance,
     required this.totalCredits,
     required this.totalWithdrawals,
-    required this.totalBalance,     // In constructor
-    required this.totalCredit,      // In constructor
-    required this.totalWithrew,     // In constructor
+    required this.totalBalance,
+    required this.totalCredit,
+    required this.totalWithrew,
     this.reference,
     this.id,
     required this.country,
-    required this.language
+    required this.language,
+    required this.industry, // ✅ in constructor
   });
 
   AffiliateModel copyWith({
@@ -82,6 +84,7 @@ class AffiliateModel {
     String? country,
     String? language,
     DocumentReference? reference,
+    List<String>? industry, // ✅
   }) {
     return AffiliateModel(
       name: name ?? this.name,
@@ -108,6 +111,7 @@ class AffiliateModel {
       id: id ?? this.id,
       country: country ?? this.country,
       language: language ?? this.language,
+      industry: industry ?? this.industry, // ✅
     );
   }
 
@@ -137,6 +141,7 @@ class AffiliateModel {
       'id': id,
       'country': country,
       'language': language,
+      'industry': industry, // ✅ save array
     };
   }
 
@@ -170,10 +175,11 @@ class AffiliateModel {
       totalBalance: map['totalBalance'] ?? 0,
       totalCredit: map['totalCredit'] ?? 0,
       totalWithrew: map['totalWithrew'] ?? 0,
-      reference: map['reference'] as DocumentReference,
+      reference: map['reference'] as DocumentReference?,
       id: map['id'] as String?,
       country: map['country'] as String,
       language: map['language'] as String,
+      industry: List<String>.from(map['industry'] ?? []), // ✅ load array
     );
   }
 }

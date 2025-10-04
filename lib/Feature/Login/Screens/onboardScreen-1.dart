@@ -19,19 +19,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
       title: 'Add Firms, Grow Your Wealth',
       subtitle1: 'Expand your portfolio and unlock greater',
       subtitle2: 'financial opportunities.',
-      imagePath: 'assets/images/firstImage.png',
+      imagePath: 'assets/svg/SPLASH SCREEN_05-01.svg',
     ),
     OnboardContent(
       title: 'Earn Money Effortlessly',
       subtitle1: 'Earn money effortlessly by turning smart ',
       subtitle2: ' strategies into steady income. ',
-      imagePath: 'assets/images/secondimage.png',
+      imagePath: 'assets/svg/SPLASH SCREEN_05-02.svg',
     ),
     OnboardContent(
       title: 'Track Your Growth in Real-Time',
       subtitle1: 'Track your growth in real-time and stay ahead ',
       subtitle2: 'with instant insights and progress updates.',
-      imagePath: 'assets/images/thridImage.png',
+      imagePath: 'assets/svg/SPLASH SCREEN_05-03.svg',
+    ),
+    OnboardContent(
+      title: 'Track Your Growth in Real-Time',
+      subtitle1: 'Track your growth in real-time and stay ahead ',
+      subtitle2: 'with instant insights and progress updates.',
+      imagePath: 'assets/svg/SPLASH SCREEN_05-04.svg',
     ),
   ];
 

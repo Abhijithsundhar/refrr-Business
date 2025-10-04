@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../Model/serviceLeadModel.dart';
-import '../repository/serviceLead-repository.dart';
-import '../../../core/common/snackbar.dart';
+import 'package:refrr_admin/Core/common/snackbar.dart';
+import 'package:refrr_admin/Feature/Funnel/Repository/serviceLead-repository.dart';
+import 'package:refrr_admin/models/serviceLeadModel.dart';
+
 
 final serviceLeadsRepositoryProvider = Provider((ref) => ServiceLeadsRepository());
 

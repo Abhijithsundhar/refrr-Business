@@ -9,6 +9,7 @@ class ServiceModel {
   final int leadsGiven;
   final DateTime createTime;
   final bool delete;
+  final String commissionFor;
 
   ServiceModel({
     required this.image,
@@ -19,6 +20,7 @@ class ServiceModel {
     required this.leadsGiven,
     required this.createTime,
     required this.delete,
+    required this.commissionFor,
   });
 
   ServiceModel copyWith({
@@ -31,6 +33,7 @@ class ServiceModel {
     DateTime? createTime,
     bool? delete,
     DocumentReference? reference,
+    String? commissionFor,
   }) {
     return ServiceModel(
       image: image ?? this.image,
@@ -41,6 +44,7 @@ class ServiceModel {
       leadsGiven: leadsGiven ?? this.leadsGiven,
       createTime: createTime ?? this.createTime,
       delete: delete ?? this.delete,
+      commissionFor: commissionFor ?? this.commissionFor,
     );
   }
 
@@ -54,6 +58,7 @@ class ServiceModel {
       'leadsGiven': leadsGiven,
       'createTime': Timestamp.fromDate(createTime),
       'delete': delete,
+      'commissionFor': commissionFor,
     };
   }
 
@@ -67,6 +72,7 @@ class ServiceModel {
       leadsGiven: map['leadsGiven'] as int,
       createTime: (map['createTime'] as Timestamp).toDate(),
       delete: map['delete'] as bool? ?? false,
+      commissionFor: map['commissionFor'] as String? ?? '',
     );
   }
 }
