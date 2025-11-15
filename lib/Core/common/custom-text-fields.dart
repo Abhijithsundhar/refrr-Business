@@ -30,7 +30,7 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: maxLines == 1 ? height*.05 :  height*.2, // Set your desired height here
+      height: maxLines == 1 ? height*.06 :  height*.2, // Set your desired height here
       decoration: BoxDecoration(
         color: Colors.grey[100], // Match the TextField's fill color
         borderRadius: BorderRadius.circular(8),

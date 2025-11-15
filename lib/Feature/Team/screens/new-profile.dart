@@ -226,11 +226,11 @@ class _NewProfileState extends State<NewProfile> with SingleTickerProviderStateM
                         SizedBox(height: height * .03),
                         Row(
                           children: [
-                            _statBox('13', 'Total\nLeads'),
+                            _statBox(widget.affiliate!.totalLeads.toString(), 'Total\nLeads'),
                             SizedBox(width: width * .015),
-                            _statBox('80%', 'Lead\nQuality'),
+                            _statBox('${widget.affiliate!.leadScore!.toInt().toString()}%', 'Lead\nQuality'),
                             SizedBox(width: width * .015),
-                            _statBox(balance, 'Balance\n(AED)'),
+                            _statBox(widget.affiliate!.totalBalance.toString(), 'Balance\n(AED)'),
                           ],
                         )
                       ],
@@ -369,7 +369,7 @@ class _NewProfileState extends State<NewProfile> with SingleTickerProviderStateM
                 ),
               ),
               SizedBox(width: width * .3),
-              customCenteredTextContainer('80%'),
+              customCenteredTextContainer('${widget.affiliate!.leadScore!.toInt().toString()}%'),
             ],
           ),
           SizedBox(height: height * .03),
@@ -385,7 +385,7 @@ class _NewProfileState extends State<NewProfile> with SingleTickerProviderStateM
                 ),
               ),
               SizedBox(width: width * .19),
-              customCenteredTextContainer('13'),
+              customCenteredTextContainer(widget.affiliate!.totalLeads.toString()),
             ],
           ),
           SizedBox(height: height * .05),
@@ -396,7 +396,7 @@ class _NewProfileState extends State<NewProfile> with SingleTickerProviderStateM
           CustomReadonlyTextField('Total Money Withdrawn', const Color(0xFFB41010), 'AED $totalWithdraw'),
           SizedBox(height: height * .03),
 
-          CustomReadonlyTextField('Balance Amount', const Color(0xFF0073A1), 'AED $balance'),
+          CustomReadonlyTextField('Balance Amount', const Color(0xFF0073A1), 'AED ${widget.affiliate!.totalBalance}'),
           SizedBox(height: height * .05),
 
           Row(
@@ -427,14 +427,13 @@ class _NewProfileState extends State<NewProfile> with SingleTickerProviderStateM
           const SizedBox(height: 15),
           _buildInfoField('Location', location),
           const SizedBox(height: 15),
-          _buildInfoField('Industry', 'Education, Food, Health'),
+          _buildInfoField('Industry',  widget.affiliate!.industry.join(', ')),
           const SizedBox(height: 15),
-          _buildInfoField('Qualification', 'Bsc Computer Science'),
+          _buildInfoField('Qualification', widget.affiliate!.qualification),
           const SizedBox(height: 15),
-          _buildInfoField('Experience', '8 Years'),
+          _buildInfoField('Experience', widget.affiliate!.experience),
           const SizedBox(height: 15),
-          _buildInfoField('More Info',
-              'Lorem Ipsum is simply dummy text of the \nprinting and typesetting industry. Lorem Ipsum has been the best.'),
+          _buildInfoField('More Info',widget.affiliate!.moreInfo),
         ],
       ),
     );

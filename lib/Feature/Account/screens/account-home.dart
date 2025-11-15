@@ -247,12 +247,12 @@ class _AccountHomeState extends ConsumerState<AccountHome> {
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     StatCard(
-                      count: '08',
+                      count: '0',
                       label: "Withdrawal request\npending",
                       imagePath: 'assets/images/account4.png',
                     ),
                     StatCard(
-                      count: "AED 25",
+                      count: "AED 0",
                       label: "Money Credited",
                       imagePath: 'assets/images/account3.png',
                     ),
@@ -262,7 +262,7 @@ class _AccountHomeState extends ConsumerState<AccountHome> {
                       imagePath: 'assets/images/account2.png',
                     ),
                     const StatCard(
-                      count: "56",
+                      count: "0",
                       label: "Leads Granted",
                       imagePath: 'assets/images/account1.png',
                     ),

@@ -26,8 +26,6 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
   final _picker = ImagePicker();
   XFile? _image;
 
-  int _selectedFirmIndex = 0;
-
   final List<String> statusOptions = const [
     'New Lead',
     'Contacted',
@@ -55,12 +53,6 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
     _commissionCtrl.dispose();
     super.dispose();
   }
-
-  String _getFirmName(AddFirmModel firm) {
-    if (firm.name.isNotEmpty) return firm.name;
-    return "Unknown Firm";
-  }
-
   Future<void> _pickImage() async {
     final res = await showModalBottomSheet<XFile?>(
       context: context,
@@ -117,20 +109,17 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
       );
       return;
     }
-
+    print('00000000000000000');
+    print(widget.currentFirm);
+    print(_serviceNameCtrl);
+    print('00000000000000000');
     setState(() => _saving = true);
 
     try {
-      final currentLead = widget.currentFirm!;
-      final targetFirmIndex = _selectedFirmIndex;
-
-      if (currentLead.firms.isEmpty || targetFirmIndex >= currentLead.firms.length) {
-        throw Exception('Invalid firm index or no firms available');
-      }
-
+      final currentFirm = widget.currentFirm!;
       String imageUrl = '';
       if (_image != null) {
-        // TODO: Replace this with actual upload logic, e.g. Firebase Storage
+        // 🔹 Replace this with your actual upload logic (Firebase Storage)
         imageUrl = _image!.path;
       }
 
@@ -145,19 +134,25 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
         createTime: DateTime.now(),
         delete: false,
       );
+      print('11111111111111');
+      print(newService);
+      print(imageUrl);
+      print('1111111');
 
-      final targetFirm = currentLead.firms[targetFirmIndex];
-      final List<ServiceModel> currentServices = List<ServiceModel>.from(targetFirm.services ?? <ServiceModel>[]);
+      // 🔹 Get current services or create a new empty list
+      final List<ServiceModel> currentServices =
+      List<ServiceModel>.from(currentFirm.services);
 
+      // 🔹 Add new service
       currentServices.add(newService);
-      final updatedFirm = targetFirm.copyWith(services: currentServices);
-      final List<AddFirmModel> updatedFirms = List<AddFirmModel>.from(currentLead.firms);
-      updatedFirms[targetFirmIndex] = updatedFirm;
 
-      final updatedLead = currentLead.copyWith(firms: updatedFirms);
+      // 🔹 Copy the firm with the updated service list
+      final updatedFirm = currentFirm.copyWith(services: currentServices);
 
-      await ref.read(leadControllerProvider.notifier)
-          .updateLead(leadModel: updatedLead, context: context);
+      // 🔹 Update in Firestore via controller
+      await ref
+          .read(leadControllerProvider.notifier)
+          .updateLead(leadModel: updatedFirm, context: context);
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -238,7 +233,6 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
@@ -272,44 +266,10 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    // if (widget.currentFirm != null && widget.currentFirm!.firms.isNotEmpty)
-                    //   Padding(
-                    //     padding: const EdgeInsets.only(top: 4.0),
-                    //     child: Text(
-                    //       'Adding to: ${_getFirmName(widget.currentFirm!.firms[_selectedFirmIndex])}',
-                    //       style: GoogleFonts.roboto(
-                    //         fontSize: width * .028,
-                    //         fontWeight: FontWeight.w400,
-                    //         color: Colors.grey[600],
-                    //       ),
-                    //     ),
-                    //   ),
                   ],
                 ),
               ),
               SizedBox(height: mq.size.height * .02),
-
-              if (widget.currentFirm != null && widget.currentFirm!.firms.length > 1) ...[
-                _label('Select Firm'),
-                SizedBox(
-                  height: kFieldHeight,
-                  child: DropdownButtonFormField<int>(
-                    value: _selectedFirmIndex,
-                    items: widget.currentFirm!.firms.asMap().entries
-                        .map((entry) => DropdownMenuItem<int>(
-                      value: entry.key,
-                      child: Text(_getFirmName(entry.value)),
-                    ))
-                        .toList(),
-                    onChanged: (v) => setState(() => _selectedFirmIndex = v ?? 0),
-                    style: const TextStyle(fontSize: 14, color: Colors.black),
-                    iconSize: 20,
-                    decoration: _decor(hint: 'Select firm', vPad: 8),
-                  ),
-                ),
-                SizedBox(height: mq.size.height * .02),
-              ],
-
               _label('Service Name'),
               SizedBox(
                 height: kFieldHeight,
@@ -320,7 +280,6 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
                 ),
               ),
               SizedBox(height: mq.size.height * .02),
-
               _label('Add Image'),
               GestureDetector(
                 onTap: _pickImage,
@@ -368,7 +327,6 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
                 ),
               ),
               SizedBox(height: mq.size.height * .02),
-
               _label('Range (AED)'),
               Row(
                 children: [
@@ -380,7 +338,6 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
                 ],
               ),
               SizedBox(height: mq.size.height * .02),
-
               _label('Commission for'),
               SizedBox(
                 height: kFieldHeight,
@@ -418,7 +375,6 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
                 ),
               ),
               SizedBox(height: height * .04),
-
               // Moved button here so it sits below the commission fields and scrolls with the page
               SafeArea(
                 top: false,

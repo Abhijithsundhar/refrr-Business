@@ -4,7 +4,9 @@ import 'package:fpdart/fpdart.dart';
 import 'package:refrr_admin/Core/constants/failure.dart';
 import 'package:refrr_admin/Core/constants/firebaseConstants.dart';
 import 'package:refrr_admin/Core/constants/typedef.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
+import 'package:refrr_admin/models/services-model.dart';
 
 
 final leadRepositoryProvider = Provider<LeadRepository>((ref) {
@@ -91,5 +93,66 @@ class LeadRepository {
           .map((snapshot) =>
           snapshot.docs.map((doc) => LeadsModel.fromMap(doc.data())).toList());
     }
+  }
+
+   /// get services from lead
+  Stream<List<ServiceModel>> getFirmServices(String leadId) {
+    return FirebaseFirestore.instance
+        .collection('leads')
+        .doc(leadId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return <ServiceModel>[];
+
+      final data = snapshot.data();
+      if (data == null || data['services'] == null) return <ServiceModel>[];
+
+      final List<ServiceModel> services = (data['services'] as List)
+          .map((e) => ServiceModel.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
+
+      return services;
+    });
+  }
+
+  /// get applications from lead
+  Stream<List<AffiliateModel>> getApplications(String appId) {
+    return FirebaseFirestore.instance
+        .collection('leads')
+        .doc(appId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return <AffiliateModel>[];
+
+      final data = snapshot.data();
+      if (data == null || data['applications'] == null) return <AffiliateModel>[];
+
+      final List<AffiliateModel> applications = (data['applications'] as List)
+          .map((e) => AffiliateModel.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
+
+      return applications;
+    });
+  }
+
+
+  /// get applications from lead
+  Stream<List<AffiliateModel>> getTeam(String leadId) {
+    return FirebaseFirestore.instance
+        .collection('leads')
+        .doc(leadId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return <AffiliateModel>[];
+
+      final data = snapshot.data();
+      if (data == null || data['teamMembers'] == null) return <AffiliateModel>[];
+
+      final List<AffiliateModel> applications = (data['teamMembers'] as List)
+          .map((e) => AffiliateModel.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
+
+      return applications;
+    });
   }
 }

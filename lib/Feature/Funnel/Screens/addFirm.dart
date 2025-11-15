@@ -794,14 +794,14 @@ class _AddFirmScreenState extends State<AddFirmScreen> {
                                 );
 
                                 // Clone the old firms list and add new one
-                                final updatedFirms = [...(widget.leads!.firms ?? []), newFirm];
+                                // final updatedFirms = [...(widget.leads ?? []), newFirm];
 
                                 // Copy the lead and update the firms list
-                                final updatedLead = widget.leads!.copyWith(firms: updatedFirms.cast<AddFirmModel>());
+                                // final updatedLead = widget.leads!.copyWith(firms: updatedFirms.cast<AddFirmModel>());
 
                                 // Call the update method
-                                await ref.read(leadControllerProvider.notifier)
-                                    .updateLead(context: context, leadModel: updatedLead);
+                                // await ref.read(leadControllerProvider.notifier)
+                                //     .updateLead(context: context, leadModel: updatedLead);
                                 Navigator.pop(context);
                                 // Navigator.push(context, MaterialPageRoute(
                                 //   builder: (context) => BottomBarSection(affiliate: widget.affiliate),

@@ -2,15 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
 import 'package:refrr_admin/Core/common/alertBox.dart';
 import 'package:refrr_admin/Core/common/global variables.dart';
-import 'package:refrr_admin/Core/common/image-picker.dart'; // PickedImage + helper
-import 'package:refrr_admin/Core/common/loadings.dart';
+import 'package:refrr_admin/Core/common/image-picker.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
-import 'package:refrr_admin/Core/common/textEditingControllers.dart';
-
 import 'package:refrr_admin/Feature/Services/controllor/offer-controller.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/offer-model.dart';
@@ -101,19 +98,65 @@ class _AddOfferState extends ConsumerState<AddOffer> {
     return null;
   }
 
+  // Future<void> _pickImage() async {
+  //   try {
+  //     final picked = await ImagePickerHelper.pickImage();
+  //     if (!mounted) return;
+  //
+  //     if (picked != null) {
+  //       setState(() {
+  //         _pickedImage = picked; // store directly
+  //       });
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error picking image: $e');
+  //   }
+  // }
+
+  final _picker = ImagePicker();
+  XFile? _image;
   Future<void> _pickImage() async {
-    try {
-      final picked = await ImagePickerHelper.pickImage();
-      if (!mounted) return;
-      if (picked != null) {
-        setState(() => _pickedImage = picked);
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-      if (!mounted) return;
-      showCommonSnackbar(context, 'Failed to pick image');
+    final res = await showModalBottomSheet<XFile?>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Gallery'),
+                onTap: () async {
+                  final x = await _picker.pickImage(source: ImageSource.gallery);
+                  if (!mounted) return;
+                  Navigator.pop(context, x);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera_outlined),
+                title: const Text('Camera'),
+                onTap: () async {
+                  final x = await _picker.pickImage(source: ImageSource.camera);
+                  if (!mounted) return;
+                  Navigator.pop(context, x);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (res != null) {
+      setState(() => _image = res);
     }
   }
+
 
   Future<void> _pickStartDate() async {
     final now = DateTime.now();
@@ -382,92 +425,50 @@ class _AddOfferState extends ConsumerState<AddOffer> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 170,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF3F3F3),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.transparent, width: 1),
-                    ),
-                    child: previewFile == null
-                        ? const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_photo_alternate_outlined,
-                            size: 44,
-                            color: Colors.black54,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Tap to add image',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                        : ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Stack(
-                        children: [
-                          Image.file(
-                            previewFile,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.error_outline,
-                                      size: 44,
-                                      color: Colors.red,
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      'Failed to load image',
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: GestureDetector(
-                              onTap: () => setState(() => _pickedImage = null),
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.7),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+              onTap: _pickImage,
+              child: Container(
+                height: 170,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3F3F3),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.transparent,
+                    width: 1,
                   ),
                 ),
+                child: _image == null
+                    ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add_photo_alternate_outlined,
+                        size: 44,
+                        color: Colors.black54,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Tap to add image',
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                    : ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(
+                    File(_image!.path),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                ),
+              ),
+            ),
                 SizedBox(height: mq.size.height * .02),
 
                 // Amount (AED)
