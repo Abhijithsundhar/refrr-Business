@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:refrr_admin/models/balance-amount-model.dart';
+import 'package:refrr_admin/models/leads_model.dart';
+import 'package:refrr_admin/models/serviceLeadModel.dart';
 import 'package:refrr_admin/models/total-credit-model.dart';
 import 'package:refrr_admin/models/total-withdrawal-model.dart';
 import 'package:refrr_admin/models/withdrew-requst-model.dart';
@@ -9,6 +11,7 @@ class AffiliateModel {
   final String profile;
   final String phone;
   final String zone;
+  final String country;
   final String userId;
   final String password;
   final String mailId;
@@ -25,17 +28,27 @@ class AffiliateModel {
   final int totalBalance;
   final int totalCredit;
   final int totalWithrew;
+  final String language;
+  final String qualification;
+  final String experience;
+  final String moreInfo;
+  final List<String> industry;
+  final List<String> jobType;
+  final String role;
   final DocumentReference? reference;
   final String? id;
-  final String country;
-  final String language;
-  final List<String> industry; // ✅ Added industry as array
+  final double? leadScore;
+  final List<LeadsModel> workingFirms;
+  final int totalLeads;
+  final int qualifiedLeads;
+  final List<ServiceLeadModel> generatedLeads;
 
   AffiliateModel({
     required this.name,
     required this.profile,
     required this.phone,
     required this.zone,
+    required this.country,
     required this.userId,
     required this.password,
     required this.mailId,
@@ -52,11 +65,20 @@ class AffiliateModel {
     required this.totalBalance,
     required this.totalCredit,
     required this.totalWithrew,
+    required this.language,
+    required this.qualification,
+    required this.experience,
+    required this.moreInfo,
+    required this.industry,
+    required this.jobType,
+    required this.role,
     this.reference,
     this.id,
-    required this.country,
-    required this.language,
-    required this.industry, // ✅ in constructor
+    required this.leadScore,
+    required this.workingFirms,
+    required this.qualifiedLeads,
+    required this.totalLeads,
+    required this.generatedLeads,
   });
 
   AffiliateModel copyWith({
@@ -80,11 +102,21 @@ class AffiliateModel {
     int? totalBalance,
     int? totalCredit,
     int? totalWithrew,
-    String? id,
     String? country,
     String? language,
+    String? qualification,
+    String? experience,
+    String? moreInfo,
+    List<String>? industry,
+    List<String>? jobType,
+    String? role,
     DocumentReference? reference,
-    List<String>? industry, // ✅
+    String? id,
+    double? leadScore,
+    List<LeadsModel>? workingFirms,
+    int? totalLeads,
+    int? qualifiedLeads,
+    List<ServiceLeadModel>? generatedLeads,
   }) {
     return AffiliateModel(
       name: name ?? this.name,
@@ -107,11 +139,21 @@ class AffiliateModel {
       totalBalance: totalBalance ?? this.totalBalance,
       totalCredit: totalCredit ?? this.totalCredit,
       totalWithrew: totalWithrew ?? this.totalWithrew,
-      reference: reference ?? this.reference,
-      id: id ?? this.id,
       country: country ?? this.country,
       language: language ?? this.language,
-      industry: industry ?? this.industry, // ✅
+      qualification: qualification ?? this.qualification,
+      experience: experience ?? this.experience,
+      moreInfo: moreInfo ?? this.moreInfo,
+      industry: industry ?? this.industry,
+      jobType: jobType ?? this.jobType,
+      role: role ?? this.role,
+      reference: reference ?? this.reference,
+      id: id ?? this.id,
+      leadScore: leadScore ?? this.leadScore,
+      workingFirms: workingFirms ?? this.workingFirms,
+      qualifiedLeads: qualifiedLeads ?? this.qualifiedLeads,
+      totalLeads: totalLeads ?? this.totalLeads,
+      generatedLeads: generatedLeads ?? this.generatedLeads,
     );
   }
 
@@ -137,49 +179,74 @@ class AffiliateModel {
       'totalBalance': totalBalance,
       'totalCredit': totalCredit,
       'totalWithrew': totalWithrew,
-      'reference': reference,
-      'id': id,
       'country': country,
       'language': language,
-      'industry': industry, // ✅ save array
+      'qualification': qualification,
+      'experience': experience,
+      'moreInfo': moreInfo,
+      'industry': industry,
+      'jobType': jobType,
+      'role': role,
+      'reference': reference,
+      'id': id,
+      'leadScore': leadScore,
+      'workingFirms': workingFirms.map((e) => e.toMap()).toList(),
+      'qualifiedLeads': qualifiedLeads,
+      'totalLeads': totalLeads,
+      'generatedLeads': generatedLeads.map((e) => e.toMap()).toList(),
+
     };
   }
 
   factory AffiliateModel.fromMap(Map<String, dynamic> map, {DocumentReference? reference}) {
     return AffiliateModel(
-      name: map['name'] as String,
-      profile: map['profile'] as String,
-      phone: map['phone'] as String,
-      zone: map['zone'] as String,
-      userId: map['userId'] as String,
-      password: map['password'] as String,
-      mailId: map['mailId'] as String,
-      level: map['level'] as String,
+      name: map['name'] ?? '',
+      profile: map['profile'] ?? '',
+      phone: map['phone'] ?? '',
+      zone: map['zone'] ?? '',
+      userId: map['userId'] ?? '',
+      password: map['password'] ?? '',
+      mailId: map['mailId'] ?? '',
+      level: map['level'] ?? '',
       status: map['status'] ?? 0,
-      delete: map['delete'] as bool? ?? false,
+      delete: map['delete'] ?? false,
       createTime: (map['createTime'] as Timestamp).toDate(),
       search: List<dynamic>.from(map['search'] ?? []),
-      addedBy: map['addedBy'] as String,
-      withdrawalRequest: (map['withdrawalRequest'] as List<dynamic>)
+      addedBy: map['addedBy'] ?? '',
+      withdrawalRequest: (map['withdrawalRequest'] as List<dynamic>? ?? [])
           .map((e) => WithdrewrequstModel.fromMap(e as Map<String, dynamic>))
           .toList(),
-      balance: (map['balance'] as List<dynamic>)
+      balance: (map['balance'] as List<dynamic>? ?? [])
           .map((e) => BalanceModel.fromMap(e as Map<String, dynamic>))
           .toList(),
-      totalCredits: (map['totalCredits'] as List<dynamic>)
+      totalCredits: (map['totalCredits'] as List<dynamic>? ?? [])
           .map((e) => TotalCreditModel.fromMap(e as Map<String, dynamic>))
           .toList(),
-      totalWithdrawals: (map['totalWithdrawals'] as List<dynamic>)
+      totalWithdrawals: (map['totalWithdrawals'] as List<dynamic>? ?? [])
           .map((e) => TotalWithdrawalsModel.fromMap(e as Map<String, dynamic>))
           .toList(),
       totalBalance: map['totalBalance'] ?? 0,
       totalCredit: map['totalCredit'] ?? 0,
       totalWithrew: map['totalWithrew'] ?? 0,
-      reference: map['reference'] as DocumentReference?,
-      id: map['id'] as String?,
-      country: map['country'] as String,
-      language: map['language'] as String,
-      industry: List<String>.from(map['industry'] ?? []), // ✅ load array
+      country: map['country'] ?? '',
+      language: map['language'] ?? '',
+      qualification: map['qualification'] ?? '',
+      experience: map['experience'] ?? '',
+      moreInfo: map['moreInfo'] ?? '',
+      industry: (map['industry'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      jobType: (map['jobType'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      role: map['role'] ?? '',
+      reference: reference ?? map['reference'],
+      id: map['id'] ?? '',
+      leadScore: (map['leadScore'] ?? 0).toDouble(),
+      workingFirms: (map['workingFirms'] as List<dynamic>? ?? [])
+          .map((e) => LeadsModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      qualifiedLeads: map['qualifiedLeads'] ?? 0,
+      totalLeads: map['totalLeads'] ?? 0,
+      generatedLeads: (map['generatedLeads'] as List<dynamic>? ?? [])
+          .map((e) => ServiceLeadModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

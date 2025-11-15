@@ -8,10 +8,13 @@ class ServiceLeadModel {
   final String marketerName;
   final String serviceName;
   final String location;
-  final List<Map<String, dynamic>> statusHistory; // New status history list
+  final String leadEmail;
+  final int leadContact;           
+  final List<Map<String, dynamic>> statusHistory;
   final DocumentReference? reference;
   final DateTime createTime;
   final int leadScore;
+  final List<Map<String, dynamic>> creditedAmount;
 
   ServiceLeadModel({
     required this.leadName,
@@ -25,9 +28,11 @@ class ServiceLeadModel {
     required this.createTime,
     required this.leadScore,
     required this.location,
+    required this.creditedAmount,
+    required this.leadEmail,
+    required this.leadContact,
   });
 
-  /// Convert this object into a Firestore-compatible map
   Map<String, dynamic> toMap() {
     return {
       'leadName': leadName,
@@ -37,14 +42,16 @@ class ServiceLeadModel {
       'marketerName': marketerName,
       'serviceName': serviceName,
       'statusHistory': statusHistory,
-      'reference': reference, // Firestore can store DocumentReference directly
+      'reference': reference,
       'createTime': createTime,
       'leadScore': leadScore,
       'location': location,
+      'creditedAmount': creditedAmount,
+      'leadEmail': leadEmail,
+      'leadContact': leadContact,
     };
   }
 
-  /// Create a model from Firestore document
   factory ServiceLeadModel.fromMap(Map<String, dynamic> map) {
     return ServiceLeadModel(
       leadName: map['leadName'] ?? '',
@@ -58,10 +65,12 @@ class ServiceLeadModel {
       createTime: (map['createTime'] as Timestamp).toDate(),
       leadScore: map['leadScore'] ?? 0,
       location: map['location'] ?? '',
+      creditedAmount: List<Map<String, dynamic>>.from(map['creditedAmount'] ?? []),
+      leadEmail: map['leadEmail'] ?? '',
+      leadContact: map['leadContact'] ?? 0,
     );
   }
 
-  /// Create a copy with updated fields
   ServiceLeadModel copyWith({
     String? leadName,
     String? leadLogo,
@@ -74,6 +83,9 @@ class ServiceLeadModel {
     DateTime? createTime,
     int? leadScore,
     String? location,
+    List<Map<String, dynamic>>? creditedAmount,
+    String? leadEmail,
+    int? leadContact,
   }) {
     return ServiceLeadModel(
       leadName: leadName ?? this.leadName,
@@ -87,6 +99,9 @@ class ServiceLeadModel {
       createTime: createTime ?? this.createTime,
       leadScore: leadScore ?? this.leadScore,
       location: location ?? this.location,
+      creditedAmount: creditedAmount ?? this.creditedAmount,
+      leadEmail: leadEmail ?? this.leadEmail,
+      leadContact: leadContact ?? this.leadContact,
     );
   }
 }

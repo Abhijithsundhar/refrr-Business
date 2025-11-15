@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:refrr_admin/Core/common/global variables.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
 import 'package:refrr_admin/Feature/Services/Screens/add-offer.dart';
 import 'package:refrr_admin/Feature/Services/Screens/add-service.dart';
 import 'package:refrr_admin/models/leads_model.dart';
@@ -20,66 +22,11 @@ class _ServiceListScreenHomeState extends State<ServiceListScreenHome> {
   List<ServiceModel> firmServices = [];
   List<ServiceModel> filteredServices = [];
 
-  @override
-  void initState() {
-    super.initState();
-    initServices();
-  }
-
-  void initServices() {
-    // Extract all services for the current firm from all its firms
-    final List<ServiceModel> services = [];
-    if (widget.currentFirm?.firms != null) {
-      for (var firm in widget.currentFirm!.firms) {
-        if (firm.services != null) {
-          services.addAll(firm.services!);
-        }
-      }
-    }
-
-    // Show newest first: assuming new items are appended to the end
-    final List<ServiceModel> ordered = services.reversed.toList();
-
-    setState(() {
-      firmServices = ordered;
-      filteredServices = List<ServiceModel>.from(ordered);
-    });
-  }
-
-  void _applyFilter(String keyword) {
-    final query = keyword.toLowerCase();
-    filteredServices = firmServices
-        .where((service) =>
-    service.name.toLowerCase().contains(query) ||
-        service.commission.toString().contains(query))
-        .toList();
-  }
-
   void onSearch(String keyword) {
     setState(() {
-      _applyFilter(keyword);
+      // filteredServices = _filterServices(keyword);
     });
   }
-
-  // Future<void> _openAddService() async {
-  //   final result = await
-  //
-  //   if (!mounted) return;
-  //
-  //   // If AddNewServicePage returns the created ServiceModel, insert it at the top
-  //   if (result is ServiceModel) {
-  //     setState(() {
-  //       firmServices.insert(0, result);
-  //       _applyFilter(searchController.text);
-  //     });
-  //   } else if (result == true) {
-  //     // If it returns a boolean flag, just refresh the list
-  //     initServices();
-  //   } else {
-  //     // If result is null or anything else, still safe to refresh
-  //     initServices();
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -101,41 +48,52 @@ class _ServiceListScreenHomeState extends State<ServiceListScreenHome> {
               ),
             ),
             actions: [
-              Icon(Icons.search),
+              const Icon(Icons.search),
               SizedBox(width: width * .02),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AddNewServicePage(currentFirm: widget.currentFirm),
-                      ),
-                    );
-                    }, child: Icon(Icons.add)),
+              GestureDetector(
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                      AddNewServicePage(currentFirm: widget.currentFirm),),);
+                  // refresh UI after returning
+                },
+                child: const Icon(Icons.add),
+              ),
               SizedBox(width: width * .02),
-              Icon(Icons.menu),
+              const Icon(Icons.menu),
               SizedBox(width: width * .03),
             ],
           ),
-          body: firmServices.isEmpty
-              ? const Center(child: Text("No services found."))
-              : SingleChildScrollView(
+          body: Consumer(
+        builder: (context, ref, child) {
+      final servicesAsync = ref.watch(firmServicesProvider(widget.currentFirm!.reference!.id));
+
+      return servicesAsync.when(
+        data: (firmServices) {
+          if (firmServices.isEmpty) {
+            return const Center(child: Text("No services found."));
+          }
+
+          // Optional: apply filtering logic
+          final filteredServices = firmServices.where((s) {
+            // your filter condition
+            return true;
+          }).toList();
+
+          return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: height * .015),
-                  // Heading before list
                   Text(
                     'Products and Services',
-                style: GoogleFonts.roboto(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                  fontSize: width * .048,
+                    style: GoogleFonts.roboto(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: width * .048,
                     ),
                   ),
-                  // Services List
                   SizedBox(height: height * .015),
                   ListView.builder(
                     padding: EdgeInsets.only(bottom: height * 0.1),
@@ -145,8 +103,7 @@ class _ServiceListScreenHomeState extends State<ServiceListScreenHome> {
                     itemBuilder: (context, index) {
                       final service = filteredServices[index];
                       return Padding(
-                        padding:
-                        EdgeInsets.symmetric(vertical: height * 0.01),
+                        padding: EdgeInsets.symmetric(vertical: height * 0.01),
                         child: Container(
                           height: 250,
                           width: double.infinity,
@@ -154,175 +111,109 @@ class _ServiceListScreenHomeState extends State<ServiceListScreenHome> {
                             color: const Color(0xFFF3F3F3),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Stack(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  // Image section
-                                  Container(
-                                    height: 157,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade300,
-                                      borderRadius:
-                                      const BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        topRight: Radius.circular(8),
-                                      ),
-                                    ),
-                                    child: service.image.isNotEmpty
-                                        ? ClipRRect(
-                                      borderRadius:
-                                      const BorderRadius.only(
-                                        topLeft:
-                                        Radius.circular(8),
-                                        topRight:
-                                        Radius.circular(8),
-                                      ),
-                                      child: service.image
-                                          .startsWith('http')
-                                          ? Image.network(
-                                        service.image,
-                                        fit: BoxFit.cover,
-                                        width:
-                                        double.infinity,
-                                        height: 157,
-                                        errorBuilder: (context,
-                                            error,
-                                            stackTrace) {
-                                          return const Center(
-                                            child: Icon(
-                                              Icons
-                                                  .broken_image,
-                                              size: 50,
-                                              color:
-                                              Colors.grey,
-                                            ),
-                                          );
-                                        },
-                                      )
-                                          : Image.file(
-                                        File(service.image),
-                                        fit: BoxFit.cover,
-                                        width:
-                                        double.infinity,
-                                        height: 157,
-                                        errorBuilder: (context,
-                                            error,
-                                            stackTrace) {
-                                          return const Center(
-                                            child: Icon(
-                                              Icons
-                                                  .broken_image,
-                                              size: 50,
-                                              color:
-                                              Colors.grey,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                        : const Center(
-                                      child: Icon(
-                                        Icons.image,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                              Container(
+                                height: 157,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
                                   ),
-
-                                  // Details Section
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: width * 0.03,
-                                      vertical: height * 0.012,
+                                ),
+                                child: service.image.isNotEmpty
+                                    ? ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                  ),
+                                  child: service.image.startsWith('http')
+                                      ? Image.network(
+                                    service.image,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 157,
+                                  )
+                                      : Image.file(
+                                    File(service.image),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 157,
+                                  ),
+                                )
+                                    : const Center(
+                                  child: Icon(
+                                    Icons.image,
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: width * 0.03,
+                                  vertical: height * 0.012,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      service.name.length > 17
+                                          ? '${service.name.toUpperCase().substring(0, 17)}...'
+                                          : service.name.toUpperCase(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.roboto(
+                                        color: const Color(0xFF00538E),
+                                        fontSize: width * 0.045,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                    SizedBox(height: height * 0.012),
+                                    Row(
                                       children: [
-                                        // Service Name (limit 17 characters)
                                         Text(
-                                          service.name.length > 17
-                                              ? '${service.name.toUpperCase().substring(0, 17)}...'
-                                              : service.name
-                                              .toUpperCase(),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                          'Range :',
                                           style: GoogleFonts.roboto(
-                                            color:
-                                            const Color(0xFF00538E),
-                                            fontSize: width * 0.045,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: width * 0.035,
                                           ),
                                         ),
-                                        SizedBox(
-                                            height: height * 0.012),
-
-                                        // Price Range
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Range :',
-                                              style: GoogleFonts.roboto(
-                                                fontWeight:
-                                                FontWeight.w400,
-                                                fontSize:
-                                                width * 0.035,
-                                              ),
-                                            ),
-                                            Text(
-                                              ' AED ${service.startingPrice} - ${service.endingPrice}',
-                                              style: GoogleFonts.roboto(
-                                                fontWeight:
-                                                FontWeight.w400,
-                                                fontSize:
-                                                width * 0.035,
-                                              ),
-                                            ),
-                                          ],
+                                        Text(
+                                          ' AED ${service.startingPrice} - ${service.endingPrice}',
+                                          style: GoogleFonts.roboto(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: width * 0.035,
+                                          ),
                                         ),
-                                        SizedBox(
-                                            height: height * 0.005),
-
-                                        // Commission
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Commission :',
-                                              style: GoogleFonts.roboto(
-                                                fontWeight:
-                                                FontWeight.w400,
-                                                fontSize:
-                                                width * 0.035,
-                                              ),
-                                            ),
-                                            Text(
-                                              ' ${service.commission}%'
-                                                  .toUpperCase(),
-                                              style: GoogleFonts.roboto(
-                                                color: Colors.green,
-                                                fontWeight:
-                                                FontWeight.w500,
-                                                fontSize:
-                                                width * 0.035,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                            height: height * 0.005),
-
-                                        // Removed: 'Lead Given' row
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(height: height * 0.005),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Commission :',
+                                          style: GoogleFonts.roboto(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: width * 0.035,
+                                          ),
+                                        ),
+                                        Text(
+                                          ' ${service.commission}%',
+                                          style: GoogleFonts.roboto(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: width * 0.035,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-
-                              // Removed: Positioned "Lead" Button
                             ],
                           ),
                         ),
@@ -332,9 +223,15 @@ class _ServiceListScreenHomeState extends State<ServiceListScreenHome> {
                 ],
               ),
             ),
-          ),
-        ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text("Error: $err")),
+      );
+    },
+    ),
 
+        ),
         Positioned(
           top: height * .84,
           left: width * .71,
@@ -385,7 +282,7 @@ class _ServiceListScreenHomeState extends State<ServiceListScreenHome> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

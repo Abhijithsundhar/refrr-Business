@@ -6,11 +6,11 @@ import 'package:refrr_admin/Core/common/global%20variables.dart';
 import 'package:refrr_admin/Core/constants/color-constnats.dart';
 import 'package:refrr_admin/Feature/Funnel/Controller/serviceLead-controllor.dart';
 import 'package:refrr_admin/Feature/Funnel/Screens/addFirm.dart';
+import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
 import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/serviceLeadModel.dart';
 import 'package:refrr_admin/models/services-model.dart';
-
 
 class SelectFirm extends StatelessWidget {
   final LeadsModel? lead;
@@ -20,15 +20,6 @@ class SelectFirm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Convert List<AddFirmModel> to List<Map> for UI use
-    final List<Map<String, dynamic>> filteredFirms = lead!.firms.map((firm) {
-      return {
-        'name': firm.name ?? '',
-        'location': firm.location ?? 'N/A',
-        'original': firm, // store original model for usage on tap
-      };
-    }).toList();
-
     return Scaffold(
       backgroundColor: ColorConstants.primaryColor,
       appBar: AppBar(
@@ -87,7 +78,7 @@ class SelectFirm extends StatelessWidget {
               ),
             ),
 
-            // Firm List Container
+            /// Firm List Container
             Container(
               margin: EdgeInsets.only(top: 30),
               width: double.infinity,
@@ -104,48 +95,75 @@ class SelectFirm extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: ListView.builder(
-                          itemCount: filteredFirms.length,
+                          itemCount: 1,
                           itemBuilder: (context, index) {
-                            final firm = filteredFirms[index];
-
+                            final firm = lead;
                             return Consumer(
                               builder: (BuildContext context, WidgetRef ref, Widget? child) {
                                 return GestureDetector(
                                   onTap: () {
                                     showCommonAlertBox(
                                       context,
-                                      'Confirm lead submission to ${firm['name']??''}',
-                                          () {
+                                      'Confirm lead submission to ${firm.name??''}',
+                                          () async {
                                         // // Create a new Firestore reference
                                         // final docRef = FirebaseFirestore.instance
                                         //     .collection(FirebaseCollections.ServiceLeadsCollection).doc();
                                         // ✅ Create ServiceLeadModel from firm or other data
                                         final serviceLeadModel = ServiceLeadModel(
-                                          firmName: firm['name']??'',
-                                          marketerId:affiliate?.userId ??'' ,
-                                          marketerName:affiliate?.name ??''  ,
+                                          marketerId:'' ,
+                                          marketerName:lead?.affiliate??'',
                                           serviceName: service?.name ??'',
                                           reference: null,
                                           createTime: DateTime.now(),
                                           leadScore: 0,
-                                          leadName: lead!.name??'',
-                                          leadLogo: lead!.logo??'',
-                                          location: firm['location'],
+                                          leadName: lead?.name??'',
+                                          leadLogo: lead?.logo??'',
+                                          leadEmail: lead?.mail??'',
+                                          leadContact: int.parse(lead!.contactNo),
+                                          location: lead?.zone ??'',
                                           statusHistory: [
                                             {
                                               'date':  DateTime.now(),
                                               'status': 'New Lead',
+                                              'added' : lead?.affiliate ?? ''
                                             },
-                                          ] ,
+                                          ],
+                                          creditedAmount: [
+                                            // {
+                                            //   'date' : DateTime.now(),
+                                            //   'amount' : '0',
+                                            //   'added' : lead?.affiliate ?? ''
+                                            // }
+                                          ],
+                                          firmName: '' ,
                                         );
                                         ref.read(serviceLeadsControllerProvider.notifier).addServiceLeads(
                                           serviceLeadsModel: serviceLeadModel, context: context,);
-                                      },
+
+                                        int newTotalLeads = affiliate!.totalLeads + 1;
+                                        int newQualifiedLeads = affiliate!.qualifiedLeads +
+                                            (!["Not Qualified", "Lost"].contains(serviceLeadModel.statusHistory) ? 1 : 0);
+
+                                        double score = (newQualifiedLeads / newTotalLeads) * 100;
+                                            int finalScore = score.clamp(0, 100).toInt();
+
+                                           final updateAffiliate = affiliate?.copyWith(
+                                             generatedLeads: [  ...(affiliate?.generatedLeads ?? []), // keep old leads
+                                               serviceLeadModel, // add new one
+                                             ],
+                                             totalLeads: newTotalLeads,
+                                             qualifiedLeads: newQualifiedLeads,
+                                             leadScore: double.parse(finalScore.toString()),);
+                                            await ref.read(affiliateControllerProvider.notifier)
+                                                .updateAffiliate(affiliateModel: updateAffiliate!, context: context);
+
+
+                                          },
                                       'Confirm',
                                     );
                                   },
-
-                                  child: buildFirmCard(firm, index),
+                                  child: buildFirmCard(firm!, index),
                                 );
                               },
                             );
@@ -163,7 +181,7 @@ class SelectFirm extends StatelessWidget {
   }
 }
 
-Widget buildFirmCard(Map<String, dynamic> firm, int index) {
+Widget buildFirmCard(LeadsModel firm, int index) {
   return Container(
     margin: EdgeInsets.only(bottom: 12),
     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -180,7 +198,7 @@ Widget buildFirmCard(Map<String, dynamic> firm, int index) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              firm['name'] ?? 'Firm Name',
+              firm.name.toUpperCase(),
               style: GoogleFonts.roboto(
                 fontSize: width * .04,
                 fontWeight: FontWeight.w600,
@@ -189,7 +207,7 @@ Widget buildFirmCard(Map<String, dynamic> firm, int index) {
             ),
             SizedBox(height: 4),
             Text(
-              firm['location'] ?? 'Location not available',
+              firm.zone ?? 'Location not available',
               style: GoogleFonts.roboto(
                 fontSize: width * .03,
                 fontWeight: FontWeight.w400,

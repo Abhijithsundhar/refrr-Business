@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/alertBox.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
 import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
+import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
 import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 
@@ -55,24 +56,40 @@ class _HireSinglePageState extends ConsumerState<HireSinglePage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('This member is already in your team.')),
           );
-          Navigator.pop(context, false); // Return to previous page, not added
+          Navigator.pop(context, false);
         }
         return;
       }
-
       final merged = _mergeUnique(baseTeam, [widget.affiliate]);
       final updatedLead = widget.currentFirm!.copyWith(teamMembers: merged);
 
-      await ref
-          .read(leadControllerProvider.notifier)
+      await ref.read(leadControllerProvider.notifier)
           .updateLead(context: context, leadModel: updatedLead);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Member added to your team.')),
         );
-        Navigator.pop(context, true); // Return to previous page, added = true
+        Navigator.pop(context, true);
       }
+
+      final currentFirm = widget.currentFirm;
+      if (currentFirm != null) {
+        final existingFirms = List<LeadsModel>.from(widget.affiliate.workingFirms);
+        if (!existingFirms.any((f) => f.name == currentFirm.name)) {
+          existingFirms.add(currentFirm);
+        }
+
+        final updatedAffiliate = widget.affiliate.copyWith(
+          workingFirms: existingFirms,
+        );
+
+        await ref
+            .read(affiliateControllerProvider.notifier)
+            .updateAffiliate(context: context, affiliateModel: updatedAffiliate);
+      }
+
+
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -127,14 +144,12 @@ class _HireSinglePageState extends ConsumerState<HireSinglePage> {
                   _profileRow("Location", widget.affiliate.zone),
                   _profileRow("Phone NO", widget.affiliate.phone),
                   _profileRow("Email ID", widget.affiliate.mailId),
-                  _profileRow("Lead Quality", "80%"),
-                  _profileRow("Total leads added", "12"),
-                  _profileRow("Industry", "Education\nFood\nConstruction"),
-                  _profileRow("Qualification", "BCA"),
-                  _profileRow("Experience", "4 Years"),
-                  _profileRow(
-                    "More Info",
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the best of all is this.",
+                  _profileRow("Lead Quality", '${widget.affiliate.leadScore!.toInt().toString()}%'),
+                  _profileRow("Total leads added", widget.affiliate.totalLeads.toString()),
+                  _profileRow("Industry", widget.affiliate.industry.join('\n')),
+                  _profileRow("Qualification", widget.affiliate.qualification),
+                  _profileRow("Experience", widget.affiliate.experience),
+                  _profileRow("More Info",widget.affiliate.moreInfo ,
                   ),
 
                   const SizedBox(height: 18),

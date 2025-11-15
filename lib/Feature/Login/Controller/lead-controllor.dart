@@ -4,11 +4,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Feature/Login/Repository/lead-repository.dart';
 import 'package:refrr_admin/Feature/Login/Screens/home.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
+import 'package:refrr_admin/models/services-model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Repository provider
 final leadRepositoryProvider = Provider((ref) => LeadRepository());
+final firmServicesProvider = StreamProvider.family<List<ServiceModel>, String>((ref, leadId) {
+  final repo = ref.watch(leadRepositoryProvider);
+  return repo.getFirmServices(leadId);
+});
+final applicationsProvider = StreamProvider.family<List<AffiliateModel>, String>((ref, appId) {
+  final repo = ref.watch(leadRepositoryProvider);
+  return repo.getApplications(appId);
+
+});final teamProvider = StreamProvider.family<List<AffiliateModel>, String>((ref, leadId) {
+  final repo = ref.watch(leadRepositoryProvider);
+  return repo.getTeam(leadId);
+});
+
 
 /// Stream provider for listing/searching leads (unchanged)
 final leadStreamProvider =

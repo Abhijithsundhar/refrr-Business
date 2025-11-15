@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:refrr_admin/models/affiliate-model.dart';
-import 'package:refrr_admin/models/firm-model.dart';
+import 'package:refrr_admin/models/services-model.dart';
 
 
 class LeadsModel {
@@ -8,7 +8,7 @@ class LeadsModel {
   final String name;
   final String industry;
   final String contactNo;
-  final String mail; // email
+  final String mail;
   final String country;
   final String zone;
   final String website;
@@ -19,14 +19,18 @@ class LeadsModel {
   final List<dynamic> search;
   final DateTime createTime;
   final String addedBy;
-  final List<AddFirmModel> firms;
+  final List<ServiceModel> services;
   final int status;
   final String affiliate;
-  final String? password;
+  final String password;
+  final String organizationType;
   final List<AffiliateModel> teamMembers;
+  final List<AffiliateModel> applications;
+  final List<dynamic> jobType;
+  final List<dynamic> lookingAt;
   final DocumentReference? reference;
 
-  LeadsModel({
+  LeadsModel( {
     required this.logo,
     required this.name,
     required this.industry,
@@ -42,11 +46,15 @@ class LeadsModel {
     required this.search,
     required this.createTime,
     required this.addedBy,
-    required this.firms,
+    required this.services,
     required this.status,
     required this.affiliate,
+    required this.password,
+    required this.organizationType,
     required this.teamMembers,
-    this.password,
+    required this.applications,
+    required this.jobType,
+    required this.lookingAt,
     this.reference,
   });
 
@@ -66,11 +74,15 @@ class LeadsModel {
     List<dynamic>? search,
     DateTime? createTime,
     String? addedBy,
-    List<AddFirmModel>? firms,
+    List<ServiceModel>? services,
     int? status,
     String? affiliate,
     String? password,
+    String? organizationType,
     List<AffiliateModel>? teamMembers,
+    List<AffiliateModel>? applications,
+    List<dynamic>? jobType,
+    List<dynamic>? lookingAt,
     DocumentReference? reference,
   }) {
     return LeadsModel(
@@ -89,11 +101,15 @@ class LeadsModel {
       search: search ?? this.search,
       createTime: createTime ?? this.createTime,
       addedBy: addedBy ?? this.addedBy,
-      firms: firms ?? this.firms,
+      services: services ?? this.services,
       status: status ?? this.status,
       affiliate: affiliate ?? this.affiliate,
-      teamMembers: teamMembers ?? this.teamMembers,
       password: password ?? this.password,
+      organizationType: organizationType ?? this.organizationType,
+      teamMembers: teamMembers ?? this.teamMembers,
+      applications: applications ?? this.applications,
+      jobType: jobType ?? this.jobType,
+      lookingAt: lookingAt ?? this.lookingAt,
       reference: reference ?? this.reference,
     );
   }
@@ -115,35 +131,20 @@ class LeadsModel {
       'search': search,
       'createTime': Timestamp.fromDate(createTime),
       'addedBy': addedBy,
-      'firms': firms.map((f) => f.toMap()).toList(),
+      'services': services.map((f) => f.toMap()).toList(),
       'status': status,
       'affiliate': affiliate,
-      'teamMembers': teamMembers.map((m) => m.toMap()).toList(), // FIX: serialize properly
       'password': password,
+      'organizationType': organizationType,
+      'teamMembers': teamMembers.map((t) => t.toMap()).toList(),
+      'applications': applications.map((t) => t.toMap()).toList(),
+      'jobType': jobType,
+      'lookingAt': lookingAt,
       'reference': reference,
     };
   }
 
-  factory LeadsModel.fromMap(
-      Map<String, dynamic> map, {
-        DocumentReference? reference,
-      }) {
-    // createTime can be Timestamp | String | DateTime
-    final ct = map['createTime'];
-    late final DateTime ctDate;
-    if (ct is Timestamp) {
-      ctDate = ct.toDate();
-    } else if (ct is String) {
-      ctDate = DateTime.tryParse(ct) ?? DateTime.now();
-    } else if (ct is DateTime) {
-      ctDate = ct;
-    } else {
-      ctDate = DateTime.now();
-    }
-
-    final refFromMap =
-    map['reference'] is DocumentReference ? map['reference'] as DocumentReference : null;
-
+  factory LeadsModel.fromMap(Map<String, dynamic> map, {DocumentReference? reference}) {
     return LeadsModel(
       logo: map['logo'] as String? ?? '',
       name: map['name'] as String? ?? '',
@@ -158,26 +159,24 @@ class LeadsModel {
       aboutFirm: map['aboutFirm'] as String? ?? '',
       delete: map['delete'] as bool? ?? false,
       search: List<dynamic>.from(map['search'] ?? []),
-      createTime: ctDate,
+      createTime: (map['createTime'] as Timestamp).toDate(),
       addedBy: map['addedBy'] as String? ?? '',
-      firms: map['firms'] != null
-          ? List<AddFirmModel>.from(
-        (map['firms'] as List)
-            .where((e) => e != null)
-            .map((e) => AddFirmModel.fromMap(e as Map<String, dynamic>)),
-      )
-          : <AddFirmModel>[],
+      services: (map['services'] as List<dynamic>? ?? [])
+          .map((e) => ServiceModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
       status: map['status'] as int? ?? 0,
       affiliate: map['affiliate'] as String? ?? '',
-      teamMembers: map['teamMembers'] != null
-          ? List<AffiliateModel>.from(
-        (map['teamMembers'] as List)
-            .where((e) => e != null)
-            .map((e) => AffiliateModel.fromMap(e as Map<String, dynamic>)),
-      )
-          : <AffiliateModel>[],
       password: map['password'] as String? ?? '',
-      reference: reference ?? refFromMap,
+      organizationType: map['organizationType'] as String? ?? '',
+      teamMembers: (map['teamMembers'] as List<dynamic>? ?? [])
+          .map((e) => AffiliateModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      applications: (map['applications'] as List<dynamic>? ?? [])
+          .map((e) => AffiliateModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      jobType: (map['jobType'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      lookingAt: (map['lookingAt'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      reference: map['reference'] as DocumentReference?,
     );
   }
 }

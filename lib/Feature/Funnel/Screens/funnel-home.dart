@@ -10,6 +10,8 @@ import 'package:refrr_admin/Core/constants/servicelead-color.dart';
 import 'package:refrr_admin/Feature/Funnel/Controller/serviceLead-controllor.dart';
 import 'package:refrr_admin/Feature/Funnel/Screens/Services-home-funnel.dart';
 import 'package:refrr_admin/Feature/Funnel/Screens/funnel-inner-page.dart';
+import 'package:refrr_admin/Feature/Funnel/Screens/notification-page.dart';
+import 'package:refrr_admin/Feature/Login/Screens/home.dart';
 import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
 import 'package:refrr_admin/Feature/Team/screens/dummyHire.dart';
 import 'package:refrr_admin/models/affiliate-model.dart';
@@ -28,6 +30,8 @@ class FunnelHome extends ConsumerStatefulWidget {
 }
 
 class _FunnelHomeState extends ConsumerState<FunnelHome> {
+
+  List notification = [];
   String? selectedStatus; // filter chip
   DateTime? fromDate;
   DateTime? toDate;
@@ -106,59 +110,37 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
 
     // Full place list (as provided)
     final List<String> allPlaces = [
-      'Alappuzha',
-      'Angamaly',
-      'Adoor',
-      'Attingal',
-      'Changanassery',
-      'Chalakudy',
-      'Cherthala',
-      'Ernakulam (Kochi)',
-      'Guruvayur',
-      'Haripad',
-      'Idukki (Painavu)',
-      'Irinjalakuda',
-      'Kalpetta (Wayanad)',
-      'Kannur',
-      'Karunagappally',
-      'Kasaragod',
-      'Kayamkulam',
-      'Kodungallur',
-      'Kollam',
-      'Kondotty',
-      'Kothamangalam',
-      'Kottakkal',
-      'Kottarakkara',
-      'Kottayam',
-      'Koyilandy',
-      'Kozhikode (Calicut)',
-      'Kunnamkulam',
-      'Malappuram',
-      'Manjeri',
-      'Mannarkkad',
-      'Mavelikkara',
-      'Muvattupuzha',
-      'Nedumangad',
-      'Neyyattinkara',
-      'Nilambur',
-      'Ottappalam',
-      'Palakkad',
-      'Pala',
-      'Paravur (North Paravur)',
-      'Pathanamthitta',
-      'Payyannur',
-      'Perinthalmanna',
-      'Perumbavoor',
-      'Ponnani',
-      'Shornur',
-      'Thiruvalla',
+      'Mumbai',
+      'Delhi NCR',
+      'Bengaluru',
+      'Hyderabad',
+      'Chennai',
+      'Pune',
+      'Kolkata',
+      'Ahmedabad',
+      'Surat',
+      'Jaipur',
+      'Chandigarh',
+      'Indore',
+      'Vadodara',
+      'Lucknow',
+      'Nagpur',
+      'Visakhapatnam',
+      'Bhubaneswar',
+      'Guwahati',
+      // Kerala major business cities
+      'Kochi',
       'Thiruvananthapuram',
-      'Thodupuzha',
-      'Thrippunithura',
+      'Kozhikode',
       'Thrissur',
-      'Varkala',
+      'Kannur',
+      'Kottayam',
+      'Perinthalmanna',
+      'Kottakkal',
+      'Varkkala',
     ];
-
+    String selectedCountry = 'All';
+    List<String> countries = ['All', 'IN', 'GB', 'US', 'SA', 'QA', 'BH', 'OM',];
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -204,7 +186,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                         children: [
                           Expanded(
                             child: Text(
-                              'Add location',
+                              'Select Your City',
                               style: GoogleFonts.roboto(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
@@ -221,25 +203,62 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                     ),
 
                     // Search
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
-                      child: TextField(
-                        controller: searchCtrl,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          hintText: 'Search location',
-                          prefixIcon: const Icon(Icons.search),
-                          filled: true,
-                          fillColor: const Color(0xFFF5F5F5),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
+                  child: Row(
+                    children: [
+                      // Country dropdown (small width)
+                      SizedBox(
+                        width: 90, // adjust size based on your design
+                        child: DropdownButtonFormField<String>(
+                          value: selectedCountry,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                           ),
+                          items: countries.map((country) {
+                            return DropdownMenuItem<String>(
+                              value: country,
+                              child: Text(country),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setModalState(() {
+                              selectedCountry = value!;
+                            });
+                          },
                         ),
-                        onChanged: (val) => setModalState(() => query = val),
                       ),
-                    ),
+
+                      const SizedBox(width: 8),
+
+                      // Search field (take full remaining width)
+                      Expanded(
+                        child: TextField(
+                          controller: searchCtrl,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: 'Search location',
+                            prefixIcon: const Icon(Icons.search),
+                            filled: true,
+                            fillColor: const Color(0xFFF5F5F5),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          onChanged: (val) => setModalState(() => query = val),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                     // Results
                     Expanded(
@@ -330,7 +349,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
   }
 
   // Filter UI: select a status (does not update a lead)
-  Future<void> _selectStatus() async {
+  Future<void> selectStatus() async {
     if (!mounted) return;
 
     final result = await showModalBottomSheet<String>(
@@ -419,7 +438,8 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
   void _selectMarketer(List<ServiceLeadModel> leads) async {
     if (!mounted) return;
 
-    final marketers = leads.map((e) => e.marketerName).toSet().toList();
+    final marketers = leads.map((e) => e.marketerName).where((name)
+    => name.trim().isNotEmpty).toSet().toList();
 
     showModalBottomSheet(
       context: context,
@@ -527,7 +547,103 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
     );
   }
 
-  // Update a single lead's status (adds a new history entry)
+  Future<void> _creditMoney(ServiceLeadModel lead) async {
+    final TextEditingController amountController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: const Text("Add Money"),
+          content: TextField(
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              hintText: "Enter amount",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext, rootNavigator: true).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final amount = amountController.text.trim();
+                if (amount.isEmpty) return;
+
+                // Show loader
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => const Center(child: CircularProgressIndicator()),
+                );
+
+                try {
+                  final newCreditEntry = {
+                    "amount": int.parse(amount),
+                    "date": Timestamp.now(),
+                    'added': lead.marketerName ?? ''
+                  };
+
+                  final updatedCreditAmount = [...lead.creditedAmount, newCreditEntry];
+
+                  final updatedLead = lead.copyWith(creditedAmount: updatedCreditAmount);
+
+                  await ref.read(serviceLeadsControllerProvider.notifier)
+                      .updateServiceLeads(
+                    context: context,
+                    serviceLeadsModel: updatedLead,
+                  );
+
+                  // ✅ Close loader
+                  Navigator.of(context, rootNavigator: true).pop();
+
+// ✅ Close dialog
+                  Navigator.of(dialogContext, rootNavigator: true).pop();
+
+// 🛑 DO NOT PUSH HERE DIRECTLY
+// ✅ Push after frame to avoid navigator lock
+                  Future.microtask(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => HomeScreen(lead: widget.currentFirm,index:0),
+                      ),
+                    );
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Amount added successfully",style: TextStyle(color: Colors.black),),
+                      backgroundColor: Colors.white,
+                    ),
+                  );
+                } catch (e) {
+                  Navigator.of(context, rootNavigator: true).pop(); // close loader
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Failed: $e"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Update a single lead's status (adds a new history entry)
   Future<void> updateStatus(ServiceLeadModel lead) async {
     if (!mounted) return;
 
@@ -556,19 +672,17 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                   SizedBox(width: width * .04),
                   InkWell(
                     onTap: () async {
-                      if (Navigator.of(bottomSheetContext).canPop()) {
-                        Navigator.of(bottomSheetContext).pop();
-                      }
-                      // await _creditMoney(lead);
+                      Navigator.of(bottomSheetContext).pop();
+                      await _creditMoney(lead);
                     },
                     child: Center(
                       child: Text(
                         ' + Add money',
                         style: GoogleFonts.roboto(
-                          color: Colors.blue.shade600,
+                          color: Colors.blue,
                           fontSize: 12,
                           decoration: TextDecoration.underline,
-                          decorationColor: Colors.blue.shade600,
+                          decorationColor: Colors.blue,
                           decorationThickness: 1,
                         ),
                       ),
@@ -585,6 +699,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                 ],
               ),
               SizedBox(height: height * .05),
+
               // Status chips
               Center(
                 child: Wrap(
@@ -632,7 +747,6 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
     if (status == null) return;
 
     try {
-      // Show loading indicator while updating
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -641,10 +755,10 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
         ),
       );
 
-      // Append with Timestamp to avoid type crashes
       final newHistoryEntry = {
         "status": status,
         "date": Timestamp.now(),
+        'added' :lead.marketerName ??''
       };
 
       final updatedHistory = [...lead.statusHistory, newHistoryEntry];
@@ -660,12 +774,10 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
         serviceLeadsModel: updatedLead,
       );
 
-      // Close loading dialog
       if (mounted && Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
 
-      // Optional: Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -676,12 +788,10 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
         );
       }
     } catch (e) {
-      // Close loading dialog if open
       if (mounted && Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
 
-      // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -692,7 +802,6 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
         );
       }
 
-      // Print error for debugging
       print('Error updating status: $e');
     }
   }
@@ -723,7 +832,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
       },
       {
         'title': selectedStatus ?? 'Status',
-        'onTap': _selectStatus,
+        'onTap': selectStatus,
         'isSelected': selectedStatus != null,
       },
       {
@@ -773,15 +882,28 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
             ),
             actions: [
               Stack(children: [
-                SvgPicture.asset('assets/svg/update_unfill.svg', height: 25),
-                const Positioned(
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage(currentFirm: widget.currentFirm),));
+                  },
+                    child: SvgPicture.asset('assets/svg/update_unfill.svg', height: 25)),
+                notification.isNotEmpty? Positioned(
                   child: CircleAvatar(
                     radius: 7,
                     backgroundColor: Colors.red,
                     child: Center(
-                      child: Text(
-                        '3',
+                      child: Text('3',
                         style: TextStyle(fontSize: 10, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ):Positioned(
+                  child: CircleAvatar(
+                    radius: 7,
+                    backgroundColor: Colors.transparent,
+                    child: Center(
+                      child: Text('3',
+                        style: TextStyle(fontSize: 10, color: Colors.transparent),
                       ),
                     ),
                   ),
@@ -824,16 +946,13 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                   filtered = filtered.where((lead) {
                     return lead.createTime.isAfter(
                         fromDate!.subtract(const Duration(days: 1))) &&
-                        lead.createTime
-                            .isBefore(toDate!.add(const Duration(days: 1)));
+                        lead.createTime.isBefore(toDate!.add(const Duration(days: 1)));
                   }).toList();
                 }
 
                 // Marketer filter
                 if (selectedMarketer != null) {
-                  filtered = filtered
-                      .where((lead) => lead.marketerName == selectedMarketer)
-                      .toList();
+                  filtered = filtered.where((lead) => lead.marketerName == selectedMarketer).toList();
                 }
 
                 // Search filter
@@ -855,8 +974,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                 const double spacing = 8.0;
                 final double leftPad = width * .04;
                 final double available = screenWidth - leftPad;
-                final double itemWidth =
-                    (available - (spacing * 4)) / visibleItems;
+                final double itemWidth = (available - (spacing * 4)) / visibleItems;
                 final double avatarRadius = itemWidth / 2;
 
                 return SingleChildScrollView(
@@ -867,8 +985,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Padding(
-                          padding: EdgeInsets.only(
-                              left: leftPad, top: height * .015, right: width * .02),
+                          padding: EdgeInsets.only(left: leftPad, top: height * .015, right: width * .02),
                           child: Row(
                             children: [
                               // Fixed "Scale" item
@@ -1010,8 +1127,10 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                 width: width * 0.22,
                                 height: height * 0.043,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF3F3F3),
-                                  borderRadius: BorderRadius.circular(5),
+                                  // color: const Color(0xFFF3F3F3),
+                                  border: Border.all( color:Colors.grey.shade400),
+                                  // border: Border.all( color:Color(0xFFF3F3F3)),
+                                  borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -1055,24 +1174,13 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                           ),
                           itemBuilder: (context, index) {
                             final lead = filtered[index];
-                            final latestStatus =
-                                getLatestStatus(lead.statusHistory) ??
-                                    'Unknown';
-                            final statusColors =
-                            getStatusColors(latestStatus);
+                            final latestStatus = getLatestStatus(lead.statusHistory) ?? 'Unknown';
+                            final statusColors = getStatusColors(latestStatus);
                             return GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PipeLineInnerPage(),
-                                    ));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => PipeLineInnerPage(currentFirm:widget.currentFirm, service: filtered[index],),));
                               },
-                              child: buildLeadCard(
-                                lead,
-                                statusColors,
-                                latestStatus,
+                              child: buildLeadCard(lead, statusColors, latestStatus,
                               ),
                             );
                           },
@@ -1094,11 +1202,9 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
           child: GestureDetector(
             onTap: () {
               if (!mounted) return;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ServiceHome(currentFirm: widget.currentFirm)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ServiceHome(currentFirm:
+                  widget.currentFirm,affiliate:widget.affiliate)));
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -1123,8 +1229,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                     ),
                   ),
                   SizedBox(width: width * .01),
-                  Text(
-                    'New',
+                  Text('New',
                     style: GoogleFonts.roboto(
                       color: Colors.white,
                       fontSize: width * .035,
@@ -1139,7 +1244,6 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
       ],
     );
   }
-
   /// Card UI
   Widget buildLeadCard(ServiceLeadModel item, StatusColors statusColors,
       String latestStatus) {
@@ -1182,7 +1286,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                           fontSize: width * .035,
                           fontWeight: FontWeight.w600,
                         ),
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -1225,7 +1329,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                 ),
                 SizedBox(height: height * .003),
                 Text(
-                  item.firmName,
+                  item.leadName,
                   style: GoogleFonts.roboto(
                     fontSize: width * .03,
                     fontWeight: FontWeight.w500,
@@ -1240,86 +1344,104 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                     color: Colors.blue[900],
                   ),
                 ),
-                SizedBox(height: height * .0258),
-                Text(
-                  'Status',
-                  style: GoogleFonts.roboto(
-                    fontSize: width * .027,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(height: height * .001),
-                latestStatus == 'Converted'
-                    ? GestureDetector(
-                  onTap: () => updateStatus(item),
-                  child: Container(
-                    height: height * .04,
-                    width: width * .3,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF3D8D00),
-                      border: Border.all(
-                          color: const Color(0xFF3D8D00),
-                          width: width * .002),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Center(
-                      child: Row(
-                        children: [
-                          SizedBox(width: width * .03),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Credited ',
-                                  style: GoogleFonts.roboto(
-                                    fontSize: width * .025,
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: 'AED 500',
-                                  style: GoogleFonts.roboto(
-                                    fontSize: width * .025,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: width * .004),
-                          SvgPicture.asset(
-                            'assets/svg/tickIcon.svg',
-                            height: 15,
-                          )
-                        ],
-                      ),
+                if (item.creditedAmount.isEmpty) ...[
+                  SizedBox(height: height * .0258),
+                  Text('Status',
+                    style: GoogleFonts.roboto(
+                      fontSize: width * .027,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                )
-                    : GestureDetector(
-                  onTap: () => updateStatus(item),
-                  child: Container(
-                    height: height * .04,
-                    width: width * .3,
-                    decoration: BoxDecoration(
-                      border: Border.all(
+                  SizedBox(height: height * .001),
+                  GestureDetector(
+                    onTap: () => updateStatus(item),
+                    child: Container(
+                      height: height * .04,
+                      width: width * .3,
+                      decoration: BoxDecoration(
+                        border: Border.all(
                           color: statusColors.border,
-                          width: width * .002),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Center(
-                      child: Text(
-                        latestStatus,
-                        style: GoogleFonts.roboto(
-                          fontSize: width * .03,
-                          fontWeight: FontWeight.w500,
+                          width: width * .002,
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          latestStatus,
+                          style: GoogleFonts.roboto(
+                            fontSize: width * .03,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
+                  )
+                ]
+                else ...[
+                  SizedBox(height: height * .005),
+                  Text(
+                    'Status',
+                    style: GoogleFonts.roboto(
+                      fontSize: width * .027,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),Text(
+                    latestStatus,
+                    style: GoogleFonts.roboto(
+                      fontSize: width * .03,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
+                  SizedBox(height: height * .001),
+                  // ✅ Credited button
+                  GestureDetector(
+                    onTap: () => updateStatus(item),
+                    child: Container(
+                      height: height * .04,
+                      width: width * .3,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3D8D00),
+                        border: Border.all(
+                          color: const Color(0xFF3D8D00),
+                          width: width * .002,
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            SizedBox(width: width * .03),
+                            // ✅ Get last credited amount
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Credited ',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: width * .025,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'AED ${item.creditedAmount.last["amount"] ?? 0}',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: width * .025,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: width * .004),
+                            SvgPicture.asset('assets/svg/tickIcon.svg', height: 15)
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ]
               ],
             ),
           ),

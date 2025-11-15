@@ -10,7 +10,8 @@ import 'package:refrr_admin/Feature/Team/screens/team-home.dart';
 
 class HomeScreen extends StatefulWidget {
   final LeadsModel? lead;
-  const HomeScreen({super.key, this.lead});
+  final int? index;
+  const HomeScreen({super.key, this.lead,  this.index});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,7 +19,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-
+@override
+  void initState() {
+  _currentIndex = widget.index ?? 0;
+      super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [

@@ -1,9 +1,283 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:refrr_admin/Core/common/dateformat.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/constants/homepage-functions.dart';
+import 'package:refrr_admin/Feature/Funnel/Controller/serviceLead-controllor.dart';
+import 'package:refrr_admin/Feature/Login/Screens/home.dart';
+import 'package:refrr_admin/models/leads_model.dart';
+import 'package:refrr_admin/models/serviceLeadModel.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PipeLineInnerPage extends StatelessWidget {
-  const PipeLineInnerPage({super.key});
+class PipeLineInnerPage extends ConsumerStatefulWidget  {
+  final ServiceLeadModel service;
+  final LeadsModel? currentFirm;
+  const PipeLineInnerPage( {super.key, required this.service,this.currentFirm,});
+
+  @override
+  ConsumerState<PipeLineInnerPage> createState() => _PipeLineInnerPageState();
+}
+
+class _PipeLineInnerPageState extends ConsumerState<PipeLineInnerPage> {
+  Future<void> _creditMoney(ServiceLeadModel lead) async {
+    final TextEditingController amountController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: const Text("Add Money"),
+          content: TextField(
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              hintText: "Enter amount",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext, rootNavigator: true).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final amount = amountController.text.trim();
+                if (amount.isEmpty) return;
+
+                // Show loader
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => const Center(child: CircularProgressIndicator()),
+                );
+
+                try {
+                  final newCreditEntry = {
+                    "amount": int.parse(amount),
+                    "date": Timestamp.now(),
+                    'added': lead.marketerName ?? ''
+                  };
+
+                  final updatedCreditAmount = [...lead.creditedAmount, newCreditEntry];
+
+                  final updatedLead = lead.copyWith(creditedAmount: updatedCreditAmount);
+
+                  await ref.read(serviceLeadsControllerProvider.notifier)
+                      .updateServiceLeads(
+                    context: context,
+                    serviceLeadsModel: updatedLead,
+                  );
+
+                  // ✅ Close loader
+                  Navigator.of(context, rootNavigator: true).pop();
+
+// ✅ Close dialog
+                  Navigator.of(dialogContext, rootNavigator: true).pop();
+
+// 🛑 DO NOT PUSH HERE DIRECTLY
+// ✅ Push after frame to avoid navigator lock
+                  Future.microtask(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => HomeScreen(lead: widget.currentFirm,index:0),
+                      ),
+                    );
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Amount added successfully",style: TextStyle(color: Colors.black),),
+                      backgroundColor: Colors.white,
+                    ),
+                  );
+                } catch (e) {
+                  Navigator.of(context, rootNavigator: true).pop(); // close loader
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Failed: $e"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> updateStatus(ServiceLeadModel lead) async {
+    if (!mounted) return;
+    final String? status = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (BuildContext bottomSheetContext) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title & Close
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Lead status',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(width: width * .04),
+                  InkWell(
+                    onTap: () async {
+                      Navigator.of(bottomSheetContext).pop();
+                      await _creditMoney(lead);
+                    },
+                    child: Center(
+                      child: Text(
+                        ' + Add money',
+                        style: GoogleFonts.roboto(
+                          color: Colors.blue,
+                          fontSize: 12,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.blue,
+                          decorationThickness: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (Navigator.of(bottomSheetContext).canPop()) {
+                        Navigator.of(bottomSheetContext).pop();
+                      }
+                    },
+                    child: const Icon(Icons.close, size: 24),
+                  ),
+                ],
+              ),
+              SizedBox(height: height * .05),
+
+              // Status chips
+              Center(
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: statusOptions.map((s) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (Navigator.of(bottomSheetContext).canPop()) {
+                          Navigator.of(bottomSheetContext).pop(s);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 18),
+                        decoration: BoxDecoration(
+                          color: chipBackground(s),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: chipAccent(s).withOpacity(0.25),
+                          ),
+                        ),
+                        child: Text(
+                          s,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF5E5E5E),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (!mounted) return;
+    if (status == null) return;
+
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      final newHistoryEntry = {
+        "status": status,
+        "date": Timestamp.now(),
+        'added' :lead.marketerName ??''
+      };
+
+      final updatedHistory = [...lead.statusHistory, newHistoryEntry];
+
+      final updatedLead = lead.copyWith(
+        statusHistory: updatedHistory,
+      );
+
+      await ref
+          .read(serviceLeadsControllerProvider.notifier)
+          .updateServiceLeads(
+        context: context,
+        serviceLeadsModel: updatedLead,
+      );
+
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Status updated to $status'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating status: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+
+      print('Error updating status: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +336,16 @@ class PipeLineInnerPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Website Development',
+                              widget.service.serviceName,
+                              // 'Website Development',
                               style: GoogleFonts.roboto(
                                 color: Color(0xFF545454),
                                 fontSize: width*.045,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            Text('22/06/2025',
+                            Text( DateFormat('dd/MM/yyyy').format(widget.service.createTime),
+
                               style: GoogleFonts.roboto(
                                 color: Color(0xFF545454),
                                 fontSize: width*.035,
@@ -90,7 +366,7 @@ class PipeLineInnerPage extends StatelessWidget {
                           children: [
                             Column(children: [
                               Text(
-                                'Abhijith',
+                                widget.service.marketerName,
                                 style: GoogleFonts.roboto(
                                   fontSize: width*.045,
                                   fontWeight: FontWeight.w500,
@@ -99,7 +375,7 @@ class PipeLineInnerPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                  'Dubai',
+                                  widget.service.location,
                                   style: GoogleFonts.roboto(
                                     fontSize: width*.03,
                                     fontWeight: FontWeight.w500,
@@ -111,19 +387,24 @@ class PipeLineInnerPage extends StatelessWidget {
 
                             Padding(
                               padding:  EdgeInsets.only(left: width*.41),
-                              child: Container(
-                                width: width*.3,
-                                height: height*.05,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Center(
-                                  child:  Text(
-                                    'Add money',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
+                              child: GestureDetector(
+                                onTap: (){
+                                  _creditMoney(widget.service);
+                                },
+                                child: Container(
+                                  width: width*.3,
+                                  height: height*.05,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Center(
+                                    child:  Text(
+                                      'Add money',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -168,10 +449,10 @@ class PipeLineInnerPage extends StatelessWidget {
             SizedBox(height: height*.01),
 
             // Details List
-            _buildDetailRow('Name', 'Crown Inox stainless steels'),
-            _buildDetailRow('Location', 'Abu Dhabi'),
-            _buildDetailRow('Phone No', '0874 345 234'),
-            _buildDetailRow('Email ID', 'crowninoxsteels@gmail.com'),
+            _buildDetailRow('Name', widget.service.leadName),
+            _buildDetailRow('Location', widget.service.location),
+            _buildDetailRow('Phone No', widget.service.leadContact != 0 ? '+91 ${widget.service.leadContact}' : 'Not provided',),
+            _buildDetailRow('Email ID', widget.service.leadEmail.isNotEmpty ? widget.service.leadEmail : 'Not provided',),
 
             const SizedBox(height: 24),
 
@@ -189,19 +470,22 @@ class PipeLineInnerPage extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  Container(
-                    width: width*.3,
-                    height: height*.05,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Center(
-                      child:  Text(
-                        'Update',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                  GestureDetector(
+                    onTap: () => updateStatus(widget.service),
+                    child: Container(
+                      width: width*.3,
+                      height: height*.05,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child:  Text(
+                          'Update',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),
@@ -213,15 +497,38 @@ class PipeLineInnerPage extends StatelessWidget {
             SizedBox(height: height*.04),
 
             // Lead Story Timeline
-            _buildTimelineItem('25-08-2025', 'Completed', 'Kavya', Color(0xFFE8FFF3)),
-            _buildTimelineItem('23-07-2025', 'Invoice raised', 'Kavya', Color(0x12D87912)),
-            _buildTimelineItem('24-06-2025', 'Proposal sent', 'Abhijith', Color(0x12D87912)),
-            _buildTimelineItem('18-05-2025', 'Contacted', 'Vishnu', Color(0x12D87912)),
-            _buildTimelineItem('30-04-2025', 'New lead', 'Arjun', Color(0xFFF2FFF9), isLast: true),
+    //     Color(0xFFE8FFF3)),
+    // _buildTimelineItem('23-07-2025', 'Invoice raised', 'Kavya', Color(0x12D87912)),
+    // _buildTimelineItem('24-06-2025', 'Proposal sent', 'Abhijith', Color(0x12D87912)),
+    // _buildTimelineItem('18-05-2025', 'Contacted', 'Vishnu', Color(0x12D87912)),
+    // _buildTimelineItem('30-04-2025', 'New lead', 'Arjun', Color(0xFFF2FFF9),
+
+            Column(
+              children: List.generate(widget.service.statusHistory.length, (index) {
+                final item = widget.service.statusHistory[index];
+                bool isLast = index == widget.service.statusHistory.length - 1;
+
+                // ✅ First & Last -> Color A | Middle -> Color B
+                Color bgColor;
+                if (index == 0 || index == widget.service.statusHistory.length - 1) {
+                  bgColor = Color(0xFFE8FFF3); // First & Last item color
+                } else {
+                  bgColor = Color(0x12D87912); // Middle items color
+                }
+
+                return _buildTimelineItem(
+                  formatDate(item['date']),
+                  item['status'] ?? '',
+                  item['added'] ?? '',
+                  bgColor,        // ✅ apply bgColor here
+                  isLast: isLast,
+                );
+              }),
+            ),
 
             const SizedBox(height: 24),
 
-            // Lead Handler Section
+            /// Lead Handler Section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -236,7 +543,7 @@ class PipeLineInnerPage extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Lead Handler Person
+            /// Lead Handler Person
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -333,7 +640,7 @@ class PipeLineInnerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTimelineItem(String date, String status, String handler, Color bgColor, {bool isLast = false}) {
+  Widget _buildTimelineItem(String date, String status, String handler,Color bgColor, {bool isLast = false,}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(

@@ -18,27 +18,22 @@ class _ServiceHomeState extends State<ServiceHome> {
   final TextEditingController searchController = TextEditingController();
   List<ServiceModel> firmServices = [];
   List<ServiceModel> filteredServices = [];
-
-  @override
-  void initState() {
-    super.initState();
-    initServices();
-  }
-
   void initServices() {
-    // Extract all services for the current firm from all its firms
-    final List<ServiceModel> services = [];
-    if (widget.currentFirm?.firms != null) {
-      for (var firm in widget.currentFirm!.firms) {
-        if (firm.services != null) {
-          services.addAll(firm.services!);
-        }
-      }
+    if (widget.currentFirm != null) {
+      // ✅ Directly take services from the current firm
+      final List<ServiceModel> services = widget.currentFirm!.services;
+
+      setState(() {
+        firmServices = services;
+        filteredServices = services;
+      });
+    } else {
+      // In case currentFirm is null
+      setState(() {
+        firmServices = [];
+        filteredServices = [];
+      });
     }
-    setState(() {
-      firmServices = services;
-      filteredServices = services;
-    });
   }
 
   void onSearch(String keyword) {
@@ -50,30 +45,6 @@ class _ServiceHomeState extends State<ServiceHome> {
     setState(() {
       filteredServices = result;
     });
-  }
-
-  // Method to handle navigation with proper error handling
-  void _navigateToAddService() async {
-    try {
-      final result = await Navigator.push(context, MaterialPageRoute(builder: (context) =>
-          AddNewServicePage(currentFirm: widget.currentFirm,),),);
-
-      // If a new service was added, refresh the list
-      if (result == true) {
-        initServices();
-      }
-    } catch (e) {
-      // Handle navigation errors
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error opening add service page: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-      debugPrint('Navigation error: $e');
-    }
   }
 
   @override
@@ -93,7 +64,10 @@ class _ServiceHomeState extends State<ServiceHome> {
         ),
         actions: [
           GestureDetector(
-              onTap: _navigateToAddService,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                    AddNewServicePage(currentFirm: widget.currentFirm,),),);
+              },
               child: Icon(Icons.add, color: Colors.black)
           ),
           SizedBox(width: width*.02,),
@@ -220,7 +194,7 @@ class _ServiceHomeState extends State<ServiceHome> {
                                     Row(
                                       children: [
                                         Text('Lead Given :', style: GoogleFonts.roboto(fontWeight: FontWeight.w400, fontSize: width * 0.035)),
-                                        Text(' 20', style: GoogleFonts.roboto(fontWeight: FontWeight.w400, fontSize: width * 0.035)),
+                                        Text(' 0', style: GoogleFonts.roboto(fontWeight: FontWeight.w400, fontSize: width * 0.035)),
                                       ],
                                     ),
                                   ],

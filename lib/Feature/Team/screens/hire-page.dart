@@ -173,22 +173,7 @@ class _HirePageState extends ConsumerState<HirePage> {
     return 'Industry (${selectedIndustries.length})';
   }
 
-  // Calculate LQ (Lead Quality) score based on completed vs total leads
-  String calculateLQScore(List<ServiceLeadModel> userLeads) {
-    if (userLeads.isEmpty) return '60%';
 
-    final totalLeads = userLeads.length;
-    final completedLeads = userLeads
-        .where((lead) =>
-    lead.statusHistory.isNotEmpty &&
-        lead.statusHistory.last['status'] == 'Completed')
-        .length;
-
-    if (totalLeads == 0) return '60%';
-
-    final percentage = ((completedLeads / totalLeads) * 100).round();
-    return '$percentage%';
-  }
 
   // Parse multiple industries from a single `industry` string.
   // Supports delimiters: comma, slash, pipe. Example: "Design, Marketing|Sales/Tech"
@@ -532,21 +517,16 @@ class _HirePageState extends ConsumerState<HirePage> {
                                   ),
                                 );
                               } else {
-                                final idx =
-                                selectedFilter == 'All' ? index - 1 : index;
+                                final idx = selectedFilter == 'All' ? index - 1 : index;
                                 final affiliate = filteredAffiliates[idx];
-
                                 final myLeads = leads
                                     .where((l) => l.marketerId == affiliate.id)
                                     .toList();
                                 final totalLeads = myLeads.length;
-                                final lqScore = calculateLQScore(myLeads);
-                                final industries =
-                                getAffiliateIndustries(affiliate);
-
+                                final lqScore = affiliate.leadScore;
+                                final industries = getAffiliateIndustries(affiliate);
                                 final idStr = _affId(affiliate);
-                                final isChecked =
-                                selectedAffiliateIds.contains(idStr);
+                                final isChecked = selectedAffiliateIds.contains(idStr);
 
                                 return Stack(
                                   children: [
@@ -569,7 +549,7 @@ class _HirePageState extends ConsumerState<HirePage> {
                                         width: width,
                                         height: height,
                                         totalLeads: totalLeads,
-                                        lqScore: lqScore,
+                                        lqScore: lqScore!.round().toString(),
                                         isSelected: isChecked,
                                         industries: industries,
                                       ),
@@ -661,7 +641,6 @@ class _HirePageState extends ConsumerState<HirePage> {
             ),
           ),
         ),
-
         // Busy overlay
         if (isUploading)
           Positioned.fill(
@@ -704,11 +683,13 @@ class _HirePageState extends ConsumerState<HirePage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: width * 0.27,   // fixed card-like width
-        height: height * 0.043, // fixed card-like height
+        width: width * 0.27,
+        height: height * 0.043,
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : const Color(0xFFF3F3F3),
-          borderRadius: BorderRadius.circular(5),
+          // color: isSelected ? Colors.black : const Color(0xFFF3F3F3),
+          border: Border.all(color: isSelected ? Colors.black : Colors.grey.shade400,
+          ),
+          borderRadius: BorderRadius.circular(30),
         ),
         child: Center(
           child: Text(
@@ -718,14 +699,13 @@ class _HirePageState extends ConsumerState<HirePage> {
             style: GoogleFonts.roboto(
               fontSize: width * 0.03,
               fontWeight: FontWeight.w400,
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected ? Colors.black : Colors.grey,
             ),
           ),
         ),
       ),
     );
   }
-
   Widget _buildCandidateCard({
     required AffiliateModel model,
     required List<String> industries,
@@ -769,8 +749,7 @@ class _HirePageState extends ConsumerState<HirePage> {
             ),
           ),
           SizedBox(height: height * 0.006),
-          Text(
-            model.name.length > 15
+          Text(model.name.length > 15
                 ? "${model.name.substring(0, 15)}..."
                 : model.name,
             style: GoogleFonts.roboto(
@@ -802,7 +781,7 @@ class _HirePageState extends ConsumerState<HirePage> {
                   ),
                 ),
                 Expanded(
-                  child: Text('02',
+                  child: Text(totalLeads.toString(),
                     style: GoogleFonts.roboto(
                       fontSize: width * .035,
                       color: Colors.black87,
@@ -817,7 +796,6 @@ class _HirePageState extends ConsumerState<HirePage> {
             ),
           ),
           const SizedBox(height: 6),
-
           // CHANGED: Industry row with 2-line cap and proper wrap indent
           Align(
             alignment: Alignment.centerLeft,
@@ -848,10 +826,9 @@ class _HirePageState extends ConsumerState<HirePage> {
               ],
             ),
           ),
-
           const SizedBox(height: 6),
           Text(
-            'LQ - $lqScore',
+            'LQ - $lqScore %',
             style: GoogleFonts.roboto(
               fontSize: width * .05,
               fontWeight: FontWeight.bold,
