@@ -7,6 +7,7 @@ class FirebaseCollections{
   static const adminsCollection='admins';
   static const ServiceLeadsCollection='serviceLeads';
   static const industriesCollection='industries';
+  static const salesPersonsCollection='sales-persons';
 
 
 }

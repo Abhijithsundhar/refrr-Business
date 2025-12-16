@@ -11,8 +11,11 @@ final affiliateRepositoryProvider = Provider((ref) => AffiliateRepository());
 /// affilate Stream Provider with search support
 final affiliateStreamProvider = StreamProvider.family<List<AffiliateModel>, String>((ref, searchQuery) {
   final repository = ref.watch(affiliateRepositoryProvider);
-
   return repository.getAffiliate(searchQuery);
+});
+final affiliateByMarketerProvider = FutureProvider.family<AffiliateModel?, String>((ref, marketerId) async {
+  final controller = ref.read(affiliateControllerProvider.notifier);
+  return await controller.getAffiliateByMarketerId(marketerId);
 });
 
 
@@ -60,4 +63,13 @@ Stream <List<AffiliateModel>>getAffiliate(String searchQuery ){
   return _repository.getAffiliate(searchQuery);
 }
 
+Future<AffiliateModel?> getAffiliateByMarketerId(String marketerId) async {
+  state = true; // optional loading state
+  final result = await _repository.getAffiliateByMarketerId(marketerId);
+  state = false;
+  return result.fold(
+        (l) => null,        // return null if error occurs
+        (affiliate) => affiliate, // return AffiliateModel? if found
+  );
+}
 }

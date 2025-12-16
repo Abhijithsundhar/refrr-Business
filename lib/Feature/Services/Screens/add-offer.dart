@@ -21,7 +21,7 @@ class AddOffer extends ConsumerStatefulWidget {
 }
 
 class _AddOfferState extends ConsumerState<AddOffer> {
-  PickedImage? _pickedImage;
+  // PickedImage? _pickedImage;
   bool _saving = false;
 
   DateTime? _selectedOfferEndDate;
@@ -65,7 +65,7 @@ class _AddOfferState extends ConsumerState<AddOffer> {
     super.dispose();
   }
 
-  File? _resolveFileFromPicked(PickedImage? picked) {
+  File? _resolveFileFromPicked(XFile? picked) {
     if (picked == null) return null;
 
     try {
@@ -224,7 +224,7 @@ class _AddOfferState extends ConsumerState<AddOffer> {
 
     if (mounted) {
       setState(() {
-        _pickedImage = null;
+        _image = null;
         _selectedOfferStartDate = DateTime.now();
         _offerStartDateController.text = _dateFmt.format(_selectedOfferStartDate!);
         _selectedOfferEndDate = null;
@@ -238,7 +238,7 @@ class _AddOfferState extends ConsumerState<AddOffer> {
       showCommonSnackbar(context, 'Please enter offer name');
       return false;
     }
-    if (_pickedImage == null) {
+    if (_image == null) {
       showCommonSnackbar(context, 'Please select an image');
       return false;
     }
@@ -279,7 +279,23 @@ class _AddOfferState extends ConsumerState<AddOffer> {
       setState(() => _saving = true);
 
       // Upload image
-      final uploadedUrl = await ImagePickerHelper.uploadImageToFirebase(_pickedImage!);
+      if (_image == null) {
+        showCommonSnackbar(context, "Please select an image");
+        return;
+      }
+
+// Convert XFile → PickedImage
+      final bytes = await _image!.readAsBytes();
+      final pickedImage = PickedImage(
+        name: _image!.name,
+        bytes: bytes,
+      );
+
+// Upload
+      final uploadedUrl =
+      await ImagePickerHelper.uploadOfferImageToFirebase(pickedImage);
+
+      print("Uploaded URL: $uploadedUrl");
 
       if (!mounted) return;
 
@@ -351,7 +367,7 @@ class _AddOfferState extends ConsumerState<AddOffer> {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    final previewFile = _resolveFileFromPicked(_pickedImage);
+    _resolveFileFromPicked(_image);
 
     return WillPopScope(
       onWillPop: () async {

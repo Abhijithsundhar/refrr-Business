@@ -29,3 +29,16 @@ final TextEditingController offerModeController = TextEditingController();
 DateTime? selectedOfferEndDate;
 String? selectedMode;
 PickedImage? pickedProfile;
+
+///chat bot section
+final TextEditingController msgController = TextEditingController();
+final TextEditingController amountController = TextEditingController();
+final TextEditingController remarksController = TextEditingController();
+final TextEditingController remarksSheduleController = TextEditingController();
+final TextEditingController eventController = TextEditingController();
+final DateTime sheduleDate  = DateTime.now();
+bool hasText = false;
+final TextEditingController salesPersonName = TextEditingController();
+final TextEditingController salesPersonNumber = TextEditingController();
+final TextEditingController salesPersonEmail = TextEditingController();
+final TextEditingController salesPersonProfile = TextEditingController();

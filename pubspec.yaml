@@ -52,6 +52,10 @@ dependencies:
   flutter_image_compress: ^2.3.0
   animated_custom_dropdown: ^3.1.1
   flutter_svg: ^2.0.9
+  table_calendar: ^3.0.9
+  url_launcher: ^6.2.1
+  material_text_fields: ^1.0.6
+  fl_chart: ^1.1.1
 
 
 dev_dependencies:
@@ -111,4 +115,4 @@ flutter:
 flutter_icons:
   android: true
   ios: false
-  image_path: 'assets/images/refrrAdminLogo.jpg'
+  image_path: 'assets/images/grroBusinessLogo.png'

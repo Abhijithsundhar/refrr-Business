@@ -69,4 +69,28 @@ class AffiliateRepository {
     }
   }
 
+  /// Fetch affiliate by marketerId
+  FutureEither<AffiliateModel?> getAffiliateByMarketerId(String marketerId) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection(FirebaseCollections.affiliatesCollection)
+          .where('id', isEqualTo: marketerId)
+          .limit(1) // assuming one affiliate per marketer
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final data = querySnapshot.docs.first.data();
+        final affiliate = AffiliateModel.fromMap(data);
+        return right(affiliate);
+      } else {
+        return right(null); // no affiliate found
+      }
+    } on FirebaseException catch (e) {
+      return left(Failure(failure: e.message ?? 'Firebase error'));
+    } catch (e) {
+      return left(Failure(failure: e.toString()));
+    }
+  }
+
+
 }

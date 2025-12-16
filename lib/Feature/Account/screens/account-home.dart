@@ -1,543 +1,489 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:refrr_admin/Core/common/custom-appBar.dart';
+import 'package:refrr_admin/Core/common/custom-round-button.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
-import 'package:refrr_admin/Feature/Account/screens/upgradePlan-page.dart';
+import 'package:refrr_admin/Core/constants/asset.dart';
+import 'package:refrr_admin/Core/theme/pallet.dart';
+import 'package:refrr_admin/Feature/Account/screens/lead-granded-page.dart';
+import 'package:refrr_admin/Feature/Account/screens/marketers-page.dart';
+import 'package:refrr_admin/Feature/Account/screens/money-credit-screen.dart';
+import 'package:refrr_admin/Feature/Account/screens/withdrewal-page.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 
-
-// Transaction model
-class Transaction {
-  final String date;
-  final String type;
-  final String amount;
-  final bool isCredited;
-
-  Transaction({
-    required this.date,
-    required this.type,
-    required this.amount,
-    required this.isCredited,
-  });
-}
-
-class AccountHome extends ConsumerStatefulWidget {
+class AccountScreen extends StatefulWidget {
   final LeadsModel? currentFirm;
-
-  const AccountHome({super.key, required this.currentFirm});
+  const AccountScreen({super.key,this.currentFirm});
 
   @override
-  ConsumerState<AccountHome> createState() => _AccountHomeState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _AccountHomeState extends ConsumerState<AccountHome> {
-  final List<Transaction> transactions = [
-    Transaction(date: "06-06-2025", type: "Credited", amount: "AED 150", isCredited: true),
-    Transaction(date: "30-05-2025", type: "Withdrawn", amount: "AED 250", isCredited: false),
-    Transaction(date: "25-05-2025", type: "Credited", amount: "AED 250", isCredited: true),
-    Transaction(date: "24-05-2025", type: "Credited", amount: "AED 100", isCredited: true),
-    Transaction(date: "18-05-2025", type: "Credited", amount: "AED 300", isCredited: true),
-    Transaction(date: "12-05-2025", type: "Withdrawn", amount: "AED 100", isCredited: false),
-    Transaction(date: "07-05-2025", type: "Credited", amount: "AED 170", isCredited: true),
-    Transaction(date: "06-05-2025", type: "Credited", amount: "AED 300", isCredited: true),
-  ];
-
-  // Use double for money
-  // late double totalCreditsSum;
-  // // Use int for count of pending requests
-  // late int totalWithdrawalPending;
-
-  @override
-  void initState() {
-    super.initState();
-    // totalCreditsSum = calculateTotalCredits();
-    // totalWithdrawalPending = calculateTotalWithdrawalPending();
-  }
-
-  @override
-  void didUpdateWidget(covariant AccountHome oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentFirm != widget.currentFirm) {
-      setState(() {
-        // totalCreditsSum = calculateTotalCredits();
-        // totalWithdrawalPending = calculateTotalWithdrawalPending();
-      });
-    }
-  }
-
-  /// Total pending requests across all team members.
-  /// withdrawalRequest can be int/num/String OR a List (e.g., List<WithdrewrequstModel>).
-  // int calculateTotalWithdrawalPending() {
-  //   final team = widget.currentFirm?.teamMembers ?? [];
-  //   int sum = 0;
-  //
-  //   for (final member in team) {
-  //     final pending = member.withdrawalRequest;
-  //
-  //     if (pending == null) continue;
-  //
-  //     // If it's a number or string containing number
-  //     if (pending is int) {
-  //       sum += pending;
-  //     } else if (pending is num) {
-  //       sum += pending.toInt();
-  //     } else if (pending is String) {
-  //       sum += int.tryParse(pending) ?? 0;
-  //     } else if (pending is List) {
-  //       // If it's a list of requests, count pending items (or all if no status field)
-  //       sum += _pendingCountFromList(pending);
-  //     }
-  //     // else: unknown type -> ignore
-  //   }
-  //
-  //   return sum;
-  // }
-
-  /// Count "pending" items in a list of requests.
-  /// Tries to detect status fields; if none, counts all items.
-  int _pendingCountFromList(List list) {
-    int count = 0;
-    for (final item in list) {
-      // Map shape: {status: 'pending'} or {isPending: true}
-      if (item is Map) {
-        final status = (item['status'] ?? item['state'])?.toString().toLowerCase();
-        final isPendingBool = item['isPending'] == true;
-        if (isPendingBool || status == 'pending') {
-          count++;
-        } else if (status == null) {
-          // No status field, assume it's a pending entry
-          count++;
-        }
-        continue;
-      }
-
-      // model shape: item.status / item.state / item.isPending
-      try {
-        final dynamic dyn = item;
-        final dynamicStatus = dyn.status ?? dyn.state;
-        final statusStr = dynamicStatus?.toString().toLowerCase();
-        final isPending = dyn.isPending == true;
-        if (isPending || statusStr == 'pending') {
-          count++;
-        } else if (dynamicStatus == null) {
-          // No status field, assume pending
-          count++;
-        }
-      } catch (_) {
-        // Unknown shape, count it
-        count++;
-      }
-    }
-    return count;
-  }
-
-  /// Total credited money across all team members.
-  /// totalCredits can be num/String OR a List<TotalCreditModel>/List<Map>/List<dynamic>.
-  // double calculateTotalCredits() {
-  //   final firm = widget.currentFirm;
-  //   if (firm == null || firm.teamMembers.isEmpty) return 0;
-  //
-  //   double sum = 0;
-  //
-  //   for (final member in firm.teamMembers) {
-  //     final creditsObj = member.totalCredits;
-  //     if (creditsObj == null) continue;
-  //
-  //     if (creditsObj is num) {
-  //       sum += creditsObj.toDouble();
-  //       continue;
-  //     }
-  //     if (creditsObj is String) {
-  //       sum += double.tryParse(creditsObj) ?? 0;
-  //       continue;
-  //     }
-  //
-  //     if (creditsObj is List) {
-  //       for (final item in creditsObj) {
-  //         sum += _creditAmountDouble(item);
-  //       }
-  //     }
-  //     // else: unknown type -> ignore
-  //   }
-  //
-  //   return sum;
-  // }
-
-  /// Extract a double amount from one credit entry.
-  /// If you know your model, replace with (item as TotalCreditModel).amount?.toDouble() ?? 0;
-  double _creditAmountDouble(dynamic item) {
-    if (item == null) return 0;
-
-    // Primitive cases
-    if (item is num) return item.toDouble();
-    if (item is String) return double.tryParse(item) ?? 0;
-
-    // Map case
-    if (item is Map) {
-      final v = item['amount'] ?? item['value'] ?? item['credits'] ?? item['total'];
-      if (v is num) return v.toDouble();
-      if (v is String) return double.tryParse(v) ?? 0;
-      return 0;
-    }
-
-    // model case with dynamic getters
-    try {
-      final v = (item as dynamic).amount;
-      if (v is num) return v.toDouble();
-      if (v is String) return double.tryParse(v) ?? 0;
-    } catch (_) {}
-    try {
-      final v = (item as dynamic).value;
-      if (v is num) return v.toDouble();
-      if (v is String) return double.tryParse(v) ?? 0;
-    } catch (_) {}
-    try {
-      final v = (item as dynamic).credits;
-      if (v is num) return v.toDouble();
-      if (v is String) return double.tryParse(v) ?? 0;
-    } catch (_) {}
-    try {
-      final v = (item as dynamic).total;
-      if (v is num) return v.toDouble();
-      if (v is String) return double.tryParse(v) ?? 0;
-    } catch (_) {}
-
-    return 0;
-  }
+class _AccountScreenState extends State<AccountScreen> {
+  String selectedValue = "Month";
 
   @override
   Widget build(BuildContext context) {
-    // Format money for display (no decimals; change to 2 if needed)
-    // final creditsDisplay = totalCreditsSum.toStringAsFixed(0);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: Text(
-          widget.currentFirm?.name ?? '',
-          style: GoogleFonts.bebasNeue(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: width * .055,
+      backgroundColor: Pallet.backgroundColor,
+      appBar: CustomAppBar(title: 'Account',showBackButton: false,),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: height*.02,),
+
+            /// Wallet Balance Card
+        Padding(
+          padding: EdgeInsets.only(
+            left: width * 0.04,
+            right: width * 0.04,
           ),
-        ),
-        actions: [
-          Icon(Icons.menu),
-          SizedBox(width: width * .03),
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(top: height * .01),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Dashboard Cards
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => MoneyCreditScreen()),
+              );
+            },
+            child: Container(
+              height: height * 0.116,
+              width: width,
+              decoration: BoxDecoration(
+                color: Pallet.lightBlue,
+                border: Border(
+                  left: BorderSide(
+                    color: Pallet.primaryColor,
+                    width: width * 0.01,
+                  ),
+                  top: BorderSide(
+                    color: Pallet.primaryColor,
+                    width: width * 0.01,
+                  ),
+                ),
+                borderRadius: BorderRadius.circular(width * 0.04),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(width * 0.04),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    StatCard(
-                      count: '0',
-                      label: "Withdrawal request\npending",
-                      imagePath: 'assets/images/account4.png',
+                    /// LEFT TEXTS
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "AED 1120",
+                            style: GoogleFonts.dmSans(
+                              fontSize: width * 0.06,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: height * 0.005),
+                          Text(
+                            "Money Credited",
+                            style: GoogleFonts.dmSans(
+                              fontSize: width * 0.03,
+                              color: Pallet.greyColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    StatCard(
-                      count: "AED 0",
-                      label: "Money Credited",
-                      imagePath: 'assets/images/account3.png',
-                    ),
-                    StatCard(
-                      count: widget.currentFirm?.teamMembers.length.toString() ?? '0',
-                      label: "Marketers Added",
-                      imagePath: 'assets/images/account2.png',
-                    ),
-                    const StatCard(
-                      count: "0",
-                      label: "Leads Granted",
-                      imagePath: 'assets/images/account1.png',
+
+                    /// TOP RIGHT ICON
+                    CircleSvgButton(
+                      size: width*.115,
+                      borderColor: Pallet.primaryColor,
+                      bgColor: Pallet.primaryColor.withOpacity(.1),
+                      child: SvgPicture.asset(
+                        'assets/svg/save-money.svg',
+                        width: width * 0.05,
+                      ),
                     ),
                   ],
                 ),
               ),
-
-              SizedBox(height: height * 0.03),
-
-              // Plan Section
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * .05),
-                child: Text(
-                  "Plan",
-                  style: GoogleFonts.roboto(fontSize: width * .045, fontWeight: FontWeight.w500),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * .05),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 4,
-                        color: Colors.grey.shade400,
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Plan title
-                      Text(
-                        "Basic Plan",
-                        style: GoogleFonts.roboto(
-                          fontSize: width * .045,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF00A0AB),
-                        ),
-                      ),
-                      const Divider(),
-
-                      const SizedBox(height: 6),
-                      Text.rich(
-                        TextSpan(
-                          text: 'Maximum ',
-                          style: GoogleFonts.roboto(fontSize: width * .035, fontWeight: FontWeight.w400),
-                          children: [
-                            TextSpan(
-                              text: '10',
-                              style: GoogleFonts.roboto(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: ' marketers can be added.',
-                              style: GoogleFonts.roboto(fontSize: width * .035, fontWeight: FontWeight.w400),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Country Row
-                      Row(
-                        children: [
-                          Text(
-                            "Country :   ",
-                            style: GoogleFonts.roboto(fontSize: width * .035, fontWeight: FontWeight.w400),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              "UAE",
-                              style: GoogleFonts.roboto(fontSize: width * .04, fontWeight: FontWeight.w400),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Upgrade Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF04C7D6),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => UpgradePlanScreen()),
-                            );
-                          },
-                          child: Text(
-                            "Upgrade",
-                            style: GoogleFonts.roboto(
-                              fontSize: width * .04,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SizedBox(height: height * 0.05),
-
-              // Transaction History
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * .05),
-                child: Text(
-                  "Transaction History",
-                  style: GoogleFonts.roboto(fontSize: width * .045, fontWeight: FontWeight.w500),
-                ),
-              ),
-              SizedBox(height: height * .01),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * .05),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: transactions.length,
-                  separatorBuilder: (context, index) => const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    final tx = transactions[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 4),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: width * 0.23,
-                            child: Text(
-                              tx.date,
-                              style: GoogleFonts.roboto(
-                                fontSize: width * 0.035,
-                                color: Colors.grey[700],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: width * .15),
-                          SizedBox(
-                            width: width * 0.22,
-                            child: Text(
-                              tx.type,
-                              style: GoogleFonts.roboto(
-                                fontSize: width * 0.035,
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            tx.amount,
-                            style: GoogleFonts.roboto(
-                              fontSize: width * 0.037,
-                              fontWeight: FontWeight.w500,
-                              color: tx.isCredited ? Colors.green : Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              SizedBox(height: height * 0.05),
-            ],
+            ),
           ),
+        ),
+
+        /// Stats Cards
+            Padding(
+              padding: EdgeInsets.only(top: height*.02,left:  width * 0.04,right:  width * 0.04,),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => WithdrawelScreen(),));
+                      },
+                      child: _statCard(
+                          "4",
+                          "Withdrawal Request Pending",
+                          CircleSvgButton(
+                            size: width*.09,
+                            borderColor: Pallet.primaryColor,
+                            bgColor: Pallet.primaryColor.withOpacity(.1),
+                            child: SvgPicture.asset('assets/svg/withdrawal.svg',
+                              width: width * 0.05,
+                            ),
+                          ),
+                          width,
+                          height)),
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MarketersAddedScreen(),));
+                      },
+                      child: _statCard(
+                          "23",
+                          "Marketers\nAdded",
+                          CircleSvgButton(
+                            size: width*.09,
+                            borderColor: Pallet.primaryColor,
+                            bgColor: Pallet.primaryColor.withOpacity(.1),
+                            child: SvgPicture.asset('assets/svg/account-group-outline.svg',
+                              width: width * 0.05,
+                            ),
+                          ),
+                          width, height)),
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LeadGrandedScreen(),));
+                      },
+                      child: _statCard(
+                          "56",
+                          "Leads\nGranted",
+                          CircleSvgButton(
+                            size: width*.09,
+                            borderColor: Pallet.primaryColor,
+                            bgColor: Pallet.primaryColor.withOpacity(.1),
+                            child: SvgPicture.asset('assets/svg/account-multiple-check-outline.svg',
+                              width: width * 0.05,
+                            ),
+                          ),
+                          width,
+                          height)),
+                ],
+              ),
+            ),
+
+            SizedBox(height: width * 0.08),
+
+            /// Plan Section
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                border: Border(
+                  bottom: BorderSide(
+                    color:Color(0xFF1AE0ED).withOpacity(.3),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    height: width * 0.09,
+                    width: double.infinity,
+                    color: Colors.blue,
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("  Basic Plan",
+                            style: GoogleFonts.dmSans(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: width * 0.036)),
+                        Padding(
+                          padding:  EdgeInsets.only(left: width*.03),
+                          child: Container(
+                            width: width * 0.18,
+                            height: width * 0.06,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(width * 0.08),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Upgrade',
+                                style: GoogleFonts.dmSans(
+                                    fontSize: width * 0.03,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// Plan features
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: width * 0.05,
+                        bottom: width * 0.005,
+                        top: width * 0.02),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset('assets/svg/blueTick.svg',
+                            width: width * 0.04),
+                        SizedBox(width: width*.01,),
+                        Text(
+                          "Maximum 10 Marketers can be added",
+                          style: GoogleFonts.dmSans(
+                              fontSize: width * 0.035, color: Pallet.greyColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: width * 0.05, bottom: width * 0.02),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset('assets/svg/globe.svg',
+                            width: width * 0.055),
+                        SizedBox(width: width*.01,),
+                        Text("Country : ",
+                            style: GoogleFonts.dmSans(
+                                fontSize: width * 0.035,
+                                color: Pallet.greyColor)),
+                        Text("Dubai",
+                            style: GoogleFonts.dmSans(
+                                fontSize: width * 0.035,
+                                color: Pallet.greyColor)),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ),
+
+            ),
+
+            SizedBox(height: width * 0.05),
+
+            /// Graph Section
+            Padding(
+              padding: EdgeInsets.all(width * 0.02),
+              child: Container(
+                padding: EdgeInsets.all(width * 0.03),
+                width: width,
+                height: height * 0.45,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Pallet.borderColor),
+                  borderRadius: BorderRadius.circular(width * 0.05),
+                  color: Pallet.lightGreyColor,
+                ),
+
+                /// Graph + Filter + Labels
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Filter (Month / Week / Day)
+                    Container(
+                      height: height*.05,
+                      width: width * 0.7,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(width * 0.02),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Radio<String>(
+                            value: "Month",
+                            groupValue: selectedValue,
+                            fillColor:
+                            WidgetStatePropertyAll(Pallet.primaryColor),
+                            onChanged: (value) =>
+                                setState(() => selectedValue = value!),
+                          ),
+                          Text("Month",
+                              style:
+                              GoogleFonts.dmSans(fontSize: width * 0.03)),
+                          SizedBox(width: width * 0.001),
+
+                          Radio<String>(
+                            value: "Week",
+                            groupValue: selectedValue,
+                            fillColor:
+                            WidgetStatePropertyAll(Pallet.primaryColor),
+                            onChanged: (value) =>
+                                setState(() => selectedValue = value!),
+                          ),
+                          Text("Week",
+                              style:
+                              GoogleFonts.dmSans(fontSize: width * 0.03)),
+                          SizedBox(width: width * 0.001),
+
+                          Radio<String>(
+                            value: "Day",
+                            groupValue: selectedValue,
+                            fillColor:
+                            WidgetStatePropertyAll(Pallet.primaryColor),
+                            onChanged: (value) =>
+                                setState(() => selectedValue = value!),
+                          ),
+                          Text("Day", style:
+                              GoogleFonts.dmSans(fontSize: width * 0.03)),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: width * 0.1),
+
+                    /// Bar Chart
+                    SizedBox(
+                      height: height * 0.3,
+                      child: BarChart(
+                        BarChartData(
+                          maxY: 30,
+                          minY: 0,
+                          borderData: FlBorderData(
+                            show: true,
+                            border: Border(
+                              left: BorderSide(
+                                  color: Colors.black, width: width * 0.005),
+                              bottom: BorderSide(
+                                  color: Colors.black, width: width * 0.005),
+                            ),
+                          ),
+                          gridData: FlGridData(show: false),
+
+                          /// Axis labels
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: 10,
+                                getTitlesWidget: (value, meta) {
+                                  if (value == 0) {
+                                    return Text("0",
+                                        style: GoogleFonts.dmSans(
+                                            fontSize: width * 0.03));
+                                  }
+                                  if (value == 10) {
+                                    return Text("10 k",
+                                        style: GoogleFonts.dmSans(
+                                            fontSize: width * 0.03));
+                                  }
+                                  if (value == 20) {
+                                    return Text("20 k",
+                                        style: GoogleFonts.dmSans(
+                                            fontSize: width * 0.03));
+                                  }
+                                  if (value == 30) {
+                                    return Text("30 k",
+                                        style: GoogleFonts.dmSans(
+                                            fontSize: width * 0.03));
+                                  }
+                                  return const SizedBox();
+                                },
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  const labels = [
+                                    "JAN",
+                                    "FEB",
+                                    "MAR",
+                                    "APR",
+                                    "MAY",
+                                    "JUN",
+                                    "JUL"
+                                  ];
+                                  if (value.toInt() < labels.length) {
+                                    return Text(labels[value.toInt()],
+                                        style: GoogleFonts.dmSans(
+                                            fontSize: width * 0.03));
+                                  }
+                                  return const SizedBox();
+                                },
+                              ),
+                            ),
+                            rightTitles:
+                            AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                            topTitles:
+                            AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          ),
+
+                          /// Bars
+                          barGroups: List.generate(7, (i) {
+                            final heights = [10, 25, 17, 8, 12, 25, 1];
+                            return BarChartGroupData(
+                              x: i,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: heights[i].toDouble(),
+                                  color: Pallet.primaryColor,
+                                  width: width * 0.05,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(width * 0.002),
+                                    topRight: Radius.circular(width * 0.002),
+                                  ),
+                                )
+                              ],
+                            );
+                          }),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
 
-/// Dashboard Card Widget
-class StatCard extends StatelessWidget {
-  final String count;
-  final String label;
-  final String imagePath;
-
-  const StatCard({
-    super.key,
-    required this.count,
-    required this.label,
-    required this.imagePath,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Container(
-          height: height * 0.2,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade200),
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-          ),
-          child: Column(
+  /// Stat Card
+  Widget _statCard(
+      String value, String title, Widget icon, double width, double height) {
+    return Container(
+      height: height * 0.11,
+      width: width * 0.3,
+      padding: EdgeInsets.all(width * 0.02),
+      decoration: BoxDecoration(
+        color: Pallet.lightBlue,
+        border: Border(
+          left: BorderSide(color: Pallet.primaryColor, width: width * 0.008),
+          top: BorderSide(color: Pallet.primaryColor, width: width * 0.008),
+        ),
+        borderRadius: BorderRadius.circular(width * 0.03),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                height: (height * 0.25) / 2,
-                width: double.infinity,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        ),
-                        child: Image.asset(
-                          imagePath,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      count, // always a String
-                      style: TextStyle(
-                        fontSize: width * 0.07,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF04C7D6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.03,
-                    vertical: height * 0.01,
-                  ),
-                  child: Center(
-                    child: Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.roboto(
-                        fontSize: width * 0.03,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              Text(value,
+                  style: GoogleFonts.dmSans(
+                      fontSize: width * 0.06, fontWeight: FontWeight.bold)),
+              icon,
             ],
           ),
-        );
-      },
+          Expanded(
+            child: SizedBox(
+              width: width * 0.24,
+              child: Text(title,
+                  style: GoogleFonts.dmSans(
+                      fontSize: width * 0.028, color: Pallet.greyColor)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

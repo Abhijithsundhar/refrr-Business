@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:refrr_admin/models/add-money-on-lead-model.dart';
+import 'package:refrr_admin/models/chatbox-model.dart';
+import 'package:refrr_admin/models/sales-person-model.dart';
 
 class ServiceLeadModel {
   final String leadName;
@@ -9,12 +12,17 @@ class ServiceLeadModel {
   final String serviceName;
   final String location;
   final String leadEmail;
-  final int leadContact;           
+  final int leadContact;
   final List<Map<String, dynamic>> statusHistory;
   final DocumentReference? reference;
   final DateTime createTime;
   final int leadScore;
-  final List<Map<String, dynamic>> creditedAmount;
+  final List<PaymentModel> creditedAmount;
+  final List<SalesPersonModel> leadHandler;
+  final List<ChatModel> chat;
+
+  /// 👉 NEW FIELD
+  final String type;
 
   ServiceLeadModel({
     required this.leadName,
@@ -31,6 +39,11 @@ class ServiceLeadModel {
     required this.creditedAmount,
     required this.leadEmail,
     required this.leadContact,
+    required this.leadHandler,
+    required this.chat,
+
+    /// 👉 NEW
+    required this.type,
   });
 
   Map<String, dynamic> toMap() {
@@ -46,9 +59,14 @@ class ServiceLeadModel {
       'createTime': createTime,
       'leadScore': leadScore,
       'location': location,
-      'creditedAmount': creditedAmount,
+      'creditedAmount': creditedAmount.map((e) => e.toMap()).toList(),
       'leadEmail': leadEmail,
       'leadContact': leadContact,
+      'leadHandler': leadHandler.map((e) => e.toMap()).toList(),
+      'chat': chat.map((e) => e.toMap()).toList(),
+
+      /// 👉 NEW
+      'type': type,
     };
   }
 
@@ -65,9 +83,20 @@ class ServiceLeadModel {
       createTime: (map['createTime'] as Timestamp).toDate(),
       leadScore: map['leadScore'] ?? 0,
       location: map['location'] ?? '',
-      creditedAmount: List<Map<String, dynamic>>.from(map['creditedAmount'] ?? []),
+      creditedAmount: (map['creditedAmount'] as List<dynamic>? ?? [])
+          .map((e) => PaymentModel.fromMap(e))
+          .toList(),
       leadEmail: map['leadEmail'] ?? '',
       leadContact: map['leadContact'] ?? 0,
+      leadHandler: (map['leadHandler'] as List<dynamic>? ?? [])
+          .map((e) => SalesPersonModel.fromMap(e))
+          .toList(),
+      chat: (map['chat'] as List<dynamic>? ?? [])
+          .map((e) => ChatModel.fromMap(e))
+          .toList(),
+
+      /// 👉 NEW
+      type: map['type'] ?? '',
     );
   }
 
@@ -83,9 +112,14 @@ class ServiceLeadModel {
     DateTime? createTime,
     int? leadScore,
     String? location,
-    List<Map<String, dynamic>>? creditedAmount,
+    List<PaymentModel>? creditedAmount,
     String? leadEmail,
     int? leadContact,
+    List<SalesPersonModel>? leadHandler,
+    List<ChatModel>? chat,
+
+    /// 👉 NEW
+    String? type,
   }) {
     return ServiceLeadModel(
       leadName: leadName ?? this.leadName,
@@ -102,6 +136,11 @@ class ServiceLeadModel {
       creditedAmount: creditedAmount ?? this.creditedAmount,
       leadEmail: leadEmail ?? this.leadEmail,
       leadContact: leadContact ?? this.leadContact,
+      leadHandler: leadHandler ?? this.leadHandler,
+      chat: chat ?? this.chat,
+
+      /// 👉 NEW
+      type: type ?? this.type,
     );
   }
 }

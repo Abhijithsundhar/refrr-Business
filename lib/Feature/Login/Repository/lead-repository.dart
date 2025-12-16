@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:refrr_admin/Core/constants/failure.dart';
@@ -155,4 +156,22 @@ class LeadRepository {
       return applications;
     });
   }
+
+  Future<void> updateFirmServices({
+    required String leadId,
+    required List<ServiceModel> services,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(FirebaseCollections.leadsCollection)
+          .doc(leadId)
+          .update({
+        'services': services.map((e) => e.toMap()).toList(),
+      });
+    } catch (e) {
+      debugPrint('Error updating services: $e');
+      rethrow;
+    }
+  }
+
 }

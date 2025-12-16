@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
 import 'package:refrr_admin/Feature/Login/Screens/SplashScreen.dart';
+import 'package:refrr_admin/Feature/Login/Screens/login-page.dart';
+import 'package:refrr_admin/Feature/Login/Screens/onboardScreen-1.dart';
 import 'package:refrr_admin/firebase_options.dart';
 
 
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
     height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: HomeScreen(),
+      // home: OnboardingPage(),
       home:  SplashScreen(),
     );
   }

@@ -1,24 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:refrr_admin/Core/constants/firebaseConstants.dart';
+import 'package:refrr_admin/models/chatbox-model.dart';
 import 'package:refrr_admin/models/services-model.dart';
 
 class ServiceRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// Fetch all services from all leads
   Future<List<ServiceModel>> fetchAllServicesFromLeads() async {
     List<ServiceModel> allServices = [];
 
     final leadSnapshot = await _firestore.collection('leads').get();
+
     for (var lead in leadSnapshot.docs) {
       final data = lead.data();
 
-      if (data['firms'] != null && data['firms'] is List) {
-        for (final firm in List.from(data['firms'])) {
-          if (firm['services'] != null && firm['services'] is Map<String, dynamic>) {
-            Map<String, dynamic> servicesMap = Map<String, dynamic>.from(firm['services']);
-            for (final entry in servicesMap.entries) {
-              allServices.add(ServiceModel.fromMap(entry.value));
-            }
-          }
+      if (data['services'] != null && data['services'] is List) {
+        for (final service in List.from(data['services'])) {
+          allServices.add(ServiceModel.fromMap(service));
         }
       }
     }
@@ -26,45 +25,48 @@ class ServiceRepository {
     return allServices;
   }
 
-  Future<void> addServiceToFirm({
+  /// Add service to lead
+  Future<void> addServiceToLead({
     required String leadId,
-    required int firmIndex,
-    required String serviceId,
     required ServiceModel service,
   }) async {
-    final leadsRef = _firestore.collection('leads').doc(leadId);
-    final leadDoc = await leadsRef.get();
-    final data = leadDoc.data()!;
-    final firms = List.from(data['firms']);
-
-    final currentFirm = Map<String, dynamic>.from(firms[firmIndex]);
-    final currentServices = Map<String, dynamic>.from(currentFirm['services'] ?? {});
-    currentServices[serviceId] = service.toMap();
-
-    currentFirm['services'] = currentServices;
-    firms[firmIndex] = currentFirm;
-
-    await leadsRef.update({'firms': firms});
+    await _firestore.collection('leads').doc(leadId).update({
+      "services": FieldValue.arrayUnion([service.toMap()])
+    });
   }
 
-  Future<void> deleteService({
+  /// Delete service from lead
+  Future<void> deleteServiceFromLead({
     required String leadId,
-    required int firmIndex,
-    required String serviceId,
+    required ServiceModel service,
   }) async {
-    final leadsRef = _firestore.collection('leads').doc(leadId);
-    final doc = await leadsRef.get();
-
-    final data = doc.data()!;
-    final firms = List.from(data['firms']);
-
-    final firm = Map<String, dynamic>.from(firms[firmIndex]);
-    final servicesMap = Map<String, dynamic>.from(firm['services'] ?? {});
-
-    servicesMap.remove(serviceId);
-    firm['services'] = servicesMap;
-    firms[firmIndex] = firm;
-
-    await leadsRef.update({'firms': firms});
+    await _firestore.collection('leads').doc(leadId).update({
+      "services": FieldValue.arrayRemove([service.toMap()])
+    });
   }
+
+  /// 🔥 Update service inside a lead (services array)
+  Future<void> updateServiceInLead({
+    required String leadId,
+    required int serviceIndex,
+    required ServiceModel updatedService,
+  }) async {
+    final ref = _firestore.collection('leads').doc(leadId);
+
+    final doc = await ref.get();
+    final data = doc.data()!;
+
+    List services = List.from(data['services'] ?? []);
+
+    if (serviceIndex < 0 || serviceIndex >= services.length) {
+      throw Exception("Invalid service index");
+    }
+
+    // Replace the service at index
+    services[serviceIndex] = updatedService.toMap();
+
+    await ref.update({"services": services});
+  }
+
+
 }

@@ -19,7 +19,8 @@ final applicationsProvider = StreamProvider.family<List<AffiliateModel>, String>
   final repo = ref.watch(leadRepositoryProvider);
   return repo.getApplications(appId);
 
-});final teamProvider = StreamProvider.family<List<AffiliateModel>, String>((ref, leadId) {
+});
+final teamProvider = StreamProvider.family<List<AffiliateModel>, String>((ref, leadId) {
   final repo = ref.watch(leadRepositoryProvider);
   return repo.getTeam(leadId);
 });

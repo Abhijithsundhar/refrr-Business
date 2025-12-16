@@ -140,8 +140,7 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
       print('1111111');
 
       // 🔹 Get current services or create a new empty list
-      final List<ServiceModel> currentServices =
-      List<ServiceModel>.from(currentFirm.services);
+      final List<ServiceModel> currentServices = List<ServiceModel>.from(currentFirm.services);
 
       // 🔹 Add new service
       currentServices.add(newService);
@@ -150,9 +149,8 @@ class _AddNewServicePageState extends ConsumerState<AddNewServicePage> {
       final updatedFirm = currentFirm.copyWith(services: currentServices);
 
       // 🔹 Update in Firestore via controller
-      await ref
-          .read(leadControllerProvider.notifier)
-          .updateLead(leadModel: updatedFirm, context: context);
+      await ref.read(leadRepositoryProvider).updateFirmServices(leadId: currentFirm.reference?.id ??'',
+        services: currentServices,);
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

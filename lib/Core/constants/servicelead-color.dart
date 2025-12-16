@@ -19,11 +19,11 @@ class StatusColors {
 StatusColors getStatusColors(String status) {
   switch (status) {
     case 'New Lead':
-      return const StatusColors(
-        background: Color(0xFFD1E8FF),
-        border: Color(0xFF3FA2FF),
+      return  StatusColors(
+        background: Color(0x29ABE2).withOpacity(0.1),
+        border: Color(0x29ABE2).withOpacity(.3),
         circleAvatarBorder: Color(0xFFFFFF00),
-        bigBackground: Color(0xFFF5FAFF),
+        bigBackground: Color(0x29ABE2).withOpacity(0.1),
       );
     case 'Contacted':
     case 'Interested':
@@ -34,27 +34,27 @@ StatusColors getStatusColors(String status) {
     case 'Invoice Raised':
     case 'Work in Progress':
       return  StatusColors(
-        background: Color(0x1AA3B500).withOpacity(0.1),
-        border: Color(0x80A3B500),
+        background: Color(0xFFAB19).withOpacity(0.1),
+        border: Color(0xFFAB19).withOpacity(.3),
         circleAvatarBorder: Color(0xFFA3B500),
-        bigBackground: Color(0x0DA3B500),
+        bigBackground: Color(0xFFAB19).withOpacity(.1),
       );
 
     case 'Completed':
-      return const StatusColors(
-        background: Color(0xFFCEF8E2),
-        border:Color(0xFF3FFF99),
+      return  StatusColors(
+        background: Color(0x30C67C).withOpacity(.1),
+        border:Color(0x30C67C).withOpacity(.3),
         circleAvatarBorder: Color(0xFFB6FFD8),
-        bigBackground: Color(0xFFF0FFF7),
+        bigBackground: Color(0x30C67C).withOpacity(.1),
       );
 
     case 'Not Qualified':
     case 'Lost':
-      return const StatusColors(
-        background: Color(0xFFFFDADA),
-        border: Color(0xFFFF0000),
+      return  StatusColors(
+        background: Color(0xE50707).withOpacity(.1),
+        border: Color(0xE50707).withOpacity(.3),
         circleAvatarBorder: Color(0xFFFF0000),
-        bigBackground: Color(0xFFFFF2F2),
+        bigBackground: Color(0xE50707).withOpacity(.1),
       );
 
     default:

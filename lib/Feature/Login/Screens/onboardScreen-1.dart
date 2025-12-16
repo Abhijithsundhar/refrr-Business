@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../Core/common/global variables.dart';
@@ -16,28 +17,28 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   final List<OnboardContent> pages = [
     OnboardContent(
-      title: 'Add Firms, Grow Your Wealth',
-      subtitle1: 'Expand your portfolio and unlock greater',
-      subtitle2: 'financial opportunities.',
-      imagePath: 'assets/svg/SPLASH SCREEN_05-01.svg',
+      title1: "Welcome to",
+      title2: "Grro",
+      subtitle:
+      "Access lead info, proposals, invoices, and performance analytics all in one powerful admin panel.",
+      imagePath: "assets/svg/sp1.svg",
+      buttonText: "Next",
     ),
     OnboardContent(
-      title: 'Earn Money Effortlessly',
-      subtitle1: 'Earn money effortlessly by turning smart ',
-      subtitle2: ' strategies into steady income. ',
-      imagePath: 'assets/svg/SPLASH SCREEN_05-02.svg',
+      title1: "Effortless Lead",
+      title2: "Management",
+      subtitle:
+      "Add, update, and monitor leads in just a few taps and stay in control of your sales flow at all times.",
+      imagePath: "assets/svg/sp2.svg",
+      buttonText: "Next",
     ),
     OnboardContent(
-      title: 'Track Your Growth in Real-Time',
-      subtitle1: 'Track your growth in real-time and stay ahead ',
-      subtitle2: 'with instant insights and progress updates.',
-      imagePath: 'assets/svg/SPLASH SCREEN_05-03.svg',
-    ),
-    OnboardContent(
-      title: 'Track Your Growth in Real-Time',
-      subtitle1: 'Track your growth in real-time and stay ahead ',
-      subtitle2: 'with instant insights and progress updates.',
-      imagePath: 'assets/svg/SPLASH SCREEN_05-04.svg',
+      title1: "Live Insights,",
+      title2: "Smarter Decisions",
+      subtitle:
+      "Track every lead’s status from first contact to conversion with real-time updates and progress tracking.",
+      imagePath: "assets/svg/sp3.svg",
+      buttonText: "Get Started",
     ),
   ];
 
@@ -48,142 +49,123 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
-    children: [
-    Column(
-    children: [
-      /// Onboarding Screens with stacked dots
-      Expanded(
-      child: Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        PageView.builder(
-          controller: _controller,
-          itemCount: pages.length,
-          onPageChanged: (index) {
-            setState(() => currentPage = index);
-          },
-          itemBuilder: (_, index) => OnboardScreen(content: pages[index]),
-        ),
-        Positioned(
-          bottom: height * 0.12,
-          child: SmoothPageIndicator(
-            controller: _controller,
-            count: pages.length,
-            effect: CustomizableEffect(
-              activeDotDecoration: DotDecoration(
-                width: 20,
-                height: 10,
-                color: Color.fromRGBO(189, 189, 189, 1),
-                borderRadius: BorderRadius.circular(10),
+        children: [
+          /// PAGE CONTENT
+          Column(
+            children: [
+              Expanded(
+                child: PageView.builder(
+                  controller: _controller,
+                  itemCount: pages.length,
+                  onPageChanged: (index) {
+                    setState(() => currentPage = index);
+                  },
+                  itemBuilder: (_, index) => OnboardScreen(
+                    content: pages[index],
+                  ),
+                ),
               ),
-              dotDecoration: DotDecoration(
-                width: 10,
-                height: 10,
-                color: Color.fromRGBO(217, 217, 217, 1),
-                borderRadius: BorderRadius.circular(50),
+
+              /// Smooth Page Indicator
+              SmoothPageIndicator(
+                controller: _controller,
+                count: pages.length,
+                effect: ExpandingDotsEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  expansionFactor: 3,
+                  activeDotColor: Colors.transparent,
+                  dotColor: Colors.transparent,
+                ),
               ),
-              spacing: 8.0,
+
+              SizedBox(height: height * 0.03),
+
+              /// NEXT / GET STARTED button
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                child: GestureDetector(
+                  onTap: () {
+                    if (currentPage == pages.length - 1) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                      );
+                    } else {
+                      _controller.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                  child: Container(
+                    height: height * 0.065,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          pages[currentPage].buttonText,
+                          style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: width * 0.04,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: width*.0025),
+                          child: Icon(Icons.arrow_forward_ios,color: Colors.white,size:width * 0.04,),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: height * 0.05),
+            ],
+          ),
+
+          /// SKIP button on top right
+          Positioned(
+            top: height * 0.06,
+            right: width * 0.05,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => LoginPage()));
+              },
+              child: Padding(
+                padding:  EdgeInsets.only(top: height*.01),
+                child: Container(
+                  height: height*.035,
+                  width: width*.17,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color:Color(0xFFE5E9EB) )
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Skip",
+                      style: GoogleFonts.dmSans(
+                        color: Color(0xff6E7C87),
+                        fontSize: width * 0.038,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        )
-      ],
-    ),
-    ),
-
-    /// Next Button
-    Padding(
-    padding: EdgeInsets.only(left: width * .02),
-    child: GestureDetector(
-    onTap: () {
-    if (currentPage == pages.length - 1) {
-    Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => LoginPage()),
-    );
-    } else {
-    _controller.nextPage(
-    duration: const Duration(milliseconds: 300),
-    curve: Curves.easeIn,
-    );
-    }
-    },
-    child: Container(
-    width: width * .9,
-    height: height * .07,
-    decoration: BoxDecoration(
-    color: Colors.black,
-    border: Border.all(
-    color: Colors.black,
-    width: width * .004,
-    ),
-    borderRadius: BorderRadius.circular(width * .03),
-    ),
-    child: Center(
-    child: Text(
-    'Next',
-    style: GoogleFonts.roboto(
-    fontSize: width * .034,
-    color: Colors.white,
-    fontWeight: FontWeight.w500,
-    ),
-    ),
-    ),
-    ),
-    ),
-    ),
-    SizedBox(height: height * .04),
-    ],
-    ),
-
-    /// Skip Button Positioned Top-Right
-    Positioned(
-    top: height * 0.06,
-    right: width * 0.05,
-    child: GestureDetector(
-    onTap: () {
-    Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => LoginPage()),
-    );
-    },
-    child: Container(
-    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    decoration: BoxDecoration(
-    color: Colors.white,
-    border: Border.all(color: Colors.white),
-    borderRadius: BorderRadius.circular(width * .01),
-    ),
-    child: Text(
-    'Skip',
-    style: GoogleFonts.roboto(
-    fontSize: width * .034,
-    color: Colors.black,
-    fontWeight: FontWeight.w400,
-    ),
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
+        ],
+      ),
     );
   }
 }
-
-class OnboardContent {
-  final String title;
-  final String subtitle1;
-  final String subtitle2;
-  final String imagePath;
-
-  OnboardContent({
-    required this.title,
-    required this.subtitle1,
-    required this.subtitle2,
-    required this.imagePath,
-  });
-}
-
 class OnboardScreen extends StatelessWidget {
   final OnboardContent content;
 
@@ -191,57 +173,85 @@ class OnboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: height * .2), // Top spacing
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: height * .12),
 
-          /// Heading
-          Text(
-            content.title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
-              fontSize: width * .05,
-            ),
+        /// LOGO
+        SizedBox(
+          height: height * 0.1,
+          width: width * .3,
+          child: SvgPicture.asset("assets/svg/GRRO-SVG.svg",
+            fit: BoxFit.contain,
           ),
-          SizedBox(height: height * .015),
+        ),
 
-          /// Subtitles
-          Text(
-            content.subtitle1,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-              color: Colors.black,
-              fontWeight: FontWeight.w300,
-              fontSize: width * .04,
-            ),
-          ),
-          Text(
-            content.subtitle2,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.roboto(
-              color: Colors.black,
-              fontWeight: FontWeight.w300,
-              fontSize: width * .04,
-            ),
-          ),
+        SizedBox(height: height * 0.055),
 
-          /// Image
-          Container(
-            height: height * .55,
-            width: double.infinity,
-            child: Image.asset(
-              content.imagePath,
-              fit: BoxFit.contain,
-            ),
+        /// IMAGE (BIG)
+        SizedBox(
+          height: height * 0.31,
+          child: SvgPicture.asset(
+            content.imagePath,
+            fit: BoxFit.contain,
           ),
-        ],
-      ),
+        ),
+
+        SizedBox(height: height * 0.03),
+
+        /// TITLE (Two Texts One by One)
+        Padding(
+          padding: EdgeInsets.only(left: width * .06),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(content.title1,
+                style: GoogleFonts.dmSans(
+                  fontSize: width * 0.09,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(content.title2,
+                style: GoogleFonts.dmSans(
+                  fontSize: width * 0.09,
+                  color: Color(0xFF00BFCA),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: height * 0.01),
+
+              /// SUBTITLE
+              Text(
+                content.subtitle,
+                textAlign: TextAlign.start,
+                style: GoogleFonts.dmSans(
+                  fontSize: width * 0.04,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
+}
+
+class OnboardContent {
+  final String title1;
+  final String title2;
+  final String subtitle;
+  final String imagePath;
+  final String buttonText;
+
+  OnboardContent({
+    required this.title1,
+    required this.title2,
+    required this.subtitle,
+    required this.imagePath,
+    required this.buttonText,
+  });
 }

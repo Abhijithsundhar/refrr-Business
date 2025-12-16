@@ -26,28 +26,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Future<void> _keepLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final uid = prefs.getString('uid');
-
     if (!mounted) return;
-
     if (uid == null || uid.isEmpty) {
       _goToOnboarding();
       return;
     }
-
     try {
       final LeadsModel? lead =
       await ref.read(leadControllerProvider.notifier).getLead(uid);
-
       if (!mounted) return;
 
       if (lead == null) {
         _goToOnboarding();
         return;
       }
-
       // IMPORTANT: Only set in-memory lead. Do NOT call updateLead here.
       ref.read(leadControllerProvider.notifier).setCurrentLead(lead);
-
       // Replace Splash with Home
       Navigator.of(context).pushReplacement(
         CupertinoPageRoute(builder: (_) => HomeScreen(lead: lead)),
@@ -72,7 +66,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.3,
           width: MediaQuery.of(context).size.width * 0.7,
-          child: SvgPicture.asset('assets/svg/refrrRoundLogo.svg'),
+          child: SvgPicture.asset('assets/images/grroLogo.png'),
           ),
         ),
       );
