@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:refrr_admin/Core/common/chat-screen-support-%20functions.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 
 class SalesProfilePage extends StatelessWidget {
   const SalesProfilePage({super.key});

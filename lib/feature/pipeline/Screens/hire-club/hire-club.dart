@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/hire-club/hire-club-inner-page.dart';
 
 class HireFromSalesClubPage extends StatelessWidget {

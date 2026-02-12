@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/constants/color-constnats.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 

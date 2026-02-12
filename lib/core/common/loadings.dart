@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 
 void showLoading(BuildContext context) {
   showDialog(

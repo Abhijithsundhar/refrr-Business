@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refrr_admin/Core/common/chat-screen-support-%20functions.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/common/image-picker.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Core/common/textEditingControllers.dart';

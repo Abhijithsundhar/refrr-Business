@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refrr_admin/Core/common/alertBox.dart';
 import 'package:refrr_admin/Core/common/custom-appBar.dart';
 import 'package:refrr_admin/Core/common/custom-text-field.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/common/loader.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Core/common/textEditingControllers.dart';

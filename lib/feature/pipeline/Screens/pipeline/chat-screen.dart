@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/change-lead-type-sheet.dart';
 import 'package:refrr_admin/Core/common/change-sales-person-sheet.dart';
 import 'package:refrr_admin/Core/common/chat-screen-support-%20functions.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/common/textEditingControllers.dart';
 import 'package:refrr_admin/Core/constants/servicelead-color.dart';
 import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';

@@ -3,7 +3,7 @@
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:refrr_admin/core/common/custom-appBar.dart';
 // import 'package:refrr_admin/core/common/custom-text-field.dart';
-// import 'package:refrr_admin/core/common/global%20variables.dart';
+// import 'package:refrr_admin/Core/common/globalVariables.dart';
 // import 'package:refrr_admin/core/common/loader.dart';
 // import 'package:refrr_admin/core/common/textEditingControllers.dart';
 // import 'package:refrr_admin/core/constants/textfield-space.dart';

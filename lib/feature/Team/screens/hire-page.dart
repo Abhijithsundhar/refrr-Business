@@ -17,7 +17,7 @@ import 'package:refrr_admin/Feature/pipeline/Screens/scale/country-bottom-sheet.
 import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/country-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 
 class HirePage extends ConsumerStatefulWidget {
   final LeadsModel? currentFirm;

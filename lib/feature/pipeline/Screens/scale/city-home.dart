@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/alertBox.dart';
 import 'package:refrr_admin/Core/common/custom-round-button.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 import 'package:refrr_admin/Feature/pipeline/Controller/city-controller.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/scale/city-account.dart';

@@ -7,7 +7,7 @@ import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Core/constants/color-constnats.dart';
 import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
 import 'package:refrr_admin/Feature/Login/Screens/contact-us.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});

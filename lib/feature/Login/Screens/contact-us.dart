@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/call-function.dart';
 import 'package:refrr_admin/Core/common/custom-appBar.dart';
 import 'package:refrr_admin/Core/common/email-function.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/common/location-funtion.dart';
 import 'package:refrr_admin/Core/common/website-function.dart';
 

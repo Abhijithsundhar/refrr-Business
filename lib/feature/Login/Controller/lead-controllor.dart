@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Feature/Login/Repository/lead-repository.dart';
 import 'package:refrr_admin/Feature/Login/Screens/home.dart';
 import 'package:refrr_admin/Feature/Login/Screens/contact-us.dart';

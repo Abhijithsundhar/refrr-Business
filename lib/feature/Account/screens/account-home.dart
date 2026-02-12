@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/custom-appBar.dart';
 import 'package:refrr_admin/Core/common/custom-round-button.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 import 'package:refrr_admin/Feature/Account/screens/lead-granded-page.dart';
 import 'package:refrr_admin/Feature/Account/screens/marketers-page.dart';

@@ -1,6 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 
 TextEditingController searchController=TextEditingController();
 ///add firms
