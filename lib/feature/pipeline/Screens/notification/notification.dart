@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/custom-round-button.dart';
-import 'package:refrr_admin/Core/common/global variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 
 class NotificationScreen extends ConsumerWidget {

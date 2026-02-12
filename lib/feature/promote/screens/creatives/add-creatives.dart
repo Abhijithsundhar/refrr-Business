@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:refrr_admin/Core/common/alertBox.dart';
 import 'package:refrr_admin/Core/common/custom-round-button.dart';
-import 'package:refrr_admin/Core/common/global variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Core/constants/asset.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';

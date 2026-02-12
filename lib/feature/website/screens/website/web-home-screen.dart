@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/custom-appBar.dart';
 import 'package:refrr_admin/Core/common/custom-text-field.dart';
-import 'package:refrr_admin/Core/common/global variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Core/common/loader.dart';
 // ❌ Removed global controller import
 // import 'package:refrr_admin/core/common/textEditingControllers.dart' hide searchQuery;

@@ -9,7 +9,7 @@ import 'package:refrr_admin/Core/common/share-image.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 import 'package:refrr_admin/Core/constants/asset.dart';
-import 'package:refrr_admin/Core/common/global variables.dart';
+import 'package:refrr_admin/Core/common/globalVariables.dart';
 import 'package:refrr_admin/Feature/promote/controller/creative-controller.dart';
 import 'package:refrr_admin/Feature/promote/screens/creatives/add-creatives.dart';
 import 'package:refrr_admin/models/leads_model.dart';
