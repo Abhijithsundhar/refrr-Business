@@ -68,7 +68,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.3,
           width: MediaQuery.of(context).size.width * 0.7,
-          child: SvgPicture.asset('assets/svg/grroLogoWhite.svg'),
+          child: SvgPicture.asset('assets/svg/grroLogoWhite.svg', color: Colors.white,),
           // child: SvgPicture.asset('assets/svg/G-logo.svg'),
           ),
         ),
