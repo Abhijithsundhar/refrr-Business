@@ -9,7 +9,7 @@ setSearchParam(String caseNumber) {
     String name = "";
 
     for (int k = i; k < nameSplits.length; k++) {
-      name = name + nameSplits[k] + " ";
+      name = "$name${nameSplits[k]} ";
     }
     temp = "";
 

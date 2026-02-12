@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'global variables.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
 
 void showLoading(BuildContext context) {
   showDialog(

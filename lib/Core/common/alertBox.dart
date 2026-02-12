@@ -5,7 +5,7 @@ import 'package:refrr_admin/Core/common/custom-round-button.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
 import 'package:flutter/services.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
-import 'package:refrr_admin/Core/constants/sizedboxes.dart'; // for clipboard copy
+// for clipboard copy
 
 
 void showCommonAlertBox(BuildContext context, String message, VoidCallback onYesPressed, String buttonText) {

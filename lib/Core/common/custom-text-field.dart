@@ -306,7 +306,7 @@ Widget dropdownField<T>({
       borderRadius: BorderRadius.circular(width * 0.025),
     ),
     child: DropdownButtonFormField<T>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       icon: const Icon(Icons.keyboard_arrow_down),
       decoration: InputDecoration(

@@ -2,27 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:refrr_admin/Core/common/alertBox.dart';
 import 'package:refrr_admin/Core/common/call-function.dart';
-import 'package:refrr_admin/Core/common/chat-screen-support-%20functions.dart';
 import 'package:refrr_admin/Core/common/custom-round-button.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
-import 'package:refrr_admin/Core/common/textEditingControllers.dart';
 import 'package:refrr_admin/Core/common/whatsapp-function.dart';
 import 'package:refrr_admin/Core/constants/asset.dart';
-import 'package:refrr_admin/Core/constants/firebaseConstants.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
 import 'package:refrr_admin/Feature/Team/screens/career-tab.dart';
 import 'package:refrr_admin/Feature/Team/screens/personal-info-tab.dart';
-import 'package:refrr_admin/Feature/Team/screens/pipleLine-tab.dart';
 import 'package:refrr_admin/Feature/Team/screens/prefssonal-tab.dart';
 import 'package:refrr_admin/core/common/snackbar.dart';
 import 'package:refrr_admin/models/affiliate-model.dart';
-import 'package:refrr_admin/models/balance-amount-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
-import 'package:refrr_admin/models/total-credit-model.dart';
 
 class NonTeamProfile extends ConsumerStatefulWidget {
   final AffiliateModel affiliate;

@@ -10,7 +10,6 @@ import 'package:refrr_admin/Core/common/custom-appBar.dart';
 import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
 import 'package:refrr_admin/Feature/pipeline/Controller/industry-controler.dart';
 import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
-import 'package:refrr_admin/Feature/pipeline/Controller/serviceLead-controllor.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 
 class SuggestedCandidats extends ConsumerStatefulWidget {

@@ -12,7 +12,6 @@ import 'package:refrr_admin/Core/constants/location-list.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 import 'package:refrr_admin/Feature/Team/screens/functions/card%20funtion.dart';
 import 'package:refrr_admin/Feature/Team/screens/non-hired-profile.dart';
-import 'package:refrr_admin/Feature/pipeline/Controller/industry-controler.dart';
 import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/scale/country-bottom-sheet.dart';
 import 'package:refrr_admin/models/affiliate-model.dart';

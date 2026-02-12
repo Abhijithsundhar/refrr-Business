@@ -43,7 +43,7 @@ class WithdrewrequstModel {
     return WithdrewrequstModel(
       amount: amount ?? this.amount,
       requstTime: requstTime ?? this.requstTime,
-      acceptedBy: acceptBy ?? this.acceptedBy,
+      acceptedBy: acceptBy ?? acceptedBy,
       currency: currency ?? this.currency,
       status: status ?? this.status,
       image: image ?? this.image,

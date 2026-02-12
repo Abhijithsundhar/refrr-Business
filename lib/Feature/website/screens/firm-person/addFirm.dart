@@ -511,7 +511,7 @@ class _AddFirmScreenState extends ConsumerState<AddFirmScreen> {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButtonFormField<String>(
-              value: selectedIndustry,
+              initialValue: selectedIndustry,
               dropdownColor: Colors.white,
               decoration: InputDecoration(
                 border: InputBorder.none,

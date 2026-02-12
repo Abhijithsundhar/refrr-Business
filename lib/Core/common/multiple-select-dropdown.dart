@@ -8,13 +8,13 @@ class MultiSelectDropdown extends StatefulWidget {
   final InputDecoration decoration;
 
   const MultiSelectDropdown({
-    Key? key,
+    super.key,
     required this.dropItemList,
     required this.hint,
     required this.w,
     required this.onChange,
     required this.decoration,
-  }) : super(key: key);
+  });
 
   @override
   _MultiSelectDropdownState createState() => _MultiSelectDropdownState();
@@ -67,10 +67,9 @@ class _MultiSelectDialog extends StatefulWidget {
   final List<String> selectedItems;
 
   const _MultiSelectDialog({
-    Key? key,
     required this.items,
     required this.selectedItems,
-  }) : super(key: key);
+  });
 
   @override
   State<_MultiSelectDialog> createState() => _MultiSelectDialogState();
@@ -78,7 +77,7 @@ class _MultiSelectDialog extends StatefulWidget {
 
 class _MultiSelectDialogState extends State<_MultiSelectDialog> {
   late List<String> _tempSelected;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
 
   @override
@@ -109,7 +108,7 @@ class _MultiSelectDialogState extends State<_MultiSelectDialog> {
       backgroundColor: Colors.white,
       contentPadding: EdgeInsets.all(16),
       title: Text('Select Services'),
-      content: Container(
+      content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: SingleChildScrollView(
           child: Column(
@@ -142,7 +141,7 @@ class _MultiSelectDialogState extends State<_MultiSelectDialog> {
                     });
                   },
                 );
-              }).toList(),
+              }),
             ],
           ),
         ),
@@ -168,13 +167,13 @@ class SingleSelectDropdown extends StatefulWidget {
   final InputDecoration decoration;
 
   const SingleSelectDropdown({
-    Key? key,
+    super.key,
     required this.itemList,
     required this.hint,
     required this.w,
     required this.onChange,
     required this.decoration,
-  }) : super(key: key);
+  });
 
   @override
   State<SingleSelectDropdown> createState() => _SingleSelectDropdownState();
@@ -184,7 +183,7 @@ class _SingleSelectDropdownState extends State<SingleSelectDropdown> {
   String? selectedItem;
 
   void _showSelectDialog() async {
-    TextEditingController _searchController = TextEditingController();
+    TextEditingController searchController = TextEditingController();
     List<String> filteredList = List.from(widget.itemList);
 
     final String? result = await showDialog<String>(
@@ -199,7 +198,7 @@ class _SingleSelectDropdownState extends State<SingleSelectDropdown> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      controller: _searchController,
+                      controller: searchController,
                       decoration: InputDecoration(
                         hintText: 'Search...',
                         prefixIcon: Icon(Icons.search),

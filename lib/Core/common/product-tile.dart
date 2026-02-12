@@ -5,7 +5,6 @@ import 'package:refrr_admin/Core/constants/color-constnats.dart';
 import 'package:refrr_admin/Core/constants/sizedboxes.dart';
 import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
 import 'package:refrr_admin/Feature/website/screens/firm-person/select-firm.dart';
-import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/product-model.dart';
 

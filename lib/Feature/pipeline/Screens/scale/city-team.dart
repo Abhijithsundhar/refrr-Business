@@ -7,7 +7,6 @@ import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Core/constants/asset.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
-import 'package:refrr_admin/Feature/Team/screens/hire-singlepage.dart';
 import 'package:refrr_admin/Feature/Team/screens/non-hired-profile.dart';
 import 'package:refrr_admin/Feature/Team/screens/profile.dart';
 import 'package:refrr_admin/Feature/pipeline/Controller/country-controllor.dart';
@@ -53,7 +52,7 @@ class _TeamTabState extends ConsumerState<TeamTab> {
             country.countryCode == widget.city!.country,
       );
 
-      if (mounted && matchingCountry != null) {
+      if (mounted) {
         setState(() {
           countryName = matchingCountry.countryName;
         });
@@ -727,8 +726,8 @@ class _TeamTabState extends ConsumerState<TeamTab> {
                 children: [
                   CircleAvatar(
                     radius: width * 0.08,
-                    backgroundImage: candidate.profile != null && candidate.profile!.isNotEmpty
-                        ? NetworkImage(candidate.profile!)
+                    backgroundImage: candidate.profile.isNotEmpty
+                        ? NetworkImage(candidate.profile)
                         : const AssetImage('assets/image.png') as ImageProvider,
                   ),
                   SizedBox(height: width * 0.02),

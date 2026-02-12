@@ -574,7 +574,7 @@ void showAddPaymentSheet(BuildContext context,String name,TextEditingController 
                           ),
                         ),
                         Text(
-                          "To ${name}",
+                          "To $name",
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.black54,

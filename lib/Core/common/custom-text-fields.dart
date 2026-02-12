@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'global variables.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String? initialValue;
@@ -15,7 +15,7 @@ class CustomTextFormField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
 
   const CustomTextFormField({
-    Key? key,
+    super.key,
     this.initialValue,
     this.hintText,
     this.maxLines = 1,
@@ -25,7 +25,7 @@ class CustomTextFormField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +78,8 @@ class CustomReadonlyTextField extends StatelessWidget {
       this.labelText,
       this.textColor,
       this.moneyValue, {
-        Key? key,
-      }) : super(key: key);
+        super.key,
+      });
 
   @override
   Widget build(BuildContext context) {

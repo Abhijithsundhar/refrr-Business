@@ -5,10 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:refrr_admin/Core/common/global variables.dart';
-import 'package:refrr_admin/Core/common/loader.dart';
 import 'package:refrr_admin/Feature/Login/Screens/SplashScreen.dart';
 import 'package:refrr_admin/Feature/Login/Screens/connectivity.dart';
-import 'package:refrr_admin/Feature/Login/Screens/net-checkpage.dart';
 import 'package:refrr_admin/firebase_options.dart';
 
 Future<void> main() async {

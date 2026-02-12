@@ -14,12 +14,9 @@ import 'package:refrr_admin/Core/common/textEditingControllers.dart' hide search
 import 'package:refrr_admin/Core/constants/homepage-functions.dart';
 import 'package:refrr_admin/Core/constants/servicelead-color.dart';
 import 'package:refrr_admin/Feature/Login/Screens/connectivity.dart';
-import 'package:refrr_admin/Feature/Team/controller/affiliate-controller.dart';
 import 'package:refrr_admin/Feature/pipeline/Controller/city-controller.dart';
 import 'package:refrr_admin/Feature/pipeline/Controller/serviceLead-controllor.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/menu/menu.dart';
-import 'package:refrr_admin/Feature/pipeline/Screens/notification/notification.dart';
-import 'package:refrr_admin/Feature/pipeline/Screens/pipeline/chat-screen.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/pipeline/date-filter.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/pipeline/lead-card-ui.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/scale/add-city.dart';
@@ -709,8 +706,9 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                 onTap: () {
                                   setState(() => selectedIndex =
                                       index);
-                                  if (item['onTap'] != null)
+                                  if (item['onTap'] != null) {
                                     item['onTap']();
+                                  }
                                 },
                                 child: Container(
                                   width: width * 0.22,

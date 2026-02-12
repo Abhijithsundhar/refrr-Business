@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../Core/common/global variables.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
 
 class AddNewPage extends StatelessWidget {
   const AddNewPage({super.key});

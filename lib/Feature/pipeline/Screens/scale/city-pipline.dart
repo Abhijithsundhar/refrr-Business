@@ -61,7 +61,7 @@ class _CityPipelineState extends State<CityPipeline> {
 
     // ✅ Filter leads where (firm name == leadName) AND (city.zone == marketerLocation)
     result = result.where((lead) {
-      final firmName = widget.currentFirm?.name?.toLowerCase().trim() ?? '';
+      final firmName = widget.currentFirm?.name.toLowerCase().trim() ?? '';
       final leadName = lead.leadName.toLowerCase().trim();
       final cityZone = widget.city?.zone.toLowerCase().trim() ?? '';
       final marketerLocation = lead.marketerLocation.toLowerCase().trim();
