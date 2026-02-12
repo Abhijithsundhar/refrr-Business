@@ -70,7 +70,7 @@ void showHireMarketersDialog(
                     child: _hireOptionCard(
                       svgPath:
                       'assets/svg/account-multiple-plus-outline.svg',
-                      label: "From Own Team",
+                      label: "From Own team",
                       onTap: () {
                         Navigator.pop(context);
                         onOwnTeamTap();

@@ -29,7 +29,7 @@ final affiliateByMarketerProvider = FutureProvider.family<AffiliateModel?, Strin
   return await controller.getAffiliateByMarketerId(marketerId);
 });
 
-/// 🔹 NEW: Team Members Provider - Fetches affiliates by IDs from teamMembers list
+/// 🔹 NEW: team Members Provider - Fetches affiliates by IDs from teamMembers list
 final teamProvider = StreamProvider.family<List<AffiliateModel>, String>((ref, leadId) async* {
   final firestore = FirebaseFirestore.instance;
 
@@ -49,7 +49,7 @@ final teamProvider = StreamProvider.family<List<AffiliateModel>, String>((ref, l
     final leadData = leadSnapshot.data();
     final List<String> teamMemberIds = List<String>.from(leadData?['teamMembers'] ?? []);
 
-    debugPrint('📋 Team Member IDs for lead $leadId: $teamMemberIds');
+    debugPrint('📋 team Member IDs for lead $leadId: $teamMemberIds');
 
     if (teamMemberIds.isEmpty) {
       debugPrint('📋 No team members found');

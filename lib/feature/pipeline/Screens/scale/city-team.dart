@@ -73,7 +73,7 @@ class _TeamTabState extends ConsumerState<TeamTab> {
     Navigator.push(context, MaterialPageRoute(builder: (_) => NonTeamProfile(affiliate: affiliate,currentFirm: widget.currentFirm,),),);
   }
 
-  // 👇 Navigate to team member profile (for Our Team section)
+  // 👇 Navigate to team member profile (for Our team section)
   void _navigateToTeamMemberProfile(AffiliateModel affiliate) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => AccountProfileScreen(affiliate: affiliate,currentFirm: widget.currentFirm),),);
   }
@@ -228,7 +228,7 @@ class _TeamTabState extends ConsumerState<TeamTab> {
           // OUR TEAM SECTION
           Padding(
             padding: EdgeInsets.only(left: width * 0.02),
-            child: Text("Our Team",
+            child: Text("Our team",
               style: GoogleFonts.dmSans(
                 fontSize: width * 0.055,
                 fontWeight: FontWeight.w700,
@@ -238,7 +238,7 @@ class _TeamTabState extends ConsumerState<TeamTab> {
           SizedBox(height: height * .005),
           teamMembersAsync.when(
             data: (teamMembers) {
-              print('\n👥 OUR TEAM - Team Members Loaded:');
+              print('\n👥 OUR TEAM - team Members Loaded:');
               print('   Total team members: ${teamMembers.length}');
               print('   Current city zone: "${widget.city?.zone}"');
 
@@ -250,9 +250,9 @@ class _TeamTabState extends ConsumerState<TeamTab> {
                 bool matches = affiliateZone == cityZone;
 
                 if (matches) {
-                  print('   ✅ Team member in zone: ${affiliate.name} (zone: $affiliateZone)');
+                  print('   ✅ team member in zone: ${affiliate.name} (zone: $affiliateZone)');
                 } else {
-                  print('   ❌ Team member NOT in zone: ${affiliate.name} (zone: $affiliateZone, needed: $cityZone)');
+                  print('   ❌ team member NOT in zone: ${affiliate.name} (zone: $affiliateZone, needed: $cityZone)');
                 }
 
                 return matches;
@@ -310,7 +310,7 @@ class _TeamTabState extends ConsumerState<TeamTab> {
                       .where((id) => id.isNotEmpty)
                       .toSet();
 
-                  print('   Team member IDs to exclude: $teamMemberIds');
+                  print('   team member IDs to exclude: $teamMemberIds');
 
                   final suggestedCandidates = allAffiliates.where((affiliate) {
                     final affiliateZone = affiliate.zone.toLowerCase().trim() ?? '';

@@ -341,7 +341,7 @@ Widget registration3BottomSheet(
                                 SizedBox(
                                     width: width * 0.02),
                                 Text(
-                                  "Creating Account...",
+                                  "Creating account...",
                                   style:
                                   GoogleFonts.dmSans(
                                     color: Colors.white,
@@ -352,7 +352,7 @@ Widget registration3BottomSheet(
                               ],
                             )
                                 : Text(
-                              "Create Account",
+                              "Create account",
                               style:
                               GoogleFonts.dmSans(
                                 color: Colors.white,

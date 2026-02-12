@@ -79,7 +79,7 @@ class _TabAccountState extends State<TabAccount> {
                 ),
                 const Spacer(),
                 /// TITLE (bottom-left)
-                Text("Team Members",
+                Text("team Members",
                   style: GoogleFonts.dmSans(
                     fontSize: width * 0.032,
                     color: Pallet.greyColor,

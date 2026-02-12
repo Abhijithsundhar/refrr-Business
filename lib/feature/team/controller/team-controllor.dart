@@ -7,7 +7,7 @@ final teamRepositoryProvider = Provider<TeamRepository>((ref) {
   return TeamRepository();
 });
 
-/// Team Controller Provider
+/// team Controller Provider
 final teamControllerProvider = StateNotifierProvider<TeamController, bool>((ref) {
   return TeamController(ref.read(teamRepositoryProvider));
 });
@@ -17,7 +17,7 @@ class TeamController extends StateNotifier<bool> {
 
   TeamController(this._repository) : super(false);
 
-  /// 🔹 Remove Affiliate from Team
+  /// 🔹 Remove Affiliate from team
   Future<bool> removeAffiliateFromTeam({
     required String firmId,
     required String affiliateId,

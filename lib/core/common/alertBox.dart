@@ -181,7 +181,7 @@ void showDeleteAccountDialog(BuildContext context,VoidCallback onTap) {
 
               // Title
               Text(
-                "Delete Account",
+                "Delete account",
                 style: GoogleFonts.dmSans(
                   fontSize: width * 0.055,
                   fontWeight: FontWeight.w700,
@@ -214,7 +214,7 @@ void showDeleteAccountDialog(BuildContext context,VoidCallback onTap) {
                     SizedBox(width: width * 0.02),
                     Expanded(
                       child: Text(
-                        "Account Deletion\n\n"
+                        "account Deletion\n\n"
                             "Users can delete their account at any time from within the application. "
                             "Once deleted, the account will be permanently disabled and access will be revoked. "
                             "All personal data will be removed from active systems and will no longer be visible to other users. "
@@ -831,7 +831,7 @@ void showTeamLimitAlert(BuildContext context, int teamLimit) {
 
                 Row(
                   children: [
-                    Text('Team Limit Reached',
+                    Text('team Limit Reached',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

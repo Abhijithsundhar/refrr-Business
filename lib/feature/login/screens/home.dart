@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               _buildNavItem(
                 index: 2,
-                label: "Team",
+                label: "team",
                 icon: _currentIndex == 2
                     ? "assets/svg/teamWhite.svg"
                     : "assets/svg/teamGrey.svg",

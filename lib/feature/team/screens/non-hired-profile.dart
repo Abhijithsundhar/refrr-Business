@@ -70,7 +70,7 @@ class _NonTeamProfileState extends ConsumerState<NonTeamProfile> {
       final teamLimit = int.tryParse(data.teamLimit.toString()) ?? 0;
       final newCount = currentCount + 1;
 
-      debugPrint('📊 Team check: currentCount=$currentCount, teamLimit=$teamLimit, newCount=$newCount');
+      debugPrint('📊 team check: currentCount=$currentCount, teamLimit=$teamLimit, newCount=$newCount');
 
       if (newCount > teamLimit) {
         showTeamLimitAlert(context, teamLimit);

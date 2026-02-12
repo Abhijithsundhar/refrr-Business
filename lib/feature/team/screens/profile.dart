@@ -273,7 +273,7 @@ class _AccountProfileScreenState extends ConsumerState<AccountProfileScreen> {
                       ),
                       child: Row(
                         children: [
-                          _tabItem("Account", 0),
+                          _tabItem("account", 0),
                           _tabItem("Pipeline", 1),
                           _tabItem("Personal Info", 2),
                           _tabItem("Professional Info", 3),
@@ -408,7 +408,7 @@ class _AccountProfileScreenState extends ConsumerState<AccountProfileScreen> {
                 ),
                 child: Row(
                   children: [
-                    _tabItem("Account", 0),
+                    _tabItem("account", 0),
                     _tabItem("Pipeline", 1),
                     _tabItem("Personal Info", 2),
                     _tabItem("Professional Info", 3),
@@ -567,7 +567,7 @@ class _AccountProfileScreenState extends ConsumerState<AccountProfileScreen> {
     }
   }
 
-  /// 🔹 Account Tab Content (UPDATED - Fetches from subcollection)
+  /// 🔹 account Tab Content (UPDATED - Fetches from subcollection)
   Widget _buildAccountTab(AffiliateModel affiliate) {
     double w = width;
     double h = height;

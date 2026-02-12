@@ -33,7 +33,7 @@ class AuthController extends Notifier<bool> {
     );
 
     result.fold(
-      // ❌ Login failed
+      // ❌ login failed
           (failure) {
         state = false;
 
@@ -45,11 +45,11 @@ class AuthController extends Notifier<bool> {
           showCommonSnackbars(context: context, message: failure.failure);
         }
       },
-      // ✅ Login success
+      // ✅ login success
           (adminModel) {
         state = false;
         ref.read(adminProvider.notifier).update((state) => adminModel);
-        showCommonSnackbars(context: context, message: "Login Successfully");
+        showCommonSnackbars(context: context, message: "login Successfully");
 
         // Navigate to home screen
         // Navigator.pushReplacement(

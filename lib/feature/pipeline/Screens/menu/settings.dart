@@ -68,7 +68,7 @@ class SettingsScreen extends ConsumerWidget {
                   size: width*.055,
                 ),
                 title: Text(
-                  "Delete Account",
+                  "Delete account",
                   style: GoogleFonts.dmSans(
                     fontSize: width * .04,
                     color: Color(0xFFE50707),
@@ -80,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
                     final leadModel= currentFirm.copyWith(delete: true);
                     ref.watch(leadControllerProvider.notifier)
                         .updateLead(leadModel: leadModel, context: context);
-                    showCommonSnackbar(context, 'Account deleted successfully');
+                    showCommonSnackbar(context, 'account deleted successfully');
                     Navigator.pop(context);
                   },);
                 },

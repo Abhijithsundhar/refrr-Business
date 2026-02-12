@@ -43,15 +43,15 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
         backgroundColor: Pallet.backgroundColor,
         appBar: teamAsync.when(
           data: (team) => CustomAppBar(
-            title: 'Our Team (${team.length.toString().padLeft(2, '0')})',
+            title: 'Our team (${team.length.toString().padLeft(2, '0')})',
             showBackButton: false,
           ),
           loading: () => CustomAppBar(
-            title: 'Our Team',
+            title: 'Our team',
             showBackButton: false,
           ),
           error: (_, __) => CustomAppBar(
-            title: 'Our Team (0)',
+            title: 'Our team (0)',
             showBackButton: false,
           ),
         ),
@@ -127,7 +127,7 @@ class _TeamHomeState extends ConsumerState<TeamHome> {
               Expanded(
                 child: teamAsync.when(
                   data: (team) {
-                    debugPrint('📋 Team data received: ${team.length} members');
+                    debugPrint('📋 team data received: ${team.length} members');
 
                     // Apply filters
                     List<AffiliateModel> filtered = List.from(team);

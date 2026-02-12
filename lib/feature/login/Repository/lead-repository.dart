@@ -37,7 +37,7 @@ class LeadRepository {
         return left(Failure(failure: "ACCOUNT_DELETED"));
       }
 
-      // Step 4: Account is active - return lead model
+      // Step 4: account is active - return lead model
       final lead = LeadsModel.fromMap({
         ...leadData,
         'reference': doc.reference,
@@ -144,7 +144,7 @@ class LeadRepository {
   }
 
   /// Get team members from lead
-  /// 🔹 Get Team Members by IDs (FIXED - teamMembers contains only IDs)
+  /// 🔹 Get team Members by IDs (FIXED - teamMembers contains only IDs)
   Stream<List<AffiliateModel>> getTeam(String leadId) {
     return FirebaseFirestore.instance
         .collection('leads')
@@ -165,7 +165,7 @@ class LeadRepository {
       // teamMembers is now List<String> (affiliate IDs)
       final List<String> teamMemberIds = List<String>.from(data['teamMembers'] ?? []);
 
-      debugPrint('📋 Team Member IDs: $teamMemberIds');
+      debugPrint('📋 team Member IDs: $teamMemberIds');
 
       if (teamMemberIds.isEmpty) {
         return <AffiliateModel>[];

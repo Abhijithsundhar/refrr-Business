@@ -7,7 +7,7 @@ class TeamRepository {
   TeamRepository({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
-  /// 🔹 Remove Affiliate from Team
+  /// 🔹 Remove Affiliate from team
   Future<void> removeAffiliateFromTeam({
     required String firmId,
     required String affiliateId,

@@ -46,7 +46,7 @@ class LoginRepository {
           ));
         }
 
-        // Step 3: Account is active - return admin model
+        // Step 3: account is active - return admin model
         AdminModel adminModel = AdminModel.fromMap(data);
 
         // Save to SharedPreferences

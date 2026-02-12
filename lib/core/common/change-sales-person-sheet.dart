@@ -396,7 +396,7 @@ class AddSalesPersonAlert extends StatelessWidget {
                 _optionCard(
                   width: width,
                   icon: Icons.person_add_outlined,
-                  title: "From Own Team",
+                  title: "From Own team",
                   onTap: () {
                     showAddSalesPersonSheet(context,currentFirm,service);
                   },

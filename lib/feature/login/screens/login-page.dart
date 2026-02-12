@@ -208,7 +208,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               ),
                             )
                                 : Text(
-                              'Login',
+                              'login',
                               style: GoogleFonts.dmSans(
                                 fontSize: width * 0.043,
                                 color: Colors.white,

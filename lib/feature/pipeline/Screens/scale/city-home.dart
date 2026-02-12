@@ -147,7 +147,7 @@ class _CityScreenState extends State<CityScreen> {
               height: width * 0.1,
               child: Row(
                 children: [
-                  _tabItem("Team", 0, width),
+                  _tabItem("team", 0, width),
                   _tabItem("Pipeline", 1, width),
                   // _tabItem("Account", 2, width),
                   _tabItem("Help Desk", 3, width),

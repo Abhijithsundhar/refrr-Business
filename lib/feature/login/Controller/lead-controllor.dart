@@ -94,13 +94,13 @@ class LeadController extends StateNotifier<bool> {
 
           _ref.read(currentLeadProvider.notifier).state = lead;
 
-          showCommonSnackbar(context, "Login successful");
+          showCommonSnackbar(context, "login successful");
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => HomeScreen(lead: lead)),
           );
         } catch (e) {
-          showCommonSnackbar(context, 'Login completed, but failed to persist uid.');
+          showCommonSnackbar(context, 'login completed, but failed to persist uid.');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => HomeScreen(lead: lead)),
@@ -347,7 +347,7 @@ class LeadController extends StateNotifier<bool> {
     res.fold(
           (failure) => showCommonSnackbar(context, failure.failure),
           (_) {
-        showCommonSnackbar(context, 'Team members updated successfully');
+        showCommonSnackbar(context, 'team members updated successfully');
 
         if (_ref.read(currentLeadProvider)?.reference?.id == leadId) {
           getLead(leadId);

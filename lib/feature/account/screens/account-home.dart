@@ -30,7 +30,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Pallet.backgroundColor,
-      appBar: CustomAppBar(title: 'Account',showBackButton: true,),
+      appBar: CustomAppBar(title: 'account',showBackButton: true,),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
