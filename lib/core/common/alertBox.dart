@@ -181,7 +181,7 @@ void showDeleteAccountDialog(BuildContext context,VoidCallback onTap) {
 
               // Title
               Text(
-                "Delete account",
+                "Delete Account",
                 style: GoogleFonts.dmSans(
                   fontSize: width * 0.055,
                   fontWeight: FontWeight.w700,
