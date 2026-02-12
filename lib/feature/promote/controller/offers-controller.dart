@@ -15,10 +15,6 @@ StreamProvider.family<List<OfferModel>, String>((ref, searchQuery) {
   return repository.getOffer(searchQuery);
 });
 
-
-
-
-
 /// offerController Provider
 final offerControllerProviders = StateNotifierProvider<OfferController, bool>((ref) {
   return OfferController(repository: ref.read(offerRepositoryProvider));

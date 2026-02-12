@@ -1,4 +1,4 @@
-// lib/Feature/pipeline/Controller/zone-controller.dart
+// lib/feature/pipeline/Controller/zone-controller.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
