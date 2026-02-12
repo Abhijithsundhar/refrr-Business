@@ -28,18 +28,15 @@ class SalesPersonController extends StateNotifier<bool> {
 
     state = false;
 
-    return result.fold(
-          (l) {
+    return result.fold((l) {
         showCommonSnackbar(context, l.failure);
-        return null; // ❗ important
-      },
-          (savedPerson) {
+        return null;
+      },(savedPerson) {
         showCommonSnackbar(context, "Sales person added successfully");
-        return savedPerson; // ❗ RETURN the new model
+        return savedPerson;
       },
     );
   }
-
 
   /// ✅ Update Sales Person
   Future<void> updateSalesPerson({

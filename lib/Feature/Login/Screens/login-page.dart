@@ -25,7 +25,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final loginState = ref.watch(leadControllerProvider);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -242,7 +241,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ContactUs()),
+                                builder: (context) =>  ContactUs()),
                           );
                         },
                         child: Text(

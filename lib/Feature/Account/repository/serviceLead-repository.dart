@@ -16,7 +16,7 @@ class ServiceLeadRepository {
   FutureEither<ServiceLeadModel> addServiceLead(ServiceLeadModel serviceLead) async {
     try {
       DocumentReference ref = FirebaseFirestore.instance
-          .collection(FirebaseCollections.ServiceLeadsCollection)
+          .collection(FirebaseCollections.serviceLeadsCollection)
           .doc();
 
       ServiceLeadModel serviceLeadModel = serviceLead.copyWith(reference: ref);
@@ -43,7 +43,7 @@ class ServiceLeadRepository {
   /// service lead stream with search
   Stream<List<ServiceLeadModel>> getServiceLead(String searchQuery) {
     final collection =
-    FirebaseFirestore.instance.collection(FirebaseCollections.ServiceLeadsCollection);
+    FirebaseFirestore.instance.collection(FirebaseCollections.serviceLeadsCollection);
 
     if (searchQuery.isEmpty) {
       return collection

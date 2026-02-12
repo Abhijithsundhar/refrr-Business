@@ -5,17 +5,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/custom-appBar.dart';
 import 'package:refrr_admin/Core/common/custom-round-button.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
-import 'package:refrr_admin/Core/constants/asset.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
 import 'package:refrr_admin/Feature/Account/screens/lead-granded-page.dart';
 import 'package:refrr_admin/Feature/Account/screens/marketers-page.dart';
 import 'package:refrr_admin/Feature/Account/screens/money-credit-screen.dart';
 import 'package:refrr_admin/Feature/Account/screens/withdrewal-page.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 
 class AccountScreen extends StatefulWidget {
   final LeadsModel? currentFirm;
-  const AccountScreen({super.key,this.currentFirm});
+  final AffiliateModel? affiliate;
+  const AccountScreen({super.key,this.currentFirm,
+    this.affiliate});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -26,14 +28,13 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Pallet.backgroundColor,
-      appBar: CustomAppBar(title: 'Account',showBackButton: false,),
+      appBar: CustomAppBar(title: 'Account',showBackButton: true,),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             SizedBox(height: height*.02,),
 
             /// Wallet Balance Card
@@ -157,7 +158,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       },
                       child: _statCard(
                           "56",
-                          "Leads\nGranted",
+                          "Leads\nGenerated",
                           CircleSvgButton(
                             size: width*.09,
                             borderColor: Pallet.primaryColor,
@@ -261,10 +262,8 @@ class _AccountScreenState extends State<AccountScreen> {
                       ],
                     ),
                   ),
-
                 ],
               ),
-
             ),
 
             SizedBox(height: width * 0.05),

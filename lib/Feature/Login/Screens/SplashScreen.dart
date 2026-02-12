@@ -24,6 +24,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _keepLogin() async {
+    await Future.delayed(const Duration(milliseconds: 400));
+
     final prefs = await SharedPreferences.getInstance();
     final uid = prefs.getString('uid');
     if (!mounted) return;
@@ -66,7 +68,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.3,
           width: MediaQuery.of(context).size.width * 0.7,
-          child: SvgPicture.asset('assets/images/grroLogo.png'),
+          child: SvgPicture.asset('assets/svg/grroLogoWhite.svg'),
+          // child: SvgPicture.asset('assets/svg/G-logo.svg'),
           ),
         ),
       );

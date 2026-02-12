@@ -330,11 +330,10 @@ Widget bottomChatInput({
         ),
 
         const SizedBox(width: 8),
-
-        circleButton(Icons.account_balance_wallet_outlined, onTap: onWalletTap),
+        circleButton(Icons.cached_rounded, onTap: onRefreshTap),
         const SizedBox(width: 8),
 
-        circleButton(Icons.cached_rounded, onTap: onRefreshTap),
+        circleButton(Icons.account_balance_wallet_outlined, onTap: onWalletTap),
         const SizedBox(width: 8),
 
         circleButton(Icons.calendar_month, onTap: onCalendarTap),
@@ -526,7 +525,7 @@ String formatDateTime(
 
 ///chat screen wallet button
 void showAddPaymentSheet(BuildContext context,String name,TextEditingController amountController,
-    TextEditingController remarksController,VoidCallback onTap) {
+    TextEditingController remarksController,LeadsModel? currentFirm,VoidCallback onTap) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -623,8 +622,7 @@ void showAddPaymentSheet(BuildContext context,String name,TextEditingController 
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: Colors.black12),
                         ),
-                        child: Text(
-                          "INR",
+                        child: Text(currentFirm?.currency??'',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: width*.03
@@ -642,7 +640,6 @@ void showAddPaymentSheet(BuildContext context,String name,TextEditingController 
                   height: height * .055,
                   padding: EdgeInsets.symmetric(horizontal: 9), // add padding here
                   decoration: BoxDecoration(
-
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Color(0xFFE5E9EB)),
                   ),
@@ -1126,9 +1123,13 @@ Future<void> callNumber(String phoneNumber) async {
 }
 
 ///hide delete alert box
-void showHideDeleteMenu(BuildContext context, Offset position) {
+void showHideDeleteMenu(
+    BuildContext context,
+    Offset position, {
+      VoidCallback? onHide,
+      VoidCallback? onDelete,
+    }) {
   final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-
   showMenu(
     context: context,
     position: RelativeRect.fromRect(
@@ -1140,17 +1141,18 @@ void showHideDeleteMenu(BuildContext context, Offset position) {
     ),
     color: Colors.white,
     items: [
+      // PopupMenuItem(
+      //   onTap: onHide,
+      //   child: Row(
+      //     children: [
+      //       Icon(Icons.visibility_off_outlined, color: Colors.black),
+      //       SizedBox(width: 10),
+      //       Text("Hide", style: TextStyle(color: Colors.black)),
+      //     ],
+      //   ),
+      // ),
       PopupMenuItem(
-        child: Row(
-          children: [
-            Icon(Icons.visibility_off_outlined, color: Colors.black),
-            SizedBox(width: 10),
-            Text("Hide", style: TextStyle(color: Colors.black)),
-          ],
-        ),
-        onTap: () {},
-      ),
-      PopupMenuItem(
+        onTap: onDelete,
         child: Row(
           children: [
             Icon(Icons.delete_outline, color: Colors.red),
@@ -1158,12 +1160,10 @@ void showHideDeleteMenu(BuildContext context, Offset position) {
             Text("Delete", style: TextStyle(color: Colors.red)),
           ],
         ),
-        onTap: () {},
       ),
     ],
   );
 }
-
 Widget chatItem(ChatModel msg) {
   switch (msg.type) {
     case "simple":

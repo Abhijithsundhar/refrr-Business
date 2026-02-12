@@ -3,20 +3,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class WithdrewrequstModel {
   final int amount;
   final DateTime requstTime;
-  final String acceptBy;
+  final String acceptedBy;
   final String currency;
-  final bool status;
   final String? image; // 🔹 New
-  final String description; // 🔹 New
+  final String description;
+  final String leadId; // 🔹 New
+  final DateTime? acceptedTime;
+  final String affiliateId;
+  final int status;
+  final String? id;
 
   WithdrewrequstModel({
     required this.amount,
-    required this.acceptBy,
+    required this.acceptedBy,
     required this.currency,
-    required this.status,
     required this.requstTime,
     required this.image, // 🔹 New
     required this.description, // 🔹 New
+    required this.leadId, // 🔹 New
+    required this.affiliateId,
+    required this.acceptedTime,
+    required this.status,
+    required this.id,
   });
 
   WithdrewrequstModel copyWith({
@@ -24,18 +32,26 @@ class WithdrewrequstModel {
     DateTime? requstTime,
     String? acceptBy,
     String? currency,
-    bool? status,
     String? image, // 🔹 New
     String? description, // 🔹 New
+    String? leadId, // 🔹 New
+    String? affiliateId,
+    DateTime? acceptedTime,
+    int? status,
+    String? id,
   }) {
     return WithdrewrequstModel(
       amount: amount ?? this.amount,
       requstTime: requstTime ?? this.requstTime,
-      acceptBy: acceptBy ?? this.acceptBy,
+      acceptedBy: acceptBy ?? this.acceptedBy,
       currency: currency ?? this.currency,
       status: status ?? this.status,
       image: image ?? this.image,
       description: description ?? this.description,
+      leadId: leadId ?? this.leadId,
+      affiliateId: affiliateId ?? this.affiliateId,
+      acceptedTime: acceptedTime ?? this.acceptedTime,
+      id: id ?? this.id,
     );
   }
 
@@ -43,11 +59,15 @@ class WithdrewrequstModel {
     return {
       'amount': amount,
       'requstTime': Timestamp.fromDate(requstTime),
-      'acceptBy': acceptBy,
+      'acceptedBy': acceptedBy,
       'currency': currency,
       'status': status,
       'image': image, // 🔹 New
       'description': description, // 🔹 New
+      'leadId': leadId, // 🔹 New
+      'affiliateId': affiliateId,
+      if (acceptedTime != null)'acceptedTime': Timestamp.fromDate(acceptedTime!),
+      'id': id
     };
   }
 
@@ -55,11 +75,16 @@ class WithdrewrequstModel {
     return WithdrewrequstModel(
       amount: map['amount'] as int,
       requstTime: (map['requstTime'] as Timestamp).toDate(),
-      acceptBy: map['acceptBy'] as String,
+      acceptedBy: map['acceptedBy'] as String,
       currency: map['currency'] as String,
-      status: map['status'] as bool,
+      status: map['status'] as int,
       image: map['image'] as String? ?? '', // 🔹 Defensive
       description: map['description'] as String? ?? '', // 🔹 Defensive
+      leadId: map['leadId'] as String? ?? '', // 🔹 Defensive
+      affiliateId: map['affiliateId'] as String,
+      acceptedTime: map['acceptedTime'] != null
+          ? (map['acceptedTime'] as Timestamp).toDate() : null,
+      id: map['id'] as String,
     );
   }
 }

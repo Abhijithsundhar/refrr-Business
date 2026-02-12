@@ -9,39 +9,46 @@ import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/services-model.dart';
 
-
 final leadRepositoryProvider = Provider<LeadRepository>((ref) {
   return LeadRepository();
 });
 
 class LeadRepository {
-  // lead-repository.dart
-///login
+  /// ========== LOGIN (UPDATED WITH DELETE CHECK) ==========
   FutureEither<LeadsModel> loginLead(String email, String password) async {
     try {
+      // Step 1: Query WITHOUT delete filter to check if account exists
       final querySnapshot = await FirebaseFirestore.instance
           .collection(FirebaseCollections.leadsCollection)
           .where('mail', isEqualTo: email)
           .where('password', isEqualTo: password)
-          .where('delete', isEqualTo: false) // Optional condition
           .get();
 
+      // Step 2: Check if any matching account exists
       if (querySnapshot.docs.isEmpty) {
-        return left( Failure(failure: "Email not found"));
+        return left(Failure(failure: "Invalid email or password"));
       }
 
-      final leadData = querySnapshot.docs.first.data();
-      final lead = LeadsModel.fromMap(leadData);
+      final doc = querySnapshot.docs.first;
+      final leadData = doc.data();
 
-      if (lead.password != password) {
-        return left( Failure(failure: "Incorrect password"));
+      // Step 3: Check if account is deleted
+      if (leadData['delete'] == true) {
+        return left(Failure(failure: "ACCOUNT_DELETED"));
       }
+
+      // Step 4: Account is active - return lead model
+      final lead = LeadsModel.fromMap({
+        ...leadData,
+        'reference': doc.reference,
+      });
 
       return right(lead);
     } catch (e) {
       return left(Failure(failure: e.toString()));
     }
   }
+
   /// Add lead
   FutureEither<LeadsModel> addLead(LeadsModel lead) async {
     try {
@@ -96,7 +103,7 @@ class LeadRepository {
     }
   }
 
-   /// get services from lead
+  /// Get services from lead
   Stream<List<ServiceModel>> getFirmServices(String leadId) {
     return FirebaseFirestore.instance
         .collection('leads')
@@ -116,7 +123,7 @@ class LeadRepository {
     });
   }
 
-  /// get applications from lead
+  /// Get applications from lead
   Stream<List<AffiliateModel>> getApplications(String appId) {
     return FirebaseFirestore.instance
         .collection('leads')
@@ -136,27 +143,62 @@ class LeadRepository {
     });
   }
 
-
-  /// get applications from lead
+  /// Get team members from lead
+  /// 🔹 Get Team Members by IDs (FIXED - teamMembers contains only IDs)
   Stream<List<AffiliateModel>> getTeam(String leadId) {
     return FirebaseFirestore.instance
         .collection('leads')
         .doc(leadId)
         .snapshots()
-        .map((snapshot) {
-      if (!snapshot.exists) return <AffiliateModel>[];
+        .asyncMap((snapshot) async {
+      if (!snapshot.exists) {
+        debugPrint('⚠️ Lead document not found: $leadId');
+        return <AffiliateModel>[];
+      }
 
       final data = snapshot.data();
-      if (data == null || data['teamMembers'] == null) return <AffiliateModel>[];
+      if (data == null || data['teamMembers'] == null) {
+        debugPrint('⚠️ No teamMembers found');
+        return <AffiliateModel>[];
+      }
 
-      final List<AffiliateModel> applications = (data['teamMembers'] as List)
-          .map((e) => AffiliateModel.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
+      // teamMembers is now List<String> (affiliate IDs)
+      final List<String> teamMemberIds = List<String>.from(data['teamMembers'] ?? []);
 
-      return applications;
+      debugPrint('📋 Team Member IDs: $teamMemberIds');
+
+      if (teamMemberIds.isEmpty) {
+        return <AffiliateModel>[];
+      }
+
+      // Fetch affiliates by IDs
+      List<AffiliateModel> affiliates = [];
+
+      // Split into chunks of 10 (Firestore whereIn limit)
+      for (int i = 0; i < teamMemberIds.length; i += 10) {
+        int end = (i + 10 < teamMemberIds.length) ? i + 10 : teamMemberIds.length;
+        List<String> chunk = teamMemberIds.sublist(i, end);
+
+        debugPrint('📡 Fetching chunk: $chunk');
+
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('affiliates') // or use FirebaseCollections.affiliatesCollection
+            .where(FieldPath.documentId, whereIn: chunk)
+            .get();
+
+        final chunkAffiliates = querySnapshot.docs.map((doc) {
+          return AffiliateModel.fromMap(doc.data(), reference: doc.reference);
+        }).toList();
+
+        affiliates.addAll(chunkAffiliates);
+      }
+
+      debugPrint('✅ Fetched ${affiliates.length} team members');
+      return affiliates;
     });
   }
 
+  /// Update firm services
   Future<void> updateFirmServices({
     required String leadId,
     required List<ServiceModel> services,
@@ -174,4 +216,174 @@ class LeadRepository {
     }
   }
 
+  /// Add team members to lead
+  FutureVoid addTeamMembers({
+    required String leadId,
+    required List<AffiliateModel> affiliates,
+  }) async {
+    try {
+      // Convert affiliates to map format
+      final affiliateMaps = affiliates.map((e) => e.toMap()).toList();
+
+      // Use arrayUnion to add without duplicates
+      await FirebaseFirestore.instance
+          .collection(FirebaseCollections.leadsCollection)
+          .doc(leadId)
+          .update({
+        'teamMembers': FieldValue.arrayUnion(affiliateMaps),
+      });
+
+      return right(null);
+    } on FirebaseException catch (e) {
+      return left(Failure(failure: e.message ?? 'Failed to add team members'));
+    } catch (e) {
+      return left(Failure(failure: e.toString()));
+    }
+  }
+
+  /// Remove team members from lead
+  FutureVoid removeTeamMembers({
+    required String leadId,
+    required List<AffiliateModel> affiliates,
+  }) async {
+    try {
+      final affiliateMaps = affiliates.map((e) => e.toMap()).toList();
+
+      await FirebaseFirestore.instance
+          .collection(FirebaseCollections.leadsCollection)
+          .doc(leadId)
+          .update({
+        'teamMembers': FieldValue.arrayRemove(affiliateMaps),
+      });
+
+      return right(null);
+    } on FirebaseException catch (e) {
+      return left(Failure(failure: e.message ?? 'Failed to remove team members'));
+    } catch (e) {
+      return left(Failure(failure: e.toString()));
+    }
+  }
+
+  /// Update entire team members list
+  FutureVoid updateTeamMembers({
+    required String leadId,
+    required List<AffiliateModel> teamMembers,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(FirebaseCollections.leadsCollection)
+          .doc(leadId)
+          .update({
+        'teamMembers': teamMembers.map((e) => e.toMap()).toList(),
+      });
+
+      return right(null);
+    } on FirebaseException catch (e) {
+      return left(Failure(failure: e.message ?? 'Failed to update team members'));
+    } catch (e) {
+      return left(Failure(failure: e.toString()));
+    }
+  }
+
+  /// Remove application and add to team members (hire action)
+  /// Hire affiliates - Store IDs only in teamMembers
+  FutureVoid hireAffiliatesFromApplications({
+    required String leadId,
+    required List<AffiliateModel> affiliates,
+  }) async {
+    try {
+      final leadRef = FirebaseFirestore.instance
+          .collection(FirebaseCollections.leadsCollection)
+          .doc(leadId);
+
+      // Get current data
+      final snapshot = await leadRef.get();
+      if (!snapshot.exists) {
+        return left(Failure(failure: 'Lead not found'));
+      }
+
+      final data = snapshot.data()!;
+      final currentApplications = data['applications'] as List? ?? [];
+      final currentTeamMemberIds = List<String>.from(data['teamMembers'] ?? []);
+
+      // Convert applications to AffiliateModel list
+      final applications = currentApplications
+          .map((e) => AffiliateModel.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
+
+      // Extract affiliate IDs to add
+      final List<String> affiliateIdsToAdd = [];
+
+      // Remove from applications and collect IDs
+      for (var affiliate in affiliates) {
+        final affiliateId = affiliate.reference?.id ?? '';
+
+        if (affiliateId.isEmpty) continue;
+
+        // Remove from applications
+        applications.removeWhere((app) =>
+        app.reference?.id == affiliate.reference?.id ||
+            app.id == affiliate.id);
+
+        // Add to team member IDs if not already present
+        if (!currentTeamMemberIds.contains(affiliateId)) {
+          affiliateIdsToAdd.add(affiliateId);
+        }
+      }
+
+      if (affiliateIdsToAdd.isEmpty) {
+        return left(Failure(failure: 'All affiliates already in team'));
+      }
+
+      // Merge team member IDs
+      final mergedTeamMemberIds = [...currentTeamMemberIds, ...affiliateIdsToAdd];
+
+      // Update Firestore with IDs only
+      await leadRef.update({
+        'applications': applications.map((e) => e.toMap()).toList(),
+        'teamMembers': mergedTeamMemberIds,
+      });
+
+      // Update each affiliate's workingFirms
+      final batch = FirebaseFirestore.instance.batch();
+      for (final affiliateId in affiliateIdsToAdd) {
+        final affiliateRef = FirebaseFirestore.instance
+            .collection(FirebaseCollections.affiliatesCollection)
+            .doc(affiliateId);
+
+        batch.update(affiliateRef, {
+          'workingFirms': FieldValue.arrayUnion([leadId]),
+        });
+      }
+      await batch.commit();
+
+      return right(null);
+    } on FirebaseException catch (e) {
+      return left(Failure(failure: e.message ?? 'Failed to hire affiliates'));
+    } catch (e) {
+      return left(Failure(failure: e.toString()));
+    }
+  }
+
+  FutureEither<LeadsModel?> getLeadById({
+    required String leadId,
+  }) async {
+    print("get lead by id repo triggered $leadId");
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection(FirebaseCollections.leadsCollection)
+          .doc(leadId)
+          .get();
+
+      if (doc.exists) {
+        return right(LeadsModel.fromMap(
+          doc.data() as Map<String, dynamic>,
+          reference: doc.reference,
+        ));
+      }
+      return left(Failure(failure: "Lead not found"));
+    } catch (e) {
+      return left(Failure(failure: e.toString()));
+    }
+  }
 }

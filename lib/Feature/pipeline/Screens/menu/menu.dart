@@ -5,9 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/alertBox.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
+import 'package:refrr_admin/Feature/Account/screens/account-home.dart';
 import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
+import 'package:refrr_admin/Feature/Login/Screens/contact-us.dart';
+import 'package:refrr_admin/Feature/Login/Screens/login-page.dart';
+import 'package:refrr_admin/Feature/pipeline/Screens/menu/view-profile.dart';
+import 'package:refrr_admin/Feature/pipeline/Screens/menu/privacy-policy.dart';
 import 'package:refrr_admin/Feature/pipeline/Screens/menu/settings.dart';
 import 'package:refrr_admin/models/leads_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuBottomSheet extends ConsumerWidget {
    final String appBarTitle;
@@ -72,12 +78,17 @@ class MenuBottomSheet extends ConsumerWidget {
                     ],
                   ),
                   // Row 2 → Company name
-                  Text(
-                    appBarTitle,
-                    style: GoogleFonts.dmSans(
-                      fontSize: width * 0.055,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
+                  Padding(
+                    padding: EdgeInsets.only(left: width * .035),
+                    child: Text(appBarTitle.length > 24
+                          ? appBarTitle.substring(0, 24) : appBarTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.dmSans(
+                        fontSize: width * 0.055,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ],
@@ -105,21 +116,36 @@ class MenuBottomSheet extends ConsumerWidget {
 
           SizedBox(height: height * .02),
 
-          // Options List
+          /// Options List
+          // buildMenuItem(
+          //   label: "Account",
+          //   url:'assets/svg/accountGrey.svg',
+          //   context: context,
+          //   onTap: () {
+          //     Navigator.push(context, MaterialPageRoute(builder: (context) => AccountScreen(currentFirm: currentFirm)));
+          //   },
+          // ),
           buildMenuItem(
-            label: "Edit Profile",
+            label: "Profile",
             url:'assets/svg/personEdit.svg',
-            context: context, onTap: () {  },
+            context: context, onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ViewProfile( currentFirm: currentFirm,),));
+          },
           ),
           buildMenuItem(
             label: "Contact Us",
             url: 'assets/svg/blackphone.svg',
-            context: context, onTap: () {  },
+            context: context, onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ContactUs(),));
+          },
           ),
           buildMenuItem(
             label: "Privacy Policy",
             url: 'assets/svg/privacy.svg',
-            context: context, onTap: () {  },
+            context: context, onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyPolicy()));
+
+          },
           ),
           buildMenuItem(
             label: "Settings",
@@ -133,13 +159,19 @@ class MenuBottomSheet extends ConsumerWidget {
             url: 'assets/svg/logOut.svg',
             context: context,
             onTap: () {
-              showLogoutDialog(context,(){
-                final leadModel= currentFirm.copyWith(delete: true);
-                ref.watch(leadControllerProvider.notifier)
-                    .updateLead(leadModel: leadModel, context: context);
-                showCommonSnackbar(context, 'Account log outed successfully');
-                Navigator.pop(context);
+              showLogoutDialog(context, () async {
+                // ‼️ 2.  Clear login/session flag
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();         // or remove only the login key if you have one
 
+                // ‼️ 3.  Navigate to LoginPage  (remove all previous routes)
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => LoginPage()), (route) => false,);
+                }
+                // ‼️ 4.  Show confirmation
+                if (context.mounted) {
+                  showCommonSnackbar(context, 'Logged out successfully');
+                }
               });
             },
           ),
@@ -172,6 +204,7 @@ class MenuBottomSheet extends ConsumerWidget {
                  url,
                  width: width * .05,
                  height: width * .05,
+                 color: Colors.black,
                ),
              ),
            ),

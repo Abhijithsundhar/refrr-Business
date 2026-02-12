@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:refrr_admin/Core/common/chat-screen-support-%20functions.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/constants/homepage-functions.dart';
 import 'package:refrr_admin/Core/constants/servicelead-color.dart';
 import 'package:refrr_admin/Feature/pipeline/Controller/serviceLead-controllor.dart';
 import 'package:refrr_admin/models/chatbox-model.dart';
@@ -38,7 +39,7 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
 
   @override
   void initState() {
-    selectedType = widget.service?.type ?? '';
+    selectedType = widget.service?.leadType ?? '';
     if (widget.service != null &&
         widget.service!.statusHistory.isNotEmpty) {
       selectedStatus = widget.service!.statusHistory.last['status'] ?? '';
@@ -83,7 +84,7 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
               ),
               GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: CircleAvatar(
+                child:  CircleAvatar(
                     radius: width*.04,
                     backgroundColor: Color(0xFFF3F3F3),
                     child: Icon(Icons.close, size: 18)),
@@ -118,32 +119,89 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
           ),
 
           SizedBox(height: 14),
-
           /// ------- STATUS WRAP -------
-          GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            crossAxisCount: 3,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 3.2,
-            children: [
-              statusChip("New Lead"),
-              statusChip("Contacted"),
-              statusChip("Interested"),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            alignment: WrapAlignment.spaceEvenly,
+            children: statusOptions.map((status) {
+              final colors = getStatusColors(status); // your helper for pastel colors
+              final bool selected = selectedStatus == status;
 
-              statusChip("Follow-up-Needed"),
-              statusChip("Proposal Sent"),
-              statusChip("Negotiation"),
+              return GestureDetector(
+                onTap: () {
+                  setState(() => selectedStatus = status);
 
-              statusChip("Converted"),
-              statusChip("Invoice Raised"),
-              statusChip("Work in Progress"),
+                  showHireConfirmation(
+                    context,
+                    'Do you want to change the status to $status?',
+                        () async {
+                      try {
+                        if (widget.service == null || widget.service!.reference == null) {
+                          print('Error: Service or reference is null');
+                          return;
+                        }
 
-              statusChip("Completed"),
-              statusChip("Not Qualified"),
-              statusChip("Lost"),
-            ],
+                        final newHistoryEntry = {
+                          "status": status,
+                          "date": DateTime.now(),
+                          'added': widget.currentFirm?.reference?.id ?? ''
+                        };
+                        final updatedHistory =
+                        [...widget.service!.statusHistory, newHistoryEntry];
+
+                        final newMessage = ChatModel(
+                          type: 'status',
+                          chatterId: widget.currentFirm!.reference!.id,
+                          imageUrl: widget.currentFirm?.logo ?? '',
+                          message: '${widget.currentFirm?.name} updated the lead status to $status',
+                          time: DateTime.now(),
+                          dateLabel: DateTime.now(),
+                          amount: 0,
+                          description: '',
+                          requiresAction: false,
+                          transactionStatus: '',
+                        );
+
+                        final updatedChatList = List<ChatModel>.from(widget.service!.chat)..add(newMessage);
+
+                        final updatedService = widget.service!.copyWith(
+                          statusHistory: updatedHistory, chat: updatedChatList,);
+
+                        await ref.read(serviceLeadsControllerProvider.notifier)
+                            .updateServiceLeads(serviceLeadsModel: updatedService, context: context,);
+
+                        if (context.mounted) Navigator.pop(context);
+                      } catch (e) {
+                        print('Error updating status: $e');
+                      }
+                    },
+                  );
+                },
+                child: Container(
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+                  decoration: BoxDecoration(
+                    color: colors.background,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: selected
+                          ? const Color(0xFF14DFED)
+                          : colors.border.withOpacity(0.25),
+                      width: selected ? 1 : 1,
+                    ),
+                  ),
+                  child: Text(
+                    status,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF5E5E5E),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
 
           SizedBox(height: 20),
@@ -156,7 +214,7 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
   Widget typeChip(String svgPath, String title) {
     bool isSelected = selectedType == title;
 
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         setState(() => selectedType = title);
 
@@ -187,7 +245,7 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
               final updatedChatList = List<ChatModel>.from(widget.service?.chat??[]);
               // 3️⃣ Add new message
               updatedChatList.add(newMessage);
-              final updateType = widget.service!.copyWith(type: type, chat: updatedChatList);
+              final updateType = widget.service!.copyWith(leadType: type, chat: updatedChatList);
               await ref.read(serviceLeadsControllerProvider.notifier)
                   .updateServiceLeads(serviceLeadsModel: updateType, context: context,);
 
@@ -243,127 +301,4 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
       ),
     );
   }
-
-  /// STATUS CHIP (Selectable with border)
-  Widget statusChip(String text) {
-    bool selected = selectedStatus == text;
-    final colors = getStatusColors(text);
-
-    return GestureDetector(
-      onTap: () {
-        setState(() => selectedStatus = text);
-
-        showHireConfirmation(context, 'Do you want to change the status to $text',
-                () async {
-              try {
-                if (widget.service == null || widget.service!.reference == null) {
-                  print('Error: Service or reference is null');
-                  return;
-                }
-                final newHistoryEntry = {
-                  "status": text,
-                  "date": DateTime.now(),
-                  'added' :widget.currentFirm?.reference?.id??''
-                };
-                final updatedHistory = [...widget.service!.statusHistory, newHistoryEntry];
-                final newMessage = ChatModel(
-                    type:'status',
-                    chatterId: widget.currentFirm!.reference!.id,
-                    imageUrl: widget.currentFirm?.logo??'',
-                    message: '${widget.currentFirm?.name} updated the lead status to $text  ',
-                    time: DateTime.now(),
-                    dateLabel: DateTime.now(),
-                    amount: 0,
-                    description: '',
-                    requiresAction: false,
-                    transactionStatus: ''
-                );
-                // 2️⃣ Copy existing chat list
-                final updatedChatList = List<ChatModel>.from(widget.service!.chat);
-                // 3️⃣ Add new message
-                updatedChatList.add(newMessage);
-                final updatedService = widget.service!.copyWith(statusHistory: updatedHistory,chat:updatedChatList);
-                await ref.read(serviceLeadsControllerProvider.notifier)
-                    .updateServiceLeads(serviceLeadsModel: updatedService, context: context);
-
-                if (context.mounted) {Navigator.pop(context);
-                }
-              } catch (e) {
-                print('Error updating status: $e');
-              }
-            }
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-        decoration: BoxDecoration(
-          color: colors.background,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? Color(0xFF14DFED) : colors.border,
-            width: selected ? 2 : 1,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: width * .025,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ),
-      ),
-    );
-  }}
-
-/// ---- Lead Type Button ----
-Widget leadTypeChip(String emoji, String text, bool selected) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-    decoration: BoxDecoration(
-      color: selected ? Color(0xFF14DFED1A) : Color(0xFFF3F3F3),
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(
-        color: selected ? Color(0xFF14DFED) : Colors.transparent,
-        width: 1.6,
-      ),
-    ),
-    child: Row(
-      children: [
-        Text(emoji, style: TextStyle(fontSize: 16)),
-        SizedBox(width: 6),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-/// ---- Status Pill ----
-Widget statusChip(String text, {Color bg = const Color(0xFFF3F3F3)}) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-    decoration: BoxDecoration(
-      color: bg,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
-        color: Colors.black,
-      ),
-    ),
-  );
 }

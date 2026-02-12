@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:refrr_admin/models/affiliate-model.dart';
 import 'package:refrr_admin/models/services-model.dart';
 
-
 class LeadsModel {
   final String logo;
   final String name;
@@ -24,13 +23,18 @@ class LeadsModel {
   final String affiliate;
   final String password;
   final String organizationType;
-  final List<AffiliateModel> teamMembers;
+  final List<String> teamMembers;
   final List<AffiliateModel> applications;
   final List<dynamic> jobType;
   final List<dynamic> lookingAt;
+
+  /// 🔹 Added / merged fields
+  final String plan;       // basic / moderate / high
+  final int teamLimit;
+
   final DocumentReference? reference;
 
-  LeadsModel( {
+  LeadsModel({
     required this.logo,
     required this.name,
     required this.industry,
@@ -55,6 +59,8 @@ class LeadsModel {
     required this.applications,
     required this.jobType,
     required this.lookingAt,
+    required this.plan,
+    required this.teamLimit,
     this.reference,
   });
 
@@ -79,10 +85,12 @@ class LeadsModel {
     String? affiliate,
     String? password,
     String? organizationType,
-    List<AffiliateModel>? teamMembers,
+    List<String>? teamMembers,
     List<AffiliateModel>? applications,
     List<dynamic>? jobType,
     List<dynamic>? lookingAt,
+    String? plan,
+    int? teamLimit,
     DocumentReference? reference,
   }) {
     return LeadsModel(
@@ -110,10 +118,11 @@ class LeadsModel {
       applications: applications ?? this.applications,
       jobType: jobType ?? this.jobType,
       lookingAt: lookingAt ?? this.lookingAt,
+      plan: plan ?? this.plan,
+      teamLimit: teamLimit ?? this.teamLimit,
       reference: reference ?? this.reference,
     );
   }
-
   Map<String, dynamic> toMap() {
     return {
       'logo': logo,
@@ -131,20 +140,24 @@ class LeadsModel {
       'search': search,
       'createTime': Timestamp.fromDate(createTime),
       'addedBy': addedBy,
-      'services': services.map((f) => f.toMap()).toList(),
+      'services': services.map((s) => s.toMap()).toList(),
       'status': status,
       'affiliate': affiliate,
       'password': password,
       'organizationType': organizationType,
-      'teamMembers': teamMembers.map((t) => t.toMap()).toList(),
-      'applications': applications.map((t) => t.toMap()).toList(),
+      'teamMembers': teamMembers,
+      'applications': applications.map((a) => a.toMap()).toList(),
       'jobType': jobType,
       'lookingAt': lookingAt,
+      'plan': plan,
+      'teamLimit': teamLimit,
       'reference': reference,
     };
   }
 
-  factory LeadsModel.fromMap(Map<String, dynamic> map, {DocumentReference? reference}) {
+  factory LeadsModel.fromMap(
+      Map<String, dynamic> map, {
+        DocumentReference? reference,}) {
     return LeadsModel(
       logo: map['logo'] as String? ?? '',
       name: map['name'] as String? ?? '',
@@ -162,21 +175,20 @@ class LeadsModel {
       createTime: (map['createTime'] as Timestamp).toDate(),
       addedBy: map['addedBy'] as String? ?? '',
       services: (map['services'] as List<dynamic>? ?? [])
-          .map((e) => ServiceModel.fromMap(e as Map<String, dynamic>))
-          .toList(),
+          .map((e) => ServiceModel.fromMap(e as Map<String, dynamic>)).toList(),
       status: map['status'] as int? ?? 0,
       affiliate: map['affiliate'] as String? ?? '',
       password: map['password'] as String? ?? '',
       organizationType: map['organizationType'] as String? ?? '',
-      teamMembers: (map['teamMembers'] as List<dynamic>? ?? [])
-          .map((e) => AffiliateModel.fromMap(e as Map<String, dynamic>))
-          .toList(),
+      teamMembers:List<String>.from(map['teamMembers'] ?? []) ,
       applications: (map['applications'] as List<dynamic>? ?? [])
           .map((e) => AffiliateModel.fromMap(e as Map<String, dynamic>))
           .toList(),
       jobType: (map['jobType'] as List?)?.map((e) => e.toString()).toList() ?? [],
       lookingAt: (map['lookingAt'] as List?)?.map((e) => e.toString()).toList() ?? [],
-      reference: map['reference'] as DocumentReference?,
+      plan: map['plan'] as String? ?? 'basic',
+      teamLimit: map['teamLimit'] as int? ?? 0,
+      reference: reference ?? map['reference'] as DocumentReference?,
     );
   }
 }

@@ -80,3 +80,62 @@ class CircleIconButton extends StatelessWidget {
     );
   }
 }
+
+class CircleFilledButton extends StatelessWidget {
+  final IconData icon;
+  final double? size;
+  final double iconSize;
+  final Color borderColor;
+  final Color? iconColor;
+  final Color backgroundColor;
+  final VoidCallback onTap;
+
+  const CircleFilledButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    required this.size,
+    required this.iconSize ,
+    this.borderColor = Colors.transparent,
+    this.iconColor = Colors.black,
+    this.backgroundColor = const Color(0xFFF2F2F2),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isIOSArrow = icon == Icons.arrow_back_ios || icon == Icons.arrow_back_ios_new_rounded;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: backgroundColor,
+          border: Border.all(color: borderColor, width: 1),
+        ),
+        child: Center(
+          child: Transform.translate(
+            offset: isIOSArrow ? const Offset(2, 0) : Offset.zero,
+            child: Icon(
+              icon,
+              size: iconSize,
+              color: iconColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Padding(
+// padding: EdgeInsets.only(right: width*.02),
+// child: CircleFilledButton(
+// icon:Icons.close,
+// size:width * 0.08 ,
+// onTap: () {
+// Navigator.pop(context);
+// }, iconSize: width * 0.05, ),
+// ),

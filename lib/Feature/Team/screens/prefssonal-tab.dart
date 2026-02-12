@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
 import 'package:refrr_admin/Core/theme/pallet.dart';
+import 'package:refrr_admin/models/affiliate-model.dart';
 
 class ProfessionalInfoTab extends StatelessWidget {
-  const ProfessionalInfoTab({super.key});
+  final AffiliateModel affiliate;
+  const ProfessionalInfoTab({super.key, required this.affiliate});
 
   @override
   Widget build(BuildContext context) {
@@ -13,53 +15,55 @@ class ProfessionalInfoTab extends StatelessWidget {
       padding: EdgeInsets.all(width * 0.02),
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(width * 0.03),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(width * 0.03),
-              color: Pallet.lightGreyColor,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _infoItem("Highest Qualification", "M COM"),
-                Divider(),
-                _infoItem("Current Job Title", "Marketer"),
-                Divider(),
-                _infoItem("Current Job Type", "Sales"),
-                Divider(),
-                _infoItem("Years of Experience", "3"),
-              ],
+          Padding(
+            padding: EdgeInsets.only(left:width * 0.04,right:width * 0.04),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(width * 0.03),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(width * 0.03),
+                color: Pallet.lightGreyColor.withOpacity(.4),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _infoItem("Highest Qualification", affiliate.qualification.isNotEmpty?affiliate.qualification:'NIL'),
+                  Divider(color: Color(0XffE5E9EB)),
+                  _infoItem("Current Job Title", affiliate.currentJobTitle.isNotEmpty?affiliate.currentJobTitle:'NIL'),
+                  Divider(color: Color(0XffE5E9EB)),
+                  _infoItem("Current Job Type", affiliate.currentJobType.isNotEmpty?affiliate.currentJobType:'NIL'),
+                  Divider(color: Color(0XffE5E9EB)),
+                  _infoItem("Years of Experience",affiliate.experience.isNotEmpty?affiliate.experience:'NIL'),
+                ],
+              ),
             ),
           ),
-
-          SizedBox(height: width * 0.02),
-
-          Container(
-            padding: EdgeInsets.all(width * 0.03),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(width * 0.03),
-              color: Pallet.lightGreyColor,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Job History",
-                  style: GoogleFonts.dmSans(
-                    fontSize: width * 0.04,
-                    color: Pallet.greyColor,
+          SizedBox(height: width * 0.03),
+          Padding(
+            padding: EdgeInsets.only(left:width * 0.04,right:width * 0.04),
+            child: Container(
+              padding: EdgeInsets.all(width * 0.03),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(width * 0.03),
+                color: Pallet.lightGreyColor,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Job History",
+                    style: GoogleFonts.dmSans(
+                      fontSize: width * 0.04,
+                      color: Pallet.greyColor,
+                    ),
                   ),
-                ),
 
-                SizedBox(height: width * 0.02),
-
-                SizedBox(
-                  width: width,
-                  height: width * 0.5,
-                  child: ListView.builder(
-                    itemCount: 5,
+                  SizedBox(height: width * 0.02),
+                  ListView.builder(
+                    itemCount: affiliate.jobHistory.length,
+                    shrinkWrap: true, // ✅ KEY
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.only(bottom: width * 0.02),
@@ -79,9 +83,7 @@ class ProfessionalInfoTab extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-
                               SizedBox(height: width * 0.02),
-
                               Row(
                                 children: [
                                   Text(
@@ -100,9 +102,7 @@ class ProfessionalInfoTab extends StatelessWidget {
                                   ),
                                 ],
                               ),
-
                               SizedBox(height: width * 0.02),
-
                               Row(
                                 children: [
                                   Text(
@@ -127,8 +127,8 @@ class ProfessionalInfoTab extends StatelessWidget {
                       );
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

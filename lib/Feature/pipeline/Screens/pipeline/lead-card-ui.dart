@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +12,6 @@ import 'package:refrr_admin/models/add-money-on-lead-model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/serviceLeadModel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 creditMoney(
     ServiceLeadModel lead,
@@ -185,6 +185,8 @@ Future<void> updateStatus(
                 runSpacing: 12,
                 alignment: WrapAlignment.center,
                 children: statusOptions.map((s) {
+                  final colors = getStatusColors(s); // your helper for pastel colors
+                  final bool selected = s == s;
                   return GestureDetector(
                     onTap: () {
                       if (Navigator.of(bottomSheetContext).canPop()) {
@@ -195,10 +197,10 @@ Future<void> updateStatus(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 18),
                       decoration: BoxDecoration(
-                        color: chipBackground(s),
+                        color: colors.bigBackground,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                          color: chipAccent(s).withOpacity(0.25),
+                          color: colors.bigBackground,
                         ),
                       ),
                       child: Text(
@@ -300,8 +302,7 @@ String getTimeAgo(DateTime date) {
   }
 }
 
-Widget buildLeadCard(
-    ServiceLeadModel item, StatusColors statusColors, String latestStatus, LeadsModel currentFirm) {
+Widget buildLeadCard(ServiceLeadModel item, StatusColors statusColors, String latestStatus, LeadsModel currentFirm) {
   return Container(
     decoration: BoxDecoration(
       color: statusColors.bigBackground,
@@ -326,11 +327,13 @@ Widget buildLeadCard(
             child: Row(
               children: [
                 CircleAvatar(
-                  radius: width * 0.038, // ✅ Slightly smaller
+                  radius: width * 0.038,
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
                     radius: width * 0.033,
-                    backgroundImage: const AssetImage('assets/image.png'),
+                    backgroundImage: item.leadLogo.isEmpty
+                        ? const AssetImage('assets/image.png')
+                        : CachedNetworkImageProvider(item.leadLogo) as ImageProvider,
                   ),
                 ),
                 SizedBox(width: width * .01),
@@ -351,7 +354,7 @@ Widget buildLeadCard(
                       ),
                       SizedBox(height: height * .001), // ✅ Minimal spacing
                       Text(
-                        item.location,
+                        item.marketerLocation,
                         style: GoogleFonts.dmSans(
                           fontSize: width * .024, // ✅ Smaller
                           fontWeight: FontWeight.w500,
@@ -384,17 +387,21 @@ Widget buildLeadCard(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(
-                  'assets/svg/warmimogi.svg',
-                  width: 9, // ✅ Slightly smaller icon
+                  item.leadType =='Cool'?
+                  'assets/svg/coolImogi.svg':
+                  item.leadType == 'Warm'?
+                  'assets/svg/warmimogi.svg':
+                  'assets/svg/fireimogi.svg',
+                  width: 9,
                   height: 9,
                 ),
                 SizedBox(width: width * .005),
                 Text(
-                  'Warm',
+                  item.leadType,
                   style: GoogleFonts.dmSans(
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
-                    fontSize: width * .024, // ✅ Slightly smaller
+                    fontSize: width * .025,
                   ),
                 ),
               ],
@@ -420,6 +427,7 @@ Widget buildLeadCard(
         /// Service name
         Text(
           item.serviceName,
+          maxLines: 1,
           textAlign: TextAlign.center,
           style: GoogleFonts.dmSans(
             fontSize: width * .038, // ✅ Slightly smaller
@@ -433,7 +441,7 @@ Widget buildLeadCard(
 
         /// Lead name
         Text(
-          item.leadName,
+          item.firmName,
           style: GoogleFonts.dmSans(
             fontSize: width * .032, // ✅ Slightly smaller
             fontWeight: FontWeight.w500,

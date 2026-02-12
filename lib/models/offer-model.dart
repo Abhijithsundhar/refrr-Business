@@ -13,6 +13,7 @@ class OfferModel {
   final String description;
   final String? mode;
   final String? affiliate;
+  final String addedBy;
 
   OfferModel({
     required this.name,
@@ -27,6 +28,7 @@ class OfferModel {
     required this.description,
     this.mode,
     this.affiliate,
+    required this.addedBy,
   });
 
   OfferModel copyWith({
@@ -42,6 +44,7 @@ class OfferModel {
     String? description,
     String? mode,
     String? affiliate,
+    String? addedBy,
   }) {
     return OfferModel(
       name: name ?? this.name,
@@ -56,6 +59,7 @@ class OfferModel {
       description: description ?? this.description,
       mode: mode ?? this.mode,
       affiliate: affiliate ?? this.affiliate,
+      addedBy: addedBy ?? this.addedBy,
     );
   }
 
@@ -73,6 +77,7 @@ class OfferModel {
       'description': description,
       'mode': mode,
       'affiliate': affiliate,
+      'addedBy': addedBy,
     };
   }
 
@@ -98,6 +103,7 @@ class OfferModel {
       description: map['description'] as String,
       mode: map['mode'] as String?,
       affiliate: map['affiliate'] as String?,
+      addedBy: map['addedBy'] as String,
     );
   }}
 

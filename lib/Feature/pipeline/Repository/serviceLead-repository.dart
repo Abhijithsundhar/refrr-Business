@@ -18,7 +18,7 @@ final serviceLeadsRepositoryProvider = Provider<ServiceLeadsRepository>((ref) {
 class ServiceLeadsRepository {
   Future<Either<Failure, ServiceLeadModel>> addServiceLeads(ServiceLeadModel serviceLeads) async {
     try {
-      final ref = FirebaseFirestore.instance.collection(FirebaseCollections.ServiceLeadsCollection).doc();
+      final ref = FirebaseFirestore.instance.collection(FirebaseCollections.serviceLeadsCollection).doc();
       final modelWithRef = serviceLeads.copyWith(reference: ref);
       await ref.set(modelWithRef.toMap());
       return right(modelWithRef);
@@ -50,7 +50,7 @@ class ServiceLeadsRepository {
   }) async {
     try {
       await FirebaseFirestore.instance
-          .collection(FirebaseCollections.ServiceLeadsCollection)
+          .collection(FirebaseCollections.serviceLeadsCollection)
           .doc(serviceLeadId)
           .update({
         'chat': FieldValue.arrayUnion([message.toMap()]),
@@ -71,7 +71,7 @@ class ServiceLeadsRepository {
   }) async {
     try {
       await FirebaseFirestore.instance
-          .collection(FirebaseCollections.ServiceLeadsCollection)
+          .collection(FirebaseCollections.serviceLeadsCollection)
           .doc(serviceLeadId)
           .update({
         'leadHandler': handlers.map((h) => h.toMap()).toList(),
@@ -86,16 +86,18 @@ class ServiceLeadsRepository {
   }
 
   Stream<List<ServiceLeadModel>> getServiceLeads(String searchQuery) {
-    final collection = FirebaseFirestore.instance.collection(FirebaseCollections.ServiceLeadsCollection);
+    final collection = FirebaseFirestore.instance.collection(FirebaseCollections.serviceLeadsCollection);
     if (searchQuery.isEmpty) {
       return collection
           .orderBy('createTime', descending: true)
+          .where('delete', isEqualTo: false)
           .snapshots()
           .map((snapshot) =>
           snapshot.docs.map((doc) => ServiceLeadModel.fromMap(doc.data())).toList());
     } else {
       return collection
           .where('search', arrayContains: searchQuery.toUpperCase())
+          .where('delete', isEqualTo: false)
           .snapshots()
           .map((snapshot) =>
           snapshot.docs.map((doc) => ServiceLeadModel.fromMap(doc.data())).toList());
@@ -104,7 +106,7 @@ class ServiceLeadsRepository {
 
   Stream<List<ChatModel>> getChats(String serviceId) {
     return FirebaseFirestore.instance
-        .collection(FirebaseCollections.ServiceLeadsCollection)
+        .collection(FirebaseCollections.serviceLeadsCollection)
         .doc(serviceId)
         .snapshots()
         .map((snapshot) {
@@ -123,7 +125,7 @@ class ServiceLeadsRepository {
 
   Stream<List<SalesPersonModel>> getLeadHandler(String serviceId) {
     return FirebaseFirestore.instance
-        .collection(FirebaseCollections.ServiceLeadsCollection)
+        .collection(FirebaseCollections.serviceLeadsCollection)
         .doc(serviceId)
         .snapshots()
         .map((snapshot) {
@@ -137,6 +139,27 @@ class ServiceLeadsRepository {
           .toList();
 
       return leadhandler;
+    });
+  }
+
+  /// ✅ Get service leads for specific affiliate and firm
+  Stream<List<ServiceLeadModel>> getServiceLeadsByAffiliateAndFirm({
+    required String affiliateId,
+    required String firmId,
+  }) {
+    return FirebaseFirestore.instance
+        .collection('serviceLeads')
+        .where('affiliateId', isEqualTo: affiliateId)
+        .where('firmId', isEqualTo: firmId)
+        .where('delete', isEqualTo: false)
+        .orderBy('createTime', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return ServiceLeadModel.fromMap(data);
+      }).toList();
     });
   }
 }

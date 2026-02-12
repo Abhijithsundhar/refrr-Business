@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../../Core/common/global variables.dart';
-import '../../../core/constants/color-constnats.dart';
+import 'package:refrr_admin/Core/common/call-function.dart';
+import 'package:refrr_admin/Core/common/custom-appBar.dart';
+import 'package:refrr_admin/Core/common/email-function.dart';
+import 'package:refrr_admin/Core/common/global%20variables.dart';
+import 'package:refrr_admin/Core/common/location-funtion.dart';
+import 'package:refrr_admin/Core/common/website-function.dart';
+import 'package:refrr_admin/Core/constants/sizedboxes.dart';
 
 class ContactUs extends StatefulWidget {
   const ContactUs({super.key});
@@ -15,112 +20,134 @@ class _ContactUsState extends State<ContactUs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstants.primaryColor,
-      appBar: AppBar(
-        backgroundColor: ColorConstants.primaryColor,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
-        child: Column(children: [
-          SizedBox(height: height*.02,),
-          Padding(
-            padding:  EdgeInsets.only(right: width*.49),
-            child: Text(
-              'Contact Us',
-              style: GoogleFonts.roboto(
-                fontSize: width * 0.05,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(title: 'Contact Us'),
+      body: Padding(
+        padding: EdgeInsets.all(width * 0.04),
+        child: Container(
+          width: double.infinity,
+          height: height*.49,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(16),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 60),
-            width: double.infinity,
-            padding: EdgeInsets.only(top: height*.05, left: 16, right: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(45)),
-            ),
-            child: SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
-              child: Padding(
-                padding:  EdgeInsets.only(bottom: 20,left: width*.03),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ///phone number
-                    SizedBox(height: height*.03),
-                    Padding(
-                      padding:  EdgeInsets.only(left: width*.2),
-                      child: Text('Phone Number' ,style: GoogleFonts.roboto(
-                          color: Colors.black,fontSize: width*.035,fontWeight: FontWeight.w400),),
-                    ),
-                    SizedBox(height: height*.01),
+          padding: EdgeInsets.symmetric(horizontal: width * 0.04, vertical: height * 0.025),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _InfoRow(
+                title: "Phone No",
+                value: "+91 85940 04461",
+                url: 'assets/svg/blackphone.svg',
+                onTap: () {
+                  openDialer('+91 85940 04461');
+                },
+              ),
+              Divider(color: Colors.grey.shade300, height: height * 0.05),
+              _InfoRow(
+                title: "Mail ID",
+                value: "info@grro.ai",
+                url: 'assets/svg/Mail-logo.svg',
+                onTap: () {
+                  openEmail(emailAddress: 'info@grro.ai');
+                },
+              ),
+              Divider(color: Colors.grey.shade300, height: height * 0.05),
+              _InfoRow(
+                title: "Website",
+                value: "www.grro.ai",
+                url: 'assets/svg/globeBig.svg',
+                onTap: () {
+                  openGrroWebsite();
+                },
+              ),
+              Divider(color: Colors.grey.shade300, height: height * 0.05),
+              _InfoRow(
+                title: "Address",
+                value: "2219, 2nd Floor, Phase 2, \nHiLITE Business Park, Calicut, \nKerala – 673014",
+                url: 'assets/svg/location.svg',
+                onTap: () {
+                  openMapLocation(
+                  "2219, 2nd Floor, Phase 2, HiLITE Business Park, Calicut, Kerala 673014",
+                ); },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-                    Row(
-                      children: [
-                        SizedBox(width: width*.04,),
-                        Icon(Icons.phone_forwarded,color: Colors.black87),
-                        SizedBox(width: width*.092,),
-                        SelectableText('+91 9955510101' ,style: GoogleFonts.roboto(
-                            color: Colors.black,fontSize: width*.035,fontWeight: FontWeight.w500),),
-                      ],
-                    ),
-                    Divider(indent: width*.2,),
-                    /// email
-                    SizedBox(height: height*.02),
-                    Padding(
-                      padding:  EdgeInsets.only(left: width*.2),
-                      child: Text('Email' ,style: GoogleFonts.roboto(
-                          color: Colors.black,fontSize: width*.035,fontWeight: FontWeight.w400),),
-                    ),
-                    SizedBox(height: height*.01),
+///-------------------- Reusable Info Row --------------------
 
-                    Row(
-                      children: [
-                        SizedBox(width: width*.04,),
-                        Icon(Icons.mail,color: Colors.black87),
-                        SizedBox(width: width*.092,),
-                        SelectableText('info@icanyon.com' ,style: GoogleFonts.roboto(
-                            color: Colors.black,fontSize: width*.035,fontWeight: FontWeight.w500),),
-                      ],
-                    ),
-                    Divider(indent: width*.2,),
+class _InfoRow extends StatelessWidget {
+  final String title;
+  final String value;
+  final String url;
+  final Function() onTap;
 
-                    /// Address
-                    SizedBox(height: height*.02),
-                    Padding(
-                      padding:  EdgeInsets.only(left: width*.2),
-                      child: Text('Address' ,style: GoogleFonts.roboto(
-                          color: Colors.black,fontSize: width*.035,fontWeight: FontWeight.w400),),
-                    ),
-                    SizedBox(height: height*.01),
+  const _InfoRow({
+    required this.title,
+    required this.value,
+    required this.url,
+    required this.onTap,
+  });
 
-                    Row(
-                      children: [
-                        SizedBox(width: width*.04,),
-                        Icon(Icons.location_pin,color: Colors.black87,),
-                        SizedBox(width: width*.092,),
-                        SelectableText('i-Canyon technologies,\n7th floor ,T2, Hilite Business Park,\nCalicut- India' ,style: GoogleFonts.roboto(
-                            color: Colors.black,fontSize: width*.035,fontWeight: FontWeight.w500),),
-                      ],
-                    ),
-                    Divider(indent: width*.2,),
-
-                    SizedBox(height: height*.4),
-                  ],
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// TEXT SECTION
+        Expanded(
+          flex: 5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.dmSans(
+                  fontSize: width * 0.035,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
+              SizedBox(height: height * 0.004),
+              Text(
+                value,
+                style: GoogleFonts.dmSans(
+                  fontSize: width * 0.037,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        /// ICON SECTION
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: width * .1,
+            height: width * .1,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE5FBFF),
+              borderRadius: BorderRadius.circular(40),
+              border: Border.all(color: const Color(0xFF00E0FF)),
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                url,
+                width: width * .05,
+                height: width * .05,
+                color: Colors.black,
+              ),
             ),
           ),
-        ],),
-      ),
+        ),
+      ],
     );
   }
 }

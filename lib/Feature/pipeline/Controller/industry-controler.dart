@@ -4,28 +4,32 @@ import 'package:refrr_admin/Core/common/snackbar.dart';
 import 'package:refrr_admin/Feature/pipeline/Repository/industry-repositery.dart';
 import 'package:refrr_admin/models/industry-model.dart';
 
-
 /// ✅ Industry Repository Provider
 final industryRepositoryProvider = Provider((ref) => IndustryRepository());
 
 final industryModelProvider = StateProvider<IndustryModel?>((ref) {
   return null;
 });
+
 final listOfServiceProvider = StateProvider<List<String>>((ref) {
   return [];
 });
+
 final serviceProvider = StateProvider<String>((ref) {
   return '';
 });
-/// ✅ Industry Stream Provider with search query
-final industryStreamProvider = StreamProvider.family<List<IndustryModel>, String>((ref, searchQuery) {
-  final repository = ref.watch(industryRepositoryProvider);
+final industrySearchProvider = StateProvider<String>((ref) => '');
 
+/// ✅ Industry Stream Provider with search query
+final industryStreamProvider =
+StreamProvider.family<List<IndustryModel>, String>((ref, searchQuery) {
+  final repository = ref.watch(industryRepositoryProvider);
   return repository.getIndustry(searchQuery);
 });
 
 /// ✅ Industry Controller Provider
-final industryControllerProvider = StateNotifierProvider<IndustryController, bool>((ref) {
+final industryControllerProvider =
+StateNotifierProvider<IndustryController, bool>((ref) {
   return IndustryController(repository: ref.read(industryRepositoryProvider));
 });
 
@@ -47,7 +51,8 @@ class IndustryController extends StateNotifier<bool> {
     final result = await _repository.addIndustry(industryModel);
 
     state = false;
-    result.fold((l) => showCommonSnackbar(context, l.failure),
+    result.fold(
+          (l) => showCommonSnackbar(context, l.failure),
           (r) {
         showCommonSnackbar(context, "Industry added successfully");
         Navigator.pop(context);

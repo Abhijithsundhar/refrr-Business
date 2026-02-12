@@ -6,5 +6,6 @@ class ColorConstants{
   static const Color primaryColor = Color.fromRGBO(15, 220, 234, 1);
   static Color buttonColor = Colors.black;
   static const Color texFieldColor = Color.fromRGBO(243, 243, 243, 1);
+  static const Color cardColor= Color(0xFFF3F3F3);
 
 }

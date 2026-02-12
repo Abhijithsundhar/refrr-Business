@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/Core/common/alertBox.dart';
+import 'package:refrr_admin/Core/common/custom-appBar.dart';
 import 'package:refrr_admin/Core/common/custom-round-button.dart';
 import 'package:refrr_admin/Core/common/global%20variables.dart';
 import 'package:refrr_admin/Core/common/snackbar.dart';
@@ -17,70 +18,38 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            SizedBox(width: width * .05),
-            CircleIconButton(
-              icon: Icons.arrow_back_ios,
-              onTap: () => Navigator.pop(context),
-            ),
-            SizedBox(width: width * .03),
-            Text(
-              "Settings",
-              style: GoogleFonts.dmSans(
-                fontSize: width * .055,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Container(
-            color: Colors.black12,
-            height: 1,  // underline thickness
-          ),
-        ),
-      ),
-
-
+      appBar: CustomAppBar(title: 'Settings'),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: width * .04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            SizedBox(height: width * .04),
-
-            /// -----------------------------
-            /// Type of Offerings Tile
-            /// -----------------------------
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xFFE5E9EB)),
-              ),
-              child: ListTile(
-                title: Text(
-                  "Type of Offerings",
-                  style: GoogleFonts.dmSans(
-                    fontSize: width * .04,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                onTap: () {
-                  showTypeOfOfferingsSheet(context);
-                },
-              ),
-            ),
+            // SizedBox(height: width * .04),
+            //
+            // /// -----------------------------
+            // /// Type of Offerings Tile
+            // /// -----------------------------
+            // Container(
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(12),
+            //     border: Border.all(color: Color(0xFFE5E9EB)),
+            //   ),
+            //   child: ListTile(
+            //     title: Text(
+            //       "Type of Offerings",
+            //       style: GoogleFonts.dmSans(
+            //         fontSize: width * .04,
+            //         fontWeight: FontWeight.w500,
+            //       ),
+            //     ),
+            //     trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            //     onTap: () {
+            //       showTypeOfOfferingsSheet(context);
+            //     },
+            //   ),
+            // ),
 
             SizedBox(height: width * .04),
 

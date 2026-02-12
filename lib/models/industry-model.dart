@@ -1,47 +1,87 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class IndustryModel {
-  final String industryName;
-  final List<String> services;
-  final DocumentReference? reference;
   final String? id;
+  final String name;
+  final List<String> services;
+  final List<String> search;
+  final int noOfBusiness;
+  final int noOfMarketers;
+  final DateTime createTime;
+  final bool delete;
+  final DocumentReference? reference;
 
   IndustryModel({
-    required this.industryName,
-    required this.services,
-    this.reference,
     this.id,
+    required this.name,
+    required this.services,
+    required this.search,
+    required this.noOfBusiness,
+    required this.noOfMarketers,
+    required this.createTime,
+    required this.delete,
+    this.reference,
   });
 
   IndustryModel copyWith({
-    String? industryName,
-    List<String>? services,
-    DocumentReference? reference,
     String? id,
+    String? name,
+    List<String>? services,
+    List<String>? search,
+    int? noOfBusiness,
+    int? noOfMarketers,
+    DateTime? createTime,
+    bool? delete,
+    DocumentReference? reference,
   }) {
     return IndustryModel(
-      industryName: industryName ?? this.industryName,
-      services: services ?? this.services,
-      reference: reference ?? this.reference,
       id: id ?? this.id,
+      name: name ?? this.name,
+      services: services ?? this.services,
+      search: search ?? this.search,
+      noOfBusiness: noOfBusiness ?? this.noOfBusiness,
+      noOfMarketers: noOfMarketers ?? this.noOfMarketers,
+      createTime: createTime ?? this.createTime,
+      delete: delete ?? this.delete,
+      reference: reference ?? this.reference,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'industryName': industryName,
+      'name': name,
       'services': services,
+      'search': search,
+      'noOfBusiness': noOfBusiness,
+      'noOfMarketers': noOfMarketers,
+      'createTime': Timestamp.fromDate(createTime),
+      'delete': delete,
       'reference': reference,
-      'id': id,
     };
   }
 
-  factory IndustryModel.fromMap(Map<String, dynamic> map, {DocumentReference? reference}) {
+  factory IndustryModel.fromMap(
+      Map<String, dynamic> map, {
+        String? id,
+        DocumentReference? reference,
+      }) {
     return IndustryModel(
-      industryName: map['industryName'] ?? '',
+      id: id ?? map['id'] as String?,
+      name: map['name'] as String? ?? '',
       services: List<String>.from(map['services'] ?? []),
-      reference: reference ?? map['reference'],
-      id: map['id'] ?? '',
+      search: List<String>.from(map['search'] ?? []),
+      noOfBusiness: map['noOfBusiness'] as int? ?? 0,
+      noOfMarketers: map['noOfMarketers'] as int? ?? 0,
+      createTime: map['createTime'] != null
+          ? (map['createTime'] as Timestamp).toDate()
+          : DateTime.now(),
+      delete: map['delete'] as bool? ?? false,
+      reference: reference ?? map['reference'] as DocumentReference?,
     );
+  }
+
+  @override
+  String toString() {
+    return 'IndustryModel(id: $id, name: $name, services: $services, search: $search, noOfBusiness: $noOfBusiness, noOfMarketers: $noOfMarketers, createTime: $createTime, delete: $delete)';
   }
 }

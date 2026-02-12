@@ -8,6 +8,15 @@ import 'package:refrr_admin/models/serviceLeadModel.dart';
 
 
 final serviceLeadsRepositoryProvider = Provider((ref) => ServiceLeadsRepository());
+/// ✅ Provider to get service leads for specific affiliate and firm
+final affiliateServiceLeadsProvider = StreamProvider.autoDispose
+    .family<List<ServiceLeadModel>, ({String affiliateId, String firmId})>((ref, filter) {
+  final repository = ref.watch(serviceLeadsRepositoryProvider);
+  return repository.getServiceLeadsByAffiliateAndFirm(
+    affiliateId: filter.affiliateId,
+    firmId: filter.firmId,
+  );
+});
 
 final chatProvider = StreamProvider.family<List<ChatModel>, String>((ref, serviceId) {
   final repo = ref.watch(serviceLeadsRepositoryProvider);

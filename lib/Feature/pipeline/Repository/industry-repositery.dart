@@ -6,14 +6,12 @@ import 'package:refrr_admin/Core/constants/firebaseConstants.dart';
 import 'package:refrr_admin/Core/constants/typedef.dart';
 import 'package:refrr_admin/models/industry-model.dart';
 
-
 /// Industry Repository Provider
 final industryRepositoryProvider = Provider<IndustryRepository>((ref) {
   return IndustryRepository();
 });
 
 class IndustryRepository {
-
   /// ✅ Add Industry
   FutureEither<IndustryModel> addIndustry(IndustryModel industry) async {
     try {
@@ -26,7 +24,7 @@ class IndustryRepository {
 
       return right(newIndustry);
     } on FirebaseException catch (e) {
-      throw e.message!;
+      return left(Failure(failure: e.message ?? 'Firebase error occurred'));
     } catch (e) {
       return left(Failure(failure: e.toString()));
     }
@@ -37,29 +35,33 @@ class IndustryRepository {
     try {
       return right(await industry.reference!.update(industry.toMap()));
     } on FirebaseException catch (e) {
-      throw e.message!;
+      return left(Failure(failure: e.message ?? 'Firebase error occurred'));
     } catch (e) {
       return left(Failure(failure: e.toString()));
     }
   }
 
-  /// ✅ Stream Industries with optional search
+  /// ✅ Stream Industries
   Stream<List<IndustryModel>> getIndustry(String searchQuery) {
-    final collection =
-    FirebaseFirestore.instance.collection(FirebaseCollections.industriesCollection);
+    final collection = FirebaseFirestore.instance
+        .collection(FirebaseCollections.industriesCollection);
 
-    if (searchQuery.isEmpty) {
-      return collection
-          .snapshots()
-          .map((snapshot) => snapshot.docs
-          .map((doc) => IndustryModel.fromMap(doc.data()))
-          .toList());
-    } else {
-      return collection
-          .snapshots()
-          .map((snapshot) => snapshot.docs
-          .map((doc) => IndustryModel.fromMap(doc.data()))
-          .toList());
-    }
+    return collection
+        .where('delete', isEqualTo: false)
+        // .orderBy('createTime', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      print('📦 Total industries in Firestore: ${snapshot.docs.length}');
+
+      return snapshot.docs.map((doc) {
+        print('📄 Industry doc ID: ${doc.id}, Data: ${doc.data()}');
+
+        return IndustryModel.fromMap(
+          doc.data(),
+          id: doc.id,
+          reference: doc.reference,
+        );
+      }).toList();
+    });
   }
 }
