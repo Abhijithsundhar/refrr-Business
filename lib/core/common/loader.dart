@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:refrr_admin/Core/theme/pallet.dart';
+import 'package:refrr_admin/core/theme/pallet.dart';
 
 class CommonLoader extends StatelessWidget {
   final double? size;

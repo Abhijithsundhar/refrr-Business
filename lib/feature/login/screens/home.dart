@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:refrr_admin/Core/common/globalVariables.dart';
+import 'package:refrr_admin/core/common/global_variables.dart';
+import 'package:refrr_admin/feature/pipeline/Screens/pipeline/funnel_home.dart';
+import 'package:refrr_admin/feature/promote/screens/promote_home.dart';
+import 'package:refrr_admin/feature/team/screens/team_home.dart';
+import 'package:refrr_admin/feature/website/screens/website/web_home_screen.dart';
 import 'package:refrr_admin/models/leads_model.dart';
-
-import 'package:refrr_admin/Feature/pipeline/Screens/pipeline/funnel-home.dart';
-import 'package:refrr_admin/Feature/website/screens/website/web-home-screen.dart';
-import 'package:refrr_admin/Feature/Team/screens/team-home.dart';
-import 'package:refrr_admin/Feature/promote/screens/promote-home.dart';
 
 class HomeScreen extends StatefulWidget {
   final LeadsModel? lead;

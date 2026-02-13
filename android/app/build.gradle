@@ -5,7 +5,7 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 
     // ⚠️ Enable ONLY if Firebase is used
-    // id 'com.google.gms.google-services'
+     id 'com.google.gms.google-services'
 }
 
 def localProperties = new Properties()

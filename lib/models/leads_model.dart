@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:refrr_admin/models/affiliate-model.dart';
-import 'package:refrr_admin/models/services-model.dart';
+import 'package:refrr_admin/models/affiliate_model.dart';
+import 'package:refrr_admin/models/services_model.dart';
+
 
 class LeadsModel {
   final String logo;

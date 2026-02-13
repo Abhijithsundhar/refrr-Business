@@ -1,19 +1,37 @@
-allprojects {
+// android/build.gradle  (root project)
+
+buildscript {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        // 👇🔑 All classpath lines belong here
+        classpath 'com.android.tools.build:gradle:8.12.3'
+        classpath 'com.google.gms:google-services:4.4.4'
     }
 }
 
+// project‑wide repositories for all modules
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+// ------------------------------------------------------------------
+
 rootProject.buildDir = "../build"
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// optional clean task
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

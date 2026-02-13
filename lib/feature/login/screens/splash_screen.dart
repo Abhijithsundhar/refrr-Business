@@ -2,12 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refrr_admin/Core/constants/color-constnats.dart';
-import 'package:refrr_admin/Feature/Login/Controller/lead-controllor.dart';
-import 'package:refrr_admin/Feature/Login/Screens/home.dart';
+import 'package:refrr_admin/core/constants/colorconstnats.dart';
+import 'package:refrr_admin/feature/Login/screens/home.dart';
+import 'package:refrr_admin/feature/login/Controller/lead_controller.dart';
+import 'package:refrr_admin/feature/login/screens/onboard_screen_1.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:refrr_admin/Feature/Login/Screens/onboardScreen-1.dart';
+
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

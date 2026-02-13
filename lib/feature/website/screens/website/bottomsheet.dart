@@ -5,23 +5,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:refrr_admin/Core/common/alertBox.dart';
-import 'package:refrr_admin/Core/common/custom-round-button.dart';
-import 'package:refrr_admin/Core/common/custom-text-field.dart';
-import 'package:refrr_admin/Core/common/globalVariables.dart';
-import 'package:refrr_admin/Core/common/loader.dart';
-import 'package:refrr_admin/Core/common/snackbar.dart';
-import 'package:refrr_admin/Core/common/textEditingControllers.dart';
-import 'package:refrr_admin/Core/constants/asset.dart';
-import 'package:refrr_admin/Core/constants/color-constnats.dart';
-import 'package:refrr_admin/Core/theme/pallet.dart';
-import 'package:refrr_admin/Core/common/image-convert-to-url.dart';
-import 'package:refrr_admin/Feature/website/controller/category-controler.dart';
-import 'package:refrr_admin/Feature/website/controller/product-controller.dart';
-import 'package:refrr_admin/Feature/website/controller/service-controller.dart';
+import 'package:refrr_admin/core/common/alert_box.dart';
+import 'package:refrr_admin/core/common/custom_round_button.dart';
+import 'package:refrr_admin/core/common/customtextfield.dart';
+import 'package:refrr_admin/core/common/global_variables.dart';
+import 'package:refrr_admin/core/common/image_convert_to_url.dart';
+import 'package:refrr_admin/core/common/loader.dart';
+import 'package:refrr_admin/core/common/snackbar.dart';
+import 'package:refrr_admin/core/common/text_editing_controllers.dart';
+import 'package:refrr_admin/core/constants/asset.dart';
+import 'package:refrr_admin/core/constants/colorconstnats.dart';
+import 'package:refrr_admin/core/theme/pallet.dart';
+import 'package:refrr_admin/feature/website/controller/category_controler.dart';
+import 'package:refrr_admin/feature/website/controller/product_controller.dart';
+import 'package:refrr_admin/feature/website/controller/service_controller.dart';
 import 'package:refrr_admin/models/leads_model.dart';
-import 'package:refrr_admin/models/product-model.dart';
-import 'package:refrr_admin/models/services-model.dart';
+import 'package:refrr_admin/models/product_model.dart';
+import 'package:refrr_admin/models/services_model.dart';
 
 /// Which form is active in the bottom sheet
 enum AddType { product, service }
@@ -440,8 +440,7 @@ class _AddBottomSheetContentState
                           onChanged: (pattern) {
                             final lower = pattern.toLowerCase();
                             visibleSuggestions.value = categories
-                                .where((c) =>
-                                c.name.toLowerCase().contains(lower))
+                                .where((c) => c.name.toLowerCase().contains(lower))
                                 .toList();
                             showDropdown.value = true;
                           },
