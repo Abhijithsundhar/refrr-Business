@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refrr_admin/core/common/global_variables.dart';
 import 'package:refrr_admin/core/constants/auth_wrapper.dart';
-import 'package:refrr_admin/feature/Login/screens/connectivity.dart';
+import 'package:refrr_admin/feature/login/screens/connectivity.dart';
 import 'package:refrr_admin/feature/login/screens/splash_screen.dart';
 import 'package:refrr_admin/firebase_options.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:refrr_admin/core/common/global_variables.dart';
-import 'package:refrr_admin/feature/Login/screens/login_page.dart';
+import 'package:refrr_admin/feature/login/screens/login_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
