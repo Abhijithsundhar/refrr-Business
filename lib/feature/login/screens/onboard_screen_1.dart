@@ -11,7 +11,6 @@ class OnboardingPage extends StatefulWidget {
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
 }
-
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _controller = PageController();
 
