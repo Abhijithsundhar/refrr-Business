@@ -5,7 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-///remo
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,8 +22,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # true used for ellam pass akki vidann, github testing
       - name: Analyze project
-        run: flutter analyze || true  //true used for ellam pass akki vidann, github testing
+        run: flutter analyze || true
 
       - name: Run tests
         run: flutter test || true
