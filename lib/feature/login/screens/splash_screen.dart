@@ -54,7 +54,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       _goToOnboarding();
     }
   }
-
   void _goToOnboarding() {
     Navigator.of(context).pushReplacement(
       CupertinoPageRoute(builder: (_) => const OnboardingPage()),
