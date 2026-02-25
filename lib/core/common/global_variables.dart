@@ -1,10 +1,13 @@
-
+import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refrr_admin/core/common/image_picker.dart';
 import 'package:refrr_admin/models/admin_model.dart';
 import 'package:refrr_admin/models/affiliate_model.dart';
+import 'package:refrr_admin/models/chatbox_model.dart';
 import 'package:refrr_admin/models/jobhistory_model.dart';
+import 'package:refrr_admin/models/leads_model.dart';
+import 'package:refrr_admin/models/serviceLead_model.dart';
 
 ///screen size
 double width = 0;
@@ -84,5 +87,17 @@ final Set<String> selectedIds = {};
 final List<AffiliateModel> selectedAffiliates = [];
 
 String affId(AffiliateModel a) => a.id ?? a.reference?.id ?? '';
+
+late ServiceLeadModel service;
+late LeadsModel? currentFirm;
+late AffiliateModel? marketer;
+String? handlerProfile;
+
+// ✅ ScrollController and first load flag
+final ScrollController scrollController = ScrollController();
+bool isFirstLoad = true;
+
+// ✅ ADD: Track latest chat list from stream
+List<ChatModel> latestChatList = [];
 
 

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:refrr_admin/core/alert_dailogs/hire_confirmation_alert.dart';
 import 'package:refrr_admin/core/common/chat_screen_support_functions.dart';
 import 'package:refrr_admin/core/common/global_variables.dart';
 import 'package:refrr_admin/core/constants/home_page_functions.dart';
 import 'package:refrr_admin/core/constants/service_lead_color.dart';
-import 'package:refrr_admin/feature/pipeline/Controller/service_lead_controller.dart';
+import 'package:refrr_admin/feature/pipeline/controller/service_lead_controller.dart';
 import 'package:refrr_admin/models/chatbox_model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/serviceLead_model.dart';
 
-
-void showLeadBottomSheet(BuildContext context,ServiceLeadModel? service,LeadsModel? currentFirm,WidgetRef? ref) {
+void showLeadBottomSheet(BuildContext context, ServiceLeadModel? service, LeadsModel? currentFirm, WidgetRef? ref) {
   showModalBottomSheet(
     backgroundColor: Colors.white,
     context: context,
@@ -20,7 +20,11 @@ void showLeadBottomSheet(BuildContext context,ServiceLeadModel? service,LeadsMod
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
     builder: (_) {
-      return LeadBottomSheetUI(currentFirm:currentFirm ,service:service ,ref: ref,);
+      return LeadBottomSheetUI(
+        currentFirm: currentFirm,
+        service: service,
+        ref: ref,
+      );
     },
   );
 }
@@ -29,11 +33,12 @@ class LeadBottomSheetUI extends ConsumerStatefulWidget {
   final ServiceLeadModel? service;
   final LeadsModel? currentFirm;
   final WidgetRef? ref;
-  const LeadBottomSheetUI( {super.key,this.currentFirm, this.service,  this.ref,});
+  const LeadBottomSheetUI({super.key, this.currentFirm, this.service, this.ref});
 
   @override
   _LeadBottomSheetUIState createState() => _LeadBottomSheetUIState();
 }
+
 class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
   String selectedType = "";
   String selectedStatus = "";
@@ -41,11 +46,9 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
   @override
   void initState() {
     selectedType = widget.service?.leadType ?? '';
-    if (widget.service != null &&
-        widget.service!.statusHistory.isNotEmpty) {
+    if (widget.service != null && widget.service!.statusHistory.isNotEmpty) {
       selectedStatus = widget.service!.statusHistory.last['status'] ?? '';
     }
-    // TODO: implement initState
     super.initState();
   }
 
@@ -57,7 +60,6 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// ------- TOP HANDLE -------
           Center(
             child: Container(
@@ -85,10 +87,11 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
               ),
               GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child:  CircleAvatar(
-                    radius: width*.04,
-                    backgroundColor: Color(0xFFF3F3F3),
-                    child: Icon(Icons.close, size: 18)),
+                child: CircleAvatar(
+                  radius: width * .04,
+                  backgroundColor: Color(0xFFF3F3F3),
+                  child: Icon(Icons.close, size: 18),
+                ),
               ),
             ],
           ),
@@ -98,11 +101,11 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
           /// ------- HOT / WARM / COOL -------
           Row(
             children: [
-              SizedBox(width: width*.02),
+              SizedBox(width: width * .02),
               typeChip("assets/svg/fireimogi.svg", "Hot"),
-              SizedBox(width: width*.03),
+              SizedBox(width: width * .03),
               typeChip("assets/svg/warmimogi.svg", "Warm"),
-              SizedBox(width: width*.03),
+              SizedBox(width: width * .03),
               typeChip("assets/svg/specsimogi.svg", "Cool"),
             ],
           ),
@@ -120,13 +123,14 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
           ),
 
           SizedBox(height: 14),
+
           /// ------- STATUS WRAP -------
           Wrap(
             spacing: 12,
             runSpacing: 12,
             alignment: WrapAlignment.spaceEvenly,
             children: statusOptions.map((status) {
-              final colors = getStatusColors(status); // your helper for pastel colors
+              final colors = getStatusColors(status);
               final bool selected = selectedStatus == status;
 
               return GestureDetector(
@@ -143,14 +147,7 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
                           return;
                         }
 
-                        final newHistoryEntry = {
-                          "status": status,
-                          "date": DateTime.now(),
-                          'added': widget.currentFirm?.reference?.id ?? ''
-                        };
-                        final updatedHistory =
-                        [...widget.service!.statusHistory, newHistoryEntry];
-
+                        // ✅ Create new chat message
                         final newMessage = ChatModel(
                           type: 'status',
                           chatterId: widget.currentFirm!.reference!.id,
@@ -164,13 +161,22 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
                           transactionStatus: '',
                         );
 
-                        final updatedChatList = List<ChatModel>.from(widget.service!.chat)..add(newMessage);
+                        // ✅ Create status history entry (use Timestamp or ISO string for Firestore)
+                        final statusHistoryEntry = {
+                          "status": status,
+                          "date": DateTime.now().toIso8601String(),
+                          'added': widget.currentFirm?.reference?.id ?? ''
+                        };
 
-                        final updatedService = widget.service!.copyWith(
-                          statusHistory: updatedHistory, chat: updatedChatList,);
-
-                        await ref.read(serviceLeadsControllerProvider.notifier)
-                            .updateServiceLeads(serviceLeadsModel: updatedService, context: context,);
+                        // ✅ Use ArrayUnion - SAFE, never clears old chats!
+                        await ref
+                            .read(serviceLeadsControllerProvider.notifier)
+                            .addChatMessageWithUpdate(
+                          serviceLeadId: widget.service!.reference!.id,
+                          message: newMessage,
+                          context: context,
+                          statusHistoryEntry: statusHistoryEntry,
+                        );
 
                         if (context.mounted) Navigator.pop(context);
                       } catch (e) {
@@ -180,8 +186,7 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
                   );
                 },
                 child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
                   decoration: BoxDecoration(
                     color: colors.background,
                     borderRadius: BorderRadius.circular(30),
@@ -225,30 +230,34 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
               () async {
             try {
               final type = title;
-
               if (widget.service == null || widget.service!.reference == null) {
                 print('Error: Service or reference is null');
                 return;
               }
+
+              // ✅ Create the new message
               final newMessage = ChatModel(
-                  type:'type',
-                  chatterId: widget.currentFirm?.reference!.id ??'',
-                  imageUrl: widget.currentFirm?.logo??'',
-                  message:' The lead type has been changed to $selectedType.',
-                  time: DateTime.now(),
-                  dateLabel: DateTime.now(),
-                  amount: 0,
-                  description: '',
-                  requiresAction: false,
-                  transactionStatus: ''
+                type: 'type',
+                chatterId: widget.currentFirm?.reference!.id ?? '',
+                imageUrl: widget.currentFirm?.logo ?? '',
+                message: 'The lead type has been changed to $type.',
+                time: DateTime.now(),
+                dateLabel: DateTime.now(),
+                amount: 0,
+                description: '',
+                requiresAction: false,
+                transactionStatus: '',
               );
-              // 2️⃣ Copy existing chat list
-              final updatedChatList = List<ChatModel>.from(widget.service?.chat??[]);
-              // 3️⃣ Add new message
-              updatedChatList.add(newMessage);
-              final updateType = widget.service!.copyWith(leadType: type, chat: updatedChatList);
-              await ref.read(serviceLeadsControllerProvider.notifier)
-                  .updateServiceLeads(serviceLeadsModel: updateType, context: context,);
+
+              // ✅ Use ArrayUnion - SAFE, never clears old chats!
+              await ref
+                  .read(serviceLeadsControllerProvider.notifier)
+                  .addChatMessageWithUpdate(
+                serviceLeadId: widget.service!.reference!.id,
+                message: newMessage,
+                context: context,
+                leadType: type,
+              );
 
               if (context.mounted) Navigator.pop(context);
             } catch (e) {
@@ -258,7 +267,7 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
         );
       },
       child: Container(
-        width: width*.285,
+        width: width * .285,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: const Color(0xFFF3F3F3),
@@ -282,19 +291,17 @@ class _LeadBottomSheetUIState extends ConsumerState<LeadBottomSheetUI> {
                 child: Text(
                   title,
                   overflow: TextOverflow.ellipsis,
-                  style:  TextStyle(
-                    fontSize: width*.03,
+                  style: TextStyle(
+                    fontSize: width * .03,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-
-              // ⭐ Always keep space for the icon
               SizedBox(
                 width: 20,
                 child: isSelected
                     ? const Icon(Icons.check_circle, color: Color(0xFF14DFED), size: 18)
-                    : const SizedBox.shrink(), // empty but same width
+                    : const SizedBox.shrink(),
               ),
             ],
           ),

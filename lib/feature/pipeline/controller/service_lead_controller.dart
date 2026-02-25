@@ -6,8 +6,6 @@ import 'package:refrr_admin/models/chatbox_model.dart';
 import 'package:refrr_admin/models/salesperson_model.dart';
 import 'package:refrr_admin/models/serviceLead_model.dart';
 
-
-
 final serviceLeadsRepositoryProvider = Provider((ref) => ServiceLeadsRepository());
 /// ✅ Provider to get service leads for specific affiliate and firm
 final affiliateServiceLeadsProvider = StreamProvider.autoDispose
@@ -73,16 +71,20 @@ class ServiceLeadsController extends StateNotifier<bool> {
     );
   }
 
-  // ✅ ADD: Method for adding chat messages
-  Future<void> addChatMessage({
+// ✅ Method for adding chat messages with optional updates
+  Future<void> addChatMessageWithUpdate({
     required String serviceLeadId,
     required ChatModel message,
     required BuildContext context,
+    String? leadType,
+    Map<String, dynamic>? statusHistoryEntry,
   }) async {
     state = true;
-    final result = await _repository.addChatMessage(
+    final result = await _repository.addChatMessageWithUpdate(
       serviceLeadId: serviceLeadId,
       message: message,
+      leadType: leadType,
+      statusHistoryEntry: statusHistoryEntry,
     );
     state = false;
     result.fold(
@@ -111,5 +113,30 @@ class ServiceLeadsController extends StateNotifier<bool> {
 
   Stream<List<ServiceLeadModel>> getServiceLeads(String searchQuery) {
     return _repository.getServiceLeads(searchQuery);
+  }
+  // Add this to your ServiceLeadsController class
+  Future<void> updateChatAtIndex({
+    required String serviceLeadId,
+    required List<ChatModel> currentChatList,
+    required int index,
+    required ChatModel updatedChat,
+    required BuildContext context,
+  }) async {
+    state = true;
+
+    // Create new list with updated chat at index
+    final updatedChatList = List<ChatModel>.from(currentChatList);
+    updatedChatList[index] = updatedChat;
+
+    final result = await _repository.updateChatInArray(
+      serviceLeadId: serviceLeadId,
+      updatedChatList: updatedChatList,
+    );
+
+    state = false;
+    result.fold(
+          (l) => showCommonSnackbar(context, l.failure),
+          (r) {}, // Silent success
+    );
   }
 }

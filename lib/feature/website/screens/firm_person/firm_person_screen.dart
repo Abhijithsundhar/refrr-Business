@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/core/common/call_function.dart';
 import 'package:refrr_admin/core/common/chat_screen_support_functions.dart';
 import 'package:refrr_admin/core/common/custom_round_button.dart';
+import 'package:refrr_admin/core/utils/whatsapp_open_function.dart';
 import 'package:refrr_admin/feature/website/controller/firm_controller.dart';
 
 class FirmDetailsPage extends ConsumerWidget {
@@ -127,26 +128,28 @@ class FirmDetailsPage extends ConsumerWidget {
               ),
             ],
           ),
-          bottomNavigationBar: Container(
-            height: 60,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            color: Colors.white,
-            child: Row(
-              children: [
-                Expanded(
-                  child: buildBottomButton(
-                    icon: 'assets/svg/phone.svg',
-                    onTap: () => openDialer(firm.phoneNo.toString() ?? ''),
+          bottomNavigationBar: SafeArea(
+            child: Container(
+              height: 60,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              color: Colors.white,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: buildBottomButton(
+                      icon: 'assets/svg/phone.svg',
+                      onTap: () => openDialer(firm.phoneNo.toString() ?? ''),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: buildBottomButton(
-                    icon: 'assets/svg/whatsappBlaack.svg',
-                    onTap: () => openWhatsApp(firm.phoneNo.toString() ?? ''),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: buildBottomButton(
+                      icon: 'assets/svg/whatsappBlaack.svg',
+                      onTap: () => openWhatsApp(firm.phoneNo.toString() ?? ''),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

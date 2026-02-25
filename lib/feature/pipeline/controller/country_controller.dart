@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refrr_admin/feature/pipeline/repository/country_repository.dart';
 import 'package:refrr_admin/models/city_model.dart';
@@ -31,13 +32,13 @@ final zoneNamesProvider = Provider<List<String>>((ref) {
 
 /// FutureProvider for countries
 final countriesFutureProvider = FutureProvider<List<CountryModel>>((ref) async {
-  final controller = ref.watch(countryControllerProvider.notifier);
-  return await controller.fetchCountries();
+  final repository = ref.watch(countryRepositoryProvider);
+  return repository.fetchCountries();
 });
 
+
 /// FutureProvider for cities based on country document ID
-final citiesFutureProvider =
-FutureProvider.family<List<CityModel>, String>((ref, countryDocumentId) async {
+final citiesFutureProvider = FutureProvider.family<List<CityModel>, String>((ref, countryDocumentId) async {
   final controller = ref.watch(countryControllerProvider.notifier);
   return await controller.fetchCitiesByCountryId(countryDocumentId);
 });
@@ -62,16 +63,16 @@ class CountryController extends StateNotifier<bool> {
 
   /// Fetch countries
   Future<List<CountryModel>> fetchCountries() async {
-    state = true;
     try {
       final countries = await repository.fetchCountries();
       return countries;
-    } catch (e) {
-      rethrow;
-    } finally {
-      state = false;
+    } catch (e, stack) {
+      debugPrint("❌ Fetch countries error: $e");
+      debugPrint("Stack: $stack");
+      throw e; // or just let it throw naturally
     }
   }
+
 
   /// Fetch cities by country document ID
   Future<List<CityModel>> fetchCitiesByCountryId(String countryDocumentId) async {

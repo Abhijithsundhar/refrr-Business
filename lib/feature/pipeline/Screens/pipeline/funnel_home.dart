@@ -18,9 +18,12 @@ import 'package:refrr_admin/feature/pipeline/Screens/scale/addcity.dart';
 import 'package:refrr_admin/feature/pipeline/controller/city_controller.dart';
 import 'package:refrr_admin/feature/pipeline/controller/service_lead_controller.dart';
 import 'package:refrr_admin/feature/pipeline/screens/menu/menu.dart';
+import 'package:refrr_admin/feature/pipeline/screens/notification/notification.dart';
+import 'package:refrr_admin/feature/pipeline/screens/pipeline/chat_screen.dart';
 import 'package:refrr_admin/feature/pipeline/screens/pipeline/date_filter.dart';
 import 'package:refrr_admin/feature/pipeline/screens/pipeline/lead_card_ui.dart';
 import 'package:refrr_admin/feature/pipeline/screens/scale/city_home.dart';
+import 'package:refrr_admin/feature/team/controller/affiliate_controller.dart';
 import 'package:refrr_admin/models/affiliate_model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/serviceLead_model.dart';
@@ -412,9 +415,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                   padding:
                                   EdgeInsets.only(left: width * .035),
                                   child: Text(
-                                    appBarTitle.length > 19
-                                        ? appBarTitle.substring(0, 19)
-                                        : appBarTitle,
+                                    appBarTitle.length > 19 ? appBarTitle.substring(0, 19) : appBarTitle,
                                     maxLines: 1,
                                     overflow:
                                     TextOverflow.ellipsis,
@@ -431,22 +432,17 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                               padding: EdgeInsets.only(right: width * .01, top: height * .01),
                               child: Row(
                                 children: [
-                                  // GestureDetector(
-                                  //   onTap: () {
-                                  //     Navigator.push(
-                                  //       context,
-                                  //       MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             NotificationScreen(currentFirm: widget.currentFirm),
-                                  //       ),
-                                  //     );
-                                  //   },
-                                  //   child: CircleSvgButton(
-                                  //     size: width * .09,
-                                  //     child: SvgPicture.asset("assets/svg/bell.svg", width: 15, height: 15),
-                                  //   ),
-                                  // ),
-                                  // const SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => NotificationScreen(currentFirm: widget.currentFirm),),);
+                                    },
+                                    child: CircleSvgButton(
+                                      size: width * .09,
+                                      child: SvgPicture.asset("assets/svg/bell.svg", width: 15, height: 15),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
                                       showModalBottomSheet(
@@ -455,13 +451,9 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                         useSafeArea: true,
                                         backgroundColor:
                                         Colors.transparent,
-                                        barrierColor: Colors.black
-                                            .withOpacity(0.4),
+                                        barrierColor: Colors.black.withOpacity(0.4),
                                         shape: const RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                              top: Radius.circular(
-                                                  30)),
+                                          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                                         ),
                                         builder: (context) {
                                           return MenuBottomSheet(
@@ -474,10 +466,8 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                     },
                                     child: CircleSvgButton(
                                       size: width * .09,
-                                      child: SvgPicture.asset(
-                                          "assets/svg/menu.svg",
-                                          width: 15,
-                                          height: 15),
+                                      child: SvgPicture.asset("assets/svg/menu.svg",
+                                          width: 15, height: 15),
                                     ),
                                   ),
                                   SizedBox(width: width * 0.03),
@@ -490,21 +480,14 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
-                            padding: EdgeInsets.only(
-                                left: leftPad,
-                                top: height * .015,
-                                right: width * .02),
+                            padding: EdgeInsets.only(left: leftPad, top: height * .015, right: width * .02),
                             child: Row(
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => Scale(
-                                              currentFirm:
-                                              widget.currentFirm,
-                                              serviceLeads: leads)),
+                                    Navigator.push(context,
+                                      MaterialPageRoute(builder: (_) => Scale(
+                                              currentFirm: widget.currentFirm, serviceLeads: leads)),
                                     );
                                   },
                                   child: SizedBox(
@@ -515,31 +498,19 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                           radius: avatarRadius,
                                           backgroundColor:
                                           Colors.black,
-                                          child: SvgPicture.asset(
-                                              'assets/svg/scale.svg'),
+                                          child: SvgPicture.asset('assets/svg/scale.svg'),
                                         ),
                                         SizedBox(height: height * .003),
                                         SizedBox(
                                             width: itemWidth,
                                             child: Text("Scale",
                                                 maxLines: 1,
-                                                overflow: TextOverflow
-                                                    .ellipsis,
-                                                textAlign:
-                                                TextAlign.center,
-                                                style:
-                                                GoogleFonts.dmSans(
-                                                    fontSize: MediaQuery
-                                                        .of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .035,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .w500,
-                                                    color: Colors
-                                                        .black))),
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.dmSans(
+                                                    fontSize: width * .035,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black))),
                                       ],
                                     ),
                                   ),
@@ -547,29 +518,16 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                 const SizedBox(width: spacing),
                                 Consumer(
                                   builder: (context, ref, _) {
-                                    final citiesAsync = ref.watch(
-                                        citiesStreamProvider(widget
-                                            .currentFirm
-                                            ?.reference
-                                            ?.id ??
-                                            ''));
+                                    final citiesAsync = ref.watch(citiesStreamProvider(widget.currentFirm?.reference?.id ?? ''));
                                     return citiesAsync.when(
-                                      loading: () =>
-                                      const SizedBox.shrink(), // ⛔ no 2nd loader
-                                      error: (e, _) => Center(
-                                          child:
-                                          Text(e.toString())),
+                                      loading: () => const SizedBox.shrink(), // ⛔ no 2nd loader
+                                      error: (e, _) => Center(child: Text(e.toString())),
                                       data: (cities) {
-                                        final activeCities = cities
-                                            .where((c) => !c.isDeleted)
-                                            .toList();
+                                        final activeCities = cities.where((c) => !c.isDeleted).toList();
                                         return Row(
                                             children:
-                                            List.generate(
-                                                activeCities
-                                                    .length, (i) {
-                                              final city =
-                                              activeCities[i];
+                                            List.generate(activeCities.length, (i) {
+                                              final city = activeCities[i];
                                               return Row(children: [
                                                 SizedBox(
                                                   width: itemWidth,
@@ -577,96 +535,45 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
-                                                          Navigator
-                                                              .push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (_) =>
-                                                                  CityScreen(
-                                                                      currentFirm:
-                                                                      widget
-                                                                          .currentFirm,
-                                                                      serviceLeads:
-                                                                      leads,
-                                                                      city:
-                                                                      city),
+                                                          Navigator.push(context,
+                                                            MaterialPageRoute(builder: (_) =>
+                                                                  CityScreen(currentFirm: widget.currentFirm,
+                                                                      serviceLeads: leads, city: city),
                                                             ),
                                                           );
                                                         },
                                                         child:
                                                         CircleAvatar(
-                                                          radius:
-                                                          avatarRadius,
-                                                          backgroundColor:
-                                                          Colors.grey
-                                                              .shade200,
+                                                          radius: avatarRadius,
+                                                          backgroundColor: Colors.grey.shade200,
                                                           child: ClipOval(
-                                                            child:
-                                                            CachedNetworkImage(
-                                                              imageUrl: city
-                                                                  .profile,
-                                                              width:
-                                                              avatarRadius *
-                                                                  2,
-                                                              height:
-                                                              avatarRadius *
-                                                                  2,
-                                                              fit: BoxFit
-                                                                  .cover,
-                                                              placeholder:
-                                                                  (context,
-                                                                  _) =>
-                                                              const SizedBox
-                                                                  .shrink(), // 🔸 silent placeholder
-                                                              errorWidget: (context,
-                                                                  _,
-                                                                  __) =>
-                                                              const Icon(
-                                                                  Icons
-                                                                      .broken_image,
-                                                                  color: Colors
-                                                                      .grey),
+                                                            child: CachedNetworkImage(
+                                                              imageUrl: city.profile,
+                                                              width: avatarRadius * 2,
+                                                              height: avatarRadius * 2,
+                                                              fit: BoxFit.cover,
+                                                              placeholder: (context, _) => const SizedBox.shrink(), // 🔸 silent placeholder
+                                                              errorWidget: (context, _, __) =>
+                                                              const Icon(Icons.broken_image, color: Colors.grey),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          height:
-                                                          height *
-                                                              .005),
-                                                      SizedBox(
-                                                          width:
-                                                          itemWidth,
-                                                          child: Text(
-                                                              city.zone,
-                                                              maxLines:
-                                                              1,
-                                                              overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
-                                                              textAlign:
-                                                              TextAlign
-                                                                  .center,
-                                                              style: GoogleFonts
-                                                                  .roboto(
-                                                                  fontSize:
-                                                                  width *
-                                                                      .035,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                                  color:
-                                                                  Colors.black))),
+                                                      SizedBox(height: height * .005),
+                                                      SizedBox(width: itemWidth,
+                                                          child: Text(city.zone,
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              textAlign: TextAlign.center,
+                                                              style: GoogleFonts.roboto(
+                                                                  fontSize: width * .035,
+                                                                  fontWeight: FontWeight.w400,
+                                                                  color: Colors.black))),
                                                     ],
                                                   ),
                                                 ),
-                                                if (i !=
-                                                    activeCities
-                                                        .length -
-                                                        1)
-                                                  SizedBox(
-                                                      width:
-                                                      spacing),
+                                                if (i != activeCities.length - 1)
+                                                  SizedBox(width: spacing),
                                               ]);
                                             }));
                                       },
@@ -678,10 +585,7 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                           ),
                         ),
                         // keep rest identical
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: height * .02,
-                              left: width * .04),
+                        Padding(padding: EdgeInsets.only(top: height * .02, left: width * .04),
                           child: Text('Your Growth Pipeline',
                               style: GoogleFonts.dmSans(
                                   color: Colors.black,
@@ -778,22 +682,22 @@ class _FunnelHomeState extends ConsumerState<FunnelHome> {
                               getStatusColors(latestStatus);
                               return GestureDetector(
                                 onTap: () async {
-                                  // final marketer = await ref
-                                  //     .read(affiliateControllerProvider.notifier)
-                                  //     .getAffiliateByMarketerId(
-                                  //     lead.marketerId);
-                                  // if (!mounted) return;
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (_) => LeadTimelineScreen(
-                                  //       statuscolor: statusColors,
-                                  //       currentFirm: widget.currentFirm,
-                                  //       service: lead,
-                                  //       marketer: marketer,
-                                  //     ),
-                                  //   ),
-                                  // );
+                                  final marketer = await ref
+                                      .read(affiliateControllerProvider.notifier)
+                                      .getAffiliateByMarketerId(
+                                      lead.marketerId);
+                                  if (!mounted) return;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => LeadTimelineScreen(
+                                        statuscolor: statusColors,
+                                        currentFirm: widget.currentFirm,
+                                        service: lead,
+                                        marketer: marketer,
+                                      ),
+                                    ),
+                                  );
                                 },
                                 child: buildLeadCard(lead, statusColors, latestStatus, widget.currentFirm!),
                               );

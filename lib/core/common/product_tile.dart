@@ -123,8 +123,7 @@ class ProductsTile extends ConsumerWidget {
                     onPressed: () {
                       if (lead == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
+                          const SnackBar(content:
                               Text("No lead associated with this view")),
                         );
                         return;

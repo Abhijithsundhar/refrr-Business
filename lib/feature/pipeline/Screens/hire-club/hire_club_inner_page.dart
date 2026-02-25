@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:refrr_admin/core/alert_dailogs/hire_confirmation_alert.dart';
 import 'package:refrr_admin/core/common/chat_screen_support_functions.dart';
 import 'package:refrr_admin/core/common/global_variables.dart';
+import 'package:refrr_admin/core/utils/call_dailpad_function.dart';
+import 'package:refrr_admin/core/utils/whatsapp_open_function.dart';
 
 class SalesProfilePage extends StatelessWidget {
   const SalesProfilePage({super.key});

@@ -1,5 +1,4 @@
 class AssetConstants {
-
   static const image = 'assets/svg/image.svg';
   static const add = 'assets/svg/add.svg';
   static const close = 'assets/svg/close.svg';
@@ -16,5 +15,7 @@ class AssetConstants {
   static const location = 'assets/svg/location.svg';
   static const hire = 'assets/svg/searchHire.svg';
   static const cashImg = 'assets/svg/cashImage.svg';
+  static const person = 'assets/svg/person_icon.svg';
+  static const hiringRequirement = 'assets/svg/hiring_requirement.svg';
 
 }

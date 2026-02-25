@@ -111,7 +111,7 @@ class AffiliateController extends StateNotifier<bool> {
     snap.fold(
           (l) => showCommonSnackbar(context, l.failure),
           (r) {
-        showCommonSnackbar(context, "Affiliate updated successfully");
+        // showCommonSnackbar(context, "Affiliate updated successfully");
         Navigator.pop(context);
       },
     );

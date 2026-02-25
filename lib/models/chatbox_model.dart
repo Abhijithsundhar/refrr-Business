@@ -27,6 +27,31 @@ class ChatModel {
     this.requiresAction,
     this.imageUrl,
   });
+  ChatModel copyWith({
+    String? type,
+    String? chatterId,
+    String? message,
+    DateTime? time,
+    DateTime? dateLabel,
+    int? amount,
+    String? description,
+    String? transactionStatus,
+    bool? requiresAction,
+    String? imageUrl,
+  }) {
+    return ChatModel(
+      type: type ?? this.type,
+      chatterId: chatterId ?? this.chatterId,
+      message: message ?? this.message,
+      time: time ?? this.time,
+      dateLabel: dateLabel ?? this.dateLabel,
+      amount: amount ?? this.amount,
+      description: description ?? this.description,
+      transactionStatus: transactionStatus ?? this.transactionStatus,
+      requiresAction: requiresAction ?? this.requiresAction,
+      imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {

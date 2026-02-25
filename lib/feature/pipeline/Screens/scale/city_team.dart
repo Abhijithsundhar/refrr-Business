@@ -47,8 +47,7 @@ class _TeamTabState extends ConsumerState<TeamTab> {
       final countries = await ref.read(countryControllerProvider.notifier).fetchCountries();
 
       final matchingCountry = countries.firstWhere(
-            (country) =>
-        country.countryName.toLowerCase() == widget.city!.country.toLowerCase() ||
+            (country) => country.countryName.toLowerCase() == widget.city!.country.toLowerCase() ||
             country.shortName.toUpperCase() == widget.city!.country.toUpperCase() ||
             country.countryCode == widget.city!.country,
       );

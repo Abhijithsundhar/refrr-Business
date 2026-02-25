@@ -5,8 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:refrr_admin/core/common/alert_box.dart';
 import 'package:refrr_admin/core/common/global_variables.dart';
 import 'package:refrr_admin/core/common/snackbar.dart';
+import 'package:refrr_admin/core/constants/asset.dart';
 import 'package:refrr_admin/feature/Login/screens/login_page.dart';
 import 'package:refrr_admin/feature/login/screens/contact_us.dart';
+import 'package:refrr_admin/feature/pipeline/screens/menu/hiring_requirement.dart';
 import 'package:refrr_admin/feature/pipeline/screens/menu/privacy_policy.dart';
 import 'package:refrr_admin/feature/pipeline/screens/menu/view_profile.dart';
 import 'package:refrr_admin/feature/pipeline/screens/menu/settings.dart';
@@ -59,14 +61,12 @@ class MenuBottomSheet extends ConsumerWidget {
                   // Row 1 → SVG + Welcome
                   Row(
                     children: [
-                      SvgPicture.asset(
-                        "assets/svg/waving-hand.svg",
+                      SvgPicture.asset("assets/svg/waving-hand.svg",
                         height: width * 0.05,
                         width: width * 0.05,
                       ),
                       SizedBox(width: 6),
-                      Text(
-                        "Welcome,",
+                      Text("Welcome,",
                         style: GoogleFonts.dmSans(
                           fontSize: width * 0.04,
                           color: Colors.black,
@@ -78,8 +78,7 @@ class MenuBottomSheet extends ConsumerWidget {
                   // Row 2 → Company name
                   Padding(
                     padding: EdgeInsets.only(left: width * .035),
-                    child: Text(appBarTitle.length > 24
-                          ? appBarTitle.substring(0, 24) : appBarTitle,
+                    child: Text(appBarTitle.length > 24 ? appBarTitle.substring(0, 24) : appBarTitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.dmSans(
@@ -124,8 +123,14 @@ class MenuBottomSheet extends ConsumerWidget {
           //   },
           // ),
           buildMenuItem(
-            label: "Profile",
-            url:'assets/svg/personEdit.svg',
+            label: "Hiring Requirements",
+            url:AssetConstants.hiringRequirement,
+            context: context, onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HiringRequirement( currentFirm: currentFirm,),));
+          },
+          ),buildMenuItem(
+            label: "View Profile",
+            url:AssetConstants.person,
             context: context, onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => ViewProfile( currentFirm: currentFirm,),));
           },

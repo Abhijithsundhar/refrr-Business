@@ -1,70 +1,13 @@
 {
   "project_info": {
-    "project_number": "574909873629",
-    "project_id": "i-canyon-marketing-app",
-    "storage_bucket": "i-canyon-marketing-app.firebasestorage.app"
+    "project_number": "675682001870",
+    "project_id": "grro-copy",
+    "storage_bucket": "grro-copy.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:574909873629:android:a238441b1187f24d3bca34",
-        "android_client_info": {
-          "package_name": "com.icanyontechnologies.refrrApp"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:574909873629:android:6633ff82ef2d6c043bca34",
-        "android_client_info": {
-          "package_name": "com.icanyontechnologies.refrrBusiness"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:574909873629:android:56f17cd359b8959f3bca34",
-        "android_client_info": {
-          "package_name": "com.syfton.grro"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:574909873629:android:7b4132b56a39b7273bca34",
+        "mobilesdk_app_id": "1:675682001870:android:78f16ff2225961f0bd819f",
         "android_client_info": {
           "package_name": "com.syfton.grroBusiness"
         }
@@ -72,7 +15,45 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+          "current_key": "AIzaSyBEMXuh8Mo9-_lYFJlU-D6qSLwD9v_PsDU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675682001870:android:c8062e44330dee49bd819f",
+        "android_client_info": {
+          "package_name": "com.syfton.grroBusinessApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEMXuh8Mo9-_lYFJlU-D6qSLwD9v_PsDU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675682001870:android:d5773c22883d4dbbbd819f",
+        "android_client_info": {
+          "package_name": "com.syfton.grromarketerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEMXuh8Mo9-_lYFJlU-D6qSLwD9v_PsDU"
         }
       ],
       "services": {

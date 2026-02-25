@@ -14,6 +14,7 @@ import 'package:refrr_admin/feature/pipeline/Screens/scale/city_team.dart';
 import 'package:refrr_admin/models/city_model.dart';
 import 'package:refrr_admin/models/leads_model.dart';
 import 'package:refrr_admin/models/serviceLead_model.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CityScreen extends StatefulWidget {
   final LeadsModel? currentFirm;
@@ -45,16 +46,18 @@ class _CityScreenState extends State<CityScreen> {
                 CachedNetworkImage(
                   imageUrl: widget.city?.profile ?? '',
                   fit: BoxFit.fill,
-                  placeholder: (context, url) => Image.asset(
-                    'assets/dubai.jpeg',
-                    fit: BoxFit.fill,
+                  width: width,
+                  height: height * 0.2,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(color: Colors.grey),
                   ),
-                  errorWidget: (context, url, error) => Image.asset(
-                    'assets/dubai.jpeg',
-                    fit: BoxFit.fill,
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey.shade800,
+                    child: const Icon(Icons.broken_image, color: Colors.white, size: 40),
                   ),
                 ),
-
                 /// 🔥 THREE DOT ICON (RIGHT SIDE)
                 Positioned(
                   top: width * 0.2,
@@ -134,7 +137,6 @@ class _CityScreenState extends State<CityScreen> {
               ],
             ),
           ),
-
           SizedBox(height: width * 0.02),
 
           /// ========== FIXED TABS ==========
@@ -149,7 +151,7 @@ class _CityScreenState extends State<CityScreen> {
                 children: [
                   _tabItem("team", 0, width),
                   _tabItem("Pipeline", 1, width),
-                  // _tabItem("Account", 2, width),
+                  _tabItem("Account", 2, width),
                   _tabItem("Help Desk", 3, width),
                 ],
               ),

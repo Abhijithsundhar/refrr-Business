@@ -1,4 +1,4 @@
-package com.syfton.grroBusiness
+package com.syfton.grroBusinessApp
 
 import io.flutter.embedding.android.FlutterActivity
 

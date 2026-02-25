@@ -1,0 +1,226 @@
+{
+  "project_info": {
+    "project_number": "574909873629",
+    "project_id": "i-canyon-marketing-app",
+    "storage_bucket": "i-canyon-marketing-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:56f17cd359b8959f3bca34",
+        "android_client_info": {
+          "package_name": "com.syfton.grro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574909873629-8luhsanq309c5k99h76dfg8i1u9842rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.grroZonalAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:89ee217d22b0cb7a3bca34",
+        "android_client_info": {
+          "package_name": "com.syfton.grroApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574909873629-8luhsanq309c5k99h76dfg8i1u9842rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.grroZonalAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:7b4132b56a39b7273bca34",
+        "android_client_info": {
+          "package_name": "com.syfton.grroBusiness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574909873629-8luhsanq309c5k99h76dfg8i1u9842rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.grroZonalAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:39261fb0eee742ca3bca34",
+        "android_client_info": {
+          "package_name": "com.syfton.grroBusinessApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574909873629-8luhsanq309c5k99h76dfg8i1u9842rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.grroZonalAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:b477bea0d7942a963bca34",
+        "android_client_info": {
+          "package_name": "com.syfton.grromarketerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574909873629-8luhsanq309c5k99h76dfg8i1u9842rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.grroZonalAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574909873629:android:affe09dc885a7dcb3bca34",
+        "android_client_info": {
+          "package_name": "com.syfton.grromarketers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm46HN25WiQC5f1W03wAkJzLi_3us76Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574909873629-ui07eknqpi7kgtqpfon9aa8b6v14n6il.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574909873629-8luhsanq309c5k99h76dfg8i1u9842rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.grroZonalAdmin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

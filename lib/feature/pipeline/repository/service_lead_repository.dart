@@ -40,18 +40,34 @@ class ServiceLeadsRepository {
     }
   }
 
-  // ✅ NEW: Add this method for adding chat messages safely
-  FutureVoid addChatMessage({
+
+// ✅ Method for adding chat message with optional field updates
+  FutureVoid addChatMessageWithUpdate({
     required String serviceLeadId,
     required ChatModel message,
+    String? leadType,
+    Map<String, dynamic>? statusHistoryEntry,
   }) async {
     try {
+      // Build update data
+      final Map<String, dynamic> updateData = {
+        'chat': FieldValue.arrayUnion([message.toMap()]),
+      };
+
+      // Add leadType if provided
+      if (leadType != null) {
+        updateData['leadType'] = leadType;
+      }
+
+      // Add status history entry if provided
+      if (statusHistoryEntry != null) {
+        updateData['statusHistory'] = FieldValue.arrayUnion([statusHistoryEntry]);
+      }
+
       await FirebaseFirestore.instance
           .collection(FirebaseCollections.serviceLeadsCollection)
           .doc(serviceLeadId)
-          .update({
-        'chat': FieldValue.arrayUnion([message.toMap()]),
-      });
+          .update(updateData);
 
       return right(null);
     } on FirebaseException catch (e) {
@@ -158,5 +174,23 @@ class ServiceLeadsRepository {
         return ServiceLeadModel.fromMap(data);
       }).toList();
     });
+  }
+
+  // Add this method to your ServiceLeadsRepository class
+  Future<Either<Failure, void>> updateChatInArray({
+    required String serviceLeadId,
+    required List<ChatModel> updatedChatList,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(FirebaseCollections.serviceLeadsCollection)
+          .doc(serviceLeadId)
+          .update({'chat': updatedChatList.map((chat) => chat.toMap()).toList(),
+      });
+
+      return right(null);
+    } on FirebaseException catch (e) {
+      return left(Failure( failure: e.message.toString()));
+    }
   }
 }
